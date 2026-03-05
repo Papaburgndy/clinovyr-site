@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Botox & Fillers Providers in Philadelphia",
   "description": "Find top-rated botox & fillers providers in Philadelphia, PA. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$200-$1200",
+  "medicalSpecialty": "DermatologyOrganization",
   "areaServed": {
     "@type": "City",
     "name": "Philadelphia",
-    "containedIn": "PA"
+    "containedIn": {
+      "@type": "State",
+      "name": "PA"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Philadelphia",
+    "addressRegion": "PA",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/philadelphia-pa/botox-fillers/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Philadelphia","item":"https://clinovyr.com/cities/philadelphia-pa/"},
+    {"@type":"ListItem","position":3,"name":"Botox & Fillers","item":"https://clinovyr.com/cities/philadelphia-pa/botox-fillers/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,8 +188,8 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Philadelphia, PA</div>
-      <h1>Top-Rated Botox & Fillers Providers in Philadelphia, PA</h1>
-      <p>Looking for a trusted botox & fillers in Philadelphia? We've curated the top-rated providers in Philadelphia, PA — verified by real patient reviews, board certifications, and outco...</p>
+      <h1>Find the Best Botox & Fillers in Philadelphia</h1>
+      <p>Choosing the right botox & fillers in Philadelphia can feel overwhelming. That's why we've done the research for you — comparing Philadelphia's best botox & fillers practices by pa...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>
         <div class="stat-item"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
@@ -213,7 +231,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <section class="section">
   <div class="container">
     <h2 class="section-title">About Botox & Fillers in Philadelphia</h2>
-    <p class="section-sub">Looking for a trusted botox & fillers in Philadelphia? We've curated the top-rated providers in Philadelphia, PA — verified by real patient reviews, board certifications, and outcomes. Whether you're seeking Botox or Dysport, our network of botox & fillers professionals makes it easy to find the right care.</p>
+    <p class="section-sub">Choosing the right botox & fillers in Philadelphia can feel overwhelming. That's why we've done the research for you — comparing Philadelphia's best botox & fillers practices by patient reviews, pricing transparency, and quality of results. Find your match and book a consultation today.</p>
 
     <h3 style="margin:28px 0 14px;font-size:1.1rem;">Treatments Available in Philadelphia</h3>
     <div class="treatments-grid"><div class="treatment-pill">✓ Botox</div>

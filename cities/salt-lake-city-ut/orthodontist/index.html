@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Orthodontist Providers in Salt Lake City",
   "description": "Find top-rated orthodontist providers in Salt Lake City, UT. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$3000-$8000",
+  "medicalSpecialty": "Dentistry",
   "areaServed": {
     "@type": "City",
     "name": "Salt Lake City",
-    "containedIn": "UT"
+    "containedIn": {
+      "@type": "State",
+      "name": "UT"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Salt Lake City",
+    "addressRegion": "UT",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/salt-lake-city-ut/orthodontist/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Salt Lake City","item":"https://clinovyr.com/cities/salt-lake-city-ut/"},
+    {"@type":"ListItem","position":3,"name":"Orthodontist","item":"https://clinovyr.com/cities/salt-lake-city-ut/orthodontist/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,8 +188,8 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Salt Lake City, UT</div>
-      <h1>Find the Best Orthodontist in Salt Lake City</h1>
-      <p>Choosing the right orthodontist in Salt Lake City can feel overwhelming. That's why we've done the research for you — comparing Salt Lake City's best orthodontist practices by pati...</p>
+      <h1>Salt Lake City's Most Trusted Orthodontist Specialists</h1>
+      <p>Residents of Salt Lake City trust our directory to find qualified orthodontist specialists. Our Salt Lake City, UT listings are verified for licensing, insurance acceptance, and pa...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>
         <div class="stat-item"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
@@ -213,7 +231,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <section class="section">
   <div class="container">
     <h2 class="section-title">About Orthodontist in Salt Lake City</h2>
-    <p class="section-sub">Choosing the right orthodontist in Salt Lake City can feel overwhelming. That's why we've done the research for you — comparing Salt Lake City's best orthodontist practices by patient reviews, pricing transparency, and quality of results. Find your match and book a consultation today.</p>
+    <p class="section-sub">Residents of Salt Lake City trust our directory to find qualified orthodontist specialists. Our Salt Lake City, UT listings are verified for licensing, insurance acceptance, and patient satisfaction — so you can focus on getting the care you deserve.</p>
 
     <h3 style="margin:28px 0 14px;font-size:1.1rem;">Treatments Available in Salt Lake City</h3>
     <div class="treatments-grid"><div class="treatment-pill">✓ Invisalign</div>

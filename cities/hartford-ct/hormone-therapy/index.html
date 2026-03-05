@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Hormone Therapy Providers in Hartford",
   "description": "Find top-rated hormone therapy providers in Hartford, CT. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$150-$500",
+  "medicalSpecialty": "Endocrine",
   "areaServed": {
     "@type": "City",
     "name": "Hartford",
-    "containedIn": "CT"
+    "containedIn": {
+      "@type": "State",
+      "name": "CT"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Hartford",
+    "addressRegion": "CT",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/hartford-ct/hormone-therapy/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Hartford","item":"https://clinovyr.com/cities/hartford-ct/"},
+    {"@type":"ListItem","position":3,"name":"Hormone Therapy","item":"https://clinovyr.com/cities/hartford-ct/hormone-therapy/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,8 +188,8 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Hartford, CT</div>
-      <h1>Affordable Hormone Therapy in Hartford — Verified Reviews</h1>
-      <p>Choosing the right hormone therapy in Hartford can feel overwhelming. That's why we've done the research for you — comparing Hartford's best hormone therapy practices by patient re...</p>
+      <h1>Find the Best Hormone Therapy in Hartford</h1>
+      <p>Residents of Hartford trust our directory to find qualified hormone therapy specialists. Our Hartford, CT listings are verified for licensing, insurance acceptance, and patient sat...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>
         <div class="stat-item"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
@@ -213,7 +231,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <section class="section">
   <div class="container">
     <h2 class="section-title">About Hormone Therapy in Hartford</h2>
-    <p class="section-sub">Choosing the right hormone therapy in Hartford can feel overwhelming. That's why we've done the research for you — comparing Hartford's best hormone therapy practices by patient reviews, pricing transparency, and quality of results. Find your match and book a consultation today.</p>
+    <p class="section-sub">Residents of Hartford trust our directory to find qualified hormone therapy specialists. Our Hartford, CT listings are verified for licensing, insurance acceptance, and patient satisfaction — so you can focus on getting the care you deserve.</p>
 
     <h3 style="margin:28px 0 14px;font-size:1.1rem;">Treatments Available in Hartford</h3>
     <div class="treatments-grid"><div class="treatment-pill">✓ testosterone therapy</div>

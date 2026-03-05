@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Body Contouring Providers in Milwaukee",
   "description": "Find top-rated body contouring providers in Milwaukee, WI. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$500-$3000",
+  "medicalSpecialty": "PlasticSurgery",
   "areaServed": {
     "@type": "City",
     "name": "Milwaukee",
-    "containedIn": "WI"
+    "containedIn": {
+      "@type": "State",
+      "name": "WI"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Milwaukee",
+    "addressRegion": "WI",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/milwaukee-wi/body-contouring/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Milwaukee","item":"https://clinovyr.com/cities/milwaukee-wi/"},
+    {"@type":"ListItem","position":3,"name":"Body Contouring","item":"https://clinovyr.com/cities/milwaukee-wi/body-contouring/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,7 +188,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Milwaukee, WI</div>
-      <h1>Affordable Body Contouring in Milwaukee — Verified Reviews</h1>
+      <h1>Find the Best Body Contouring in Milwaukee</h1>
       <p>Looking for a trusted body contouring in Milwaukee? We've curated the top-rated providers in Milwaukee, WI — verified by real patient reviews, board certifications, and outcomes. W...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>

@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Botox & Fillers Providers in Raleigh",
   "description": "Find top-rated botox & fillers providers in Raleigh, NC. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$200-$1200",
+  "medicalSpecialty": "DermatologyOrganization",
   "areaServed": {
     "@type": "City",
     "name": "Raleigh",
-    "containedIn": "NC"
+    "containedIn": {
+      "@type": "State",
+      "name": "NC"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Raleigh",
+    "addressRegion": "NC",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/raleigh-nc/botox-fillers/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Raleigh","item":"https://clinovyr.com/cities/raleigh-nc/"},
+    {"@type":"ListItem","position":3,"name":"Botox & Fillers","item":"https://clinovyr.com/cities/raleigh-nc/botox-fillers/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,8 +188,8 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Raleigh, NC</div>
-      <h1>Top-Rated Botox & Fillers Providers in Raleigh, NC</h1>
-      <p>Looking for a trusted botox & fillers in Raleigh? We've curated the top-rated providers in Raleigh, NC — verified by real patient reviews, board certifications, and outcomes. Wheth...</p>
+      <h1>Find the Best Botox & Fillers in Raleigh</h1>
+      <p>Choosing the right botox & fillers in Raleigh can feel overwhelming. That's why we've done the research for you — comparing Raleigh's best botox & fillers practices by patient revi...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>
         <div class="stat-item"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
@@ -213,7 +231,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <section class="section">
   <div class="container">
     <h2 class="section-title">About Botox & Fillers in Raleigh</h2>
-    <p class="section-sub">Looking for a trusted botox & fillers in Raleigh? We've curated the top-rated providers in Raleigh, NC — verified by real patient reviews, board certifications, and outcomes. Whether you're seeking Botox or Dysport, our network of botox & fillers professionals makes it easy to find the right care.</p>
+    <p class="section-sub">Choosing the right botox & fillers in Raleigh can feel overwhelming. That's why we've done the research for you — comparing Raleigh's best botox & fillers practices by patient reviews, pricing transparency, and quality of results. Find your match and book a consultation today.</p>
 
     <h3 style="margin:28px 0 14px;font-size:1.1rem;">Treatments Available in Raleigh</h3>
     <div class="treatments-grid"><div class="treatment-pill">✓ Botox</div>

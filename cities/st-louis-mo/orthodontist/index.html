@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Orthodontist Providers in St. Louis",
   "description": "Find top-rated orthodontist providers in St. Louis, MO. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$3000-$8000",
+  "medicalSpecialty": "Dentistry",
   "areaServed": {
     "@type": "City",
     "name": "St. Louis",
-    "containedIn": "MO"
+    "containedIn": {
+      "@type": "State",
+      "name": "MO"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "St. Louis",
+    "addressRegion": "MO",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/st-louis-mo/orthodontist/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"St. Louis","item":"https://clinovyr.com/cities/st-louis-mo/"},
+    {"@type":"ListItem","position":3,"name":"Orthodontist","item":"https://clinovyr.com/cities/st-louis-mo/orthodontist/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,8 +188,8 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 St. Louis, MO</div>
-      <h1>Find the Best Orthodontist in St. Louis</h1>
-      <p>Choosing the right orthodontist in St. Louis can feel overwhelming. That's why we've done the research for you — comparing St. Louis's best orthodontist practices by patient review...</p>
+      <h1>St. Louis's Most Trusted Orthodontist Specialists</h1>
+      <p>Residents of St. Louis trust our directory to find qualified orthodontist specialists. Our St. Louis, MO listings are verified for licensing, insurance acceptance, and patient sati...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>
         <div class="stat-item"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
@@ -213,7 +231,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <section class="section">
   <div class="container">
     <h2 class="section-title">About Orthodontist in St. Louis</h2>
-    <p class="section-sub">Choosing the right orthodontist in St. Louis can feel overwhelming. That's why we've done the research for you — comparing St. Louis's best orthodontist practices by patient reviews, pricing transparency, and quality of results. Find your match and book a consultation today.</p>
+    <p class="section-sub">Residents of St. Louis trust our directory to find qualified orthodontist specialists. Our St. Louis, MO listings are verified for licensing, insurance acceptance, and patient satisfaction — so you can focus on getting the care you deserve.</p>
 
     <h3 style="margin:28px 0 14px;font-size:1.1rem;">Treatments Available in St. Louis</h3>
     <div class="treatments-grid"><div class="treatment-pill">✓ Invisalign</div>

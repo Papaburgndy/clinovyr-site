@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Weight Loss Clinic Providers in Boca Raton",
   "description": "Find top-rated weight loss clinic providers in Boca Raton, FL. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$200-$600",
+  "medicalSpecialty": "GeneralPractice",
   "areaServed": {
     "@type": "City",
     "name": "Boca Raton",
-    "containedIn": "FL"
+    "containedIn": {
+      "@type": "State",
+      "name": "FL"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Boca Raton",
+    "addressRegion": "FL",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/boca-raton-fl/weight-loss-clinic/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Boca Raton","item":"https://clinovyr.com/cities/boca-raton-fl/"},
+    {"@type":"ListItem","position":3,"name":"Weight Loss Clinic","item":"https://clinovyr.com/cities/boca-raton-fl/weight-loss-clinic/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,8 +188,8 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Boca Raton, FL</div>
-      <h1>Top-Rated Weight Loss Clinic Providers in Boca Raton, FL</h1>
-      <p>Looking for a trusted weight loss clinic in Boca Raton? We've curated the top-rated providers in Boca Raton, FL — verified by real patient reviews, board certifications, and outcom...</p>
+      <h1>Find the Best Weight Loss Clinic in Boca Raton</h1>
+      <p>Choosing the right weight loss clinic in Boca Raton can feel overwhelming. That's why we've done the research for you — comparing Boca Raton's best weight loss clinic practices by ...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>
         <div class="stat-item"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
@@ -213,7 +231,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <section class="section">
   <div class="container">
     <h2 class="section-title">About Weight Loss Clinic in Boca Raton</h2>
-    <p class="section-sub">Looking for a trusted weight loss clinic in Boca Raton? We've curated the top-rated providers in Boca Raton, FL — verified by real patient reviews, board certifications, and outcomes. Whether you're seeking semaglutide (Ozempic/Wegovy) or phentermine, our network of weight loss clinic professionals makes it easy to find the right care.</p>
+    <p class="section-sub">Choosing the right weight loss clinic in Boca Raton can feel overwhelming. That's why we've done the research for you — comparing Boca Raton's best weight loss clinic practices by patient reviews, pricing transparency, and quality of results. Find your match and book a consultation today.</p>
 
     <h3 style="margin:28px 0 14px;font-size:1.1rem;">Treatments Available in Boca Raton</h3>
     <div class="treatments-grid"><div class="treatment-pill">✓ semaglutide (Ozempic/Wegovy)</div>

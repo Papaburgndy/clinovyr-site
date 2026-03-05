@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Body Contouring Providers in Las Vegas",
   "description": "Find top-rated body contouring providers in Las Vegas, NV. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$500-$3000",
+  "medicalSpecialty": "PlasticSurgery",
   "areaServed": {
     "@type": "City",
     "name": "Las Vegas",
-    "containedIn": "NV"
+    "containedIn": {
+      "@type": "State",
+      "name": "NV"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Las Vegas",
+    "addressRegion": "NV",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/las-vegas-nv/body-contouring/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Las Vegas","item":"https://clinovyr.com/cities/las-vegas-nv/"},
+    {"@type":"ListItem","position":3,"name":"Body Contouring","item":"https://clinovyr.com/cities/las-vegas-nv/body-contouring/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,7 +188,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Las Vegas, NV</div>
-      <h1>Find the Best Body Contouring in Las Vegas</h1>
+      <h1>Top-Rated Body Contouring Providers in Las Vegas, NV</h1>
       <p>Looking for a trusted body contouring in Las Vegas? We've curated the top-rated providers in Las Vegas, NV — verified by real patient reviews, board certifications, and outcomes. W...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>

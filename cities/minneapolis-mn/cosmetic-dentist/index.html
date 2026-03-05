@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Cosmetic Dentist Providers in Minneapolis",
   "description": "Find top-rated cosmetic dentist providers in Minneapolis, MN. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$300-$2500",
+  "medicalSpecialty": "Dentistry",
   "areaServed": {
     "@type": "City",
     "name": "Minneapolis",
-    "containedIn": "MN"
+    "containedIn": {
+      "@type": "State",
+      "name": "MN"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Minneapolis",
+    "addressRegion": "MN",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/minneapolis-mn/cosmetic-dentist/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Minneapolis","item":"https://clinovyr.com/cities/minneapolis-mn/"},
+    {"@type":"ListItem","position":3,"name":"Cosmetic Dentist","item":"https://clinovyr.com/cities/minneapolis-mn/cosmetic-dentist/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,7 +188,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Minneapolis, MN</div>
-      <h1>Affordable Cosmetic Dentist in Minneapolis — Verified Reviews</h1>
+      <h1>Find the Best Cosmetic Dentist in Minneapolis</h1>
       <p>Choosing the right cosmetic dentist in Minneapolis can feel overwhelming. That's why we've done the research for you — comparing Minneapolis's best cosmetic dentist practices by pa...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>

@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Body Contouring Providers in Indianapolis",
   "description": "Find top-rated body contouring providers in Indianapolis, IN. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$500-$3000",
+  "medicalSpecialty": "PlasticSurgery",
   "areaServed": {
     "@type": "City",
     "name": "Indianapolis",
-    "containedIn": "IN"
+    "containedIn": {
+      "@type": "State",
+      "name": "IN"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Indianapolis",
+    "addressRegion": "IN",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/indianapolis-in/body-contouring/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Indianapolis","item":"https://clinovyr.com/cities/indianapolis-in/"},
+    {"@type":"ListItem","position":3,"name":"Body Contouring","item":"https://clinovyr.com/cities/indianapolis-in/body-contouring/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,7 +188,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Indianapolis, IN</div>
-      <h1>Indianapolis's Most Trusted Body Contouring Specialists</h1>
+      <h1>Find the Best Body Contouring in Indianapolis</h1>
       <p>Looking for a trusted body contouring in Indianapolis? We've curated the top-rated providers in Indianapolis, IN — verified by real patient reviews, board certifications, and outco...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>

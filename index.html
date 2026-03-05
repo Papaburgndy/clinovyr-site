@@ -119,7 +119,37 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; text-align: center; font-size: 0.78rem; opacity: 0.6; max-width: 1100px; margin: 0 auto; }
 @media (max-width: 700px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
 </style>
-
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clinovyr",
+  "url": "https://clinovyr.com/",
+  "description": "Compare top-rated dentists, med spas, chiropractors, and aesthetic clinics in 50+ US cities. Free quotes, verified reviews, same-week appointments.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clinovyr.com/search?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Clinovyr",
+  "url": "https://clinovyr.com/",
+  "description": "Compare top-rated dentists, med spas, chiropractors, and aesthetic clinics in 50+ US cities. Free quotes, verified reviews, same-week appointments.",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "availableLanguage": "English"
+  }
+}
+</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>

@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Cosmetic Dentist Providers in Cincinnati",
   "description": "Find top-rated cosmetic dentist providers in Cincinnati, OH. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$300-$2500",
+  "medicalSpecialty": "Dentistry",
   "areaServed": {
     "@type": "City",
     "name": "Cincinnati",
-    "containedIn": "OH"
+    "containedIn": {
+      "@type": "State",
+      "name": "OH"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Cincinnati",
+    "addressRegion": "OH",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/cincinnati-oh/cosmetic-dentist/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Cincinnati","item":"https://clinovyr.com/cities/cincinnati-oh/"},
+    {"@type":"ListItem","position":3,"name":"Cosmetic Dentist","item":"https://clinovyr.com/cities/cincinnati-oh/cosmetic-dentist/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,7 +188,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Cincinnati, OH</div>
-      <h1>Affordable Cosmetic Dentist in Cincinnati — Verified Reviews</h1>
+      <h1>Cincinnati's Most Trusted Cosmetic Dentist Specialists</h1>
       <p>Choosing the right cosmetic dentist in Cincinnati can feel overwhelming. That's why we've done the research for you — comparing Cincinnati's best cosmetic dentist practices by pati...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>

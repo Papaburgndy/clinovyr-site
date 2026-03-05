@@ -122,20 +122,38 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": ["MedicalBusiness", "LocalBusiness"],
   "name": "Top Skin Care & Facials Providers in Louisville",
   "description": "Find top-rated skin care & facials providers in Louisville, KY. Compare reviews, pricing, and availability. Get free quotes from verified specialists near you.",
+  "priceRange": "$75-$400",
+  "medicalSpecialty": "DermatologyOrganization",
   "areaServed": {
     "@type": "City",
     "name": "Louisville",
-    "containedIn": "KY"
+    "containedIn": {
+      "@type": "State",
+      "name": "KY"
+    }
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Louisville",
+    "addressRegion": "KY",
+    "addressCountry": "US"
   },
   "url": "https://clinovyr.com/cities/louisville-ky/skin-care-facials/",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://clinovyr.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "sameAs": "https://clinovyr.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://clinovyr.com/"},
+    {"@type":"ListItem","position":2,"name":"Louisville","item":"https://clinovyr.com/cities/louisville-ky/"},
+    {"@type":"ListItem","position":3,"name":"Skin Care & Facials","item":"https://clinovyr.com/cities/louisville-ky/skin-care-facials/"}
+  ]
 }
 </script>
 <script type="application/ld+json">
@@ -170,7 +188,7 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
   <div class="hero-grid">
     <div>
       <div class="hero-badge">📍 Louisville, KY</div>
-      <h1>Top-Rated Skin Care & Facials Providers in Louisville, KY</h1>
+      <h1>Affordable Skin Care & Facials in Louisville — Verified Reviews</h1>
       <p>Choosing the right skin care & facials in Louisville can feel overwhelming. That's why we've done the research for you — comparing Louisville's best skin care & facials practices b...</p>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Verified Providers</div></div>
