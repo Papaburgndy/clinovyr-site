@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://clinovyr.com/sitemap.xml
