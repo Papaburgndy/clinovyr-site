@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="dns-prefetch" href="//fonts.gstatic.com">
+<link rel="dns-prefetch" href="//www.googletagmanager.com">
+<meta charset="UTF-8">
+<meta name="theme-color" content="#2563eb">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical & Aesthetic Web Stories — Clinovyr</title>
+<meta name="description" content="Quick-read AMP Web Stories about medical and aesthetic treatments, procedures, and wellness tips.">
+<link rel="canonical" href="https://clinovyr.com/stories/">
+<meta property="og:title" content="Medical & Aesthetic Web Stories — Clinovyr">
+<meta property="og:description" content="Quick-read AMP Web Stories about medical and aesthetic treatments.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clinovyr.com/stories/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --blue: #2563eb; --sky: #0ea5e9; --green: #10b981;
+  --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+  --gray-600: #4b5563; --gray-900: #111827; --white: #ffffff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, system-ui, sans-serif; color: var(--gray-900); line-height: 1.6; background: var(--gray-50); }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* Nav */
+nav { background: var(--white); border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 100; }
+.nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; max-width: 1100px; margin: 0 auto; }
+.nav-logo { font-size: 1.25rem; font-weight: 800; color: var(--blue); }
+.nav-links { display: flex; gap: 24px; font-size: 0.9rem; }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, #1e40af 0%, #0284c7 100%); color: var(--white); padding: 60px 20px; text-align: center; }
+.hero h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
+.hero p { font-size: 1.1rem; opacity: 0.9; max-width: 700px; margin: 0 auto; }
+
+/* Stories Grid */
+.stories-section { padding: 60px 20px; }
+.section-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+.section-sub { color: var(--gray-600); margin-bottom: 36px; }
+
+.stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+
+.story-card {
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
+}
+
+.story-cover {
+  height: 180px;
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 3rem;
+}
+
+.story-cover.botox { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+.story-cover.coolsculpt { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); }
+.story-cover.medspa { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+.story-cover.laser { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); }
+.story-cover.cost { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+.story-cover.lips { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+.story-cover.dentist { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+.story-cover.iv { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.story-cover.hormone { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+.story-cover.chiro { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+
+.story-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--gray-900);
+}
+
+.story-description {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.story-link {
+  display: inline-block;
+  background: var(--blue);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.story-link:hover { background: #1d4ed8; text-decoration: none; }
+
+/* Footer */
+footer {
+  background: var(--gray-900);
+  color: var(--gray-200);
+  padding: 40px 20px;
+  margin-top: 60px;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 24px;
+  text-align: center;
+  font-size: 0.78rem;
+  opacity: 0.6;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .hero h1 { font-size: 1.8rem; }
+  .stories-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Medical & Aesthetic Web Stories",
+  "description": "AMP Web Stories about medical and aesthetic treatments",
+  "url": "https://clinovyr.com/stories/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Clinovyr",
+    "url": "https://clinovyr.com"
+  }
+}
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZVEKYV3LTS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ZVEKYV3LTS');</script>
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Medical & Aesthetic Web Stories — Clinovyr">
+<meta name="twitter:description" content="Quick-read AMP Web Stories about medical and aesthetic treatments, procedures, and wellness tips.">
+<meta name="twitter:image" content="https://clinovyr.com/images/og-default.jpg">
+<link rel="alternate" hreflang="x-default" href="https://clinovyr.com/stories/">
+<link rel="alternate" hreflang="en" href="https://clinovyr.com/stories/">
+<script type="speculationrules">{"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">🏥 Clinovyr</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/#services">Services</a>
+      <a href="/#cities">Cities</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <h1>Medical & Aesthetic Stories</h1>
+    <p>Quick-read AMP Web Stories about treatments, procedures, and wellness tips. Read in seconds on any device.</p>
+  </div>
+</section>
+
+<section class="stories-section">
+  <div class="container">
+    <h2 class="section-title">Featured Stories</h2>
+    <p class="section-sub">Tap any story below to read instantly on your phone or device</p>
+
+    <div class="stories-grid">
+      <div class="story-card">
+        <div class="story-cover botox">💉</div>
+        <div class="story-content">
+          <div class="story-title">How Botox Actually Works</div>
+          <div class="story-description">Learn the science behind Botox and how it prevents wrinkles with stunning results.</div>
+          <a href="/stories/how-botox-works/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover coolsculpt">❄️</div>
+        <div class="story-content">
+          <div class="story-title">CoolSculpting Results</div>
+          <div class="story-description">See real before and after transformations from non-invasive fat freezing technology.</div>
+          <a href="/stories/coolsculpting-results/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover medspa">🧖</div>
+        <div class="story-content">
+          <div class="story-title">First Med Spa Visit</div>
+          <div class="story-description">Complete guide to what to expect when visiting a medical spa for the first time.</div>
+          <a href="/stories/med-spa-first-visit/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover laser">✨</div>
+        <div class="story-content">
+          <div class="story-title">Laser Hair Removal</div>
+          <div class="story-description">Everything about permanent hair reduction and what to expect during treatment.</div>
+          <a href="/stories/laser-hair-removal-guide/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover cost">💰</div>
+        <div class="story-content">
+          <div class="story-title">Botox Cost Breakdown</div>
+          <div class="story-description">Understanding Botox pricing and what you actually pay for treatments.</div>
+          <a href="/stories/botox-cost-breakdown/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover lips">💋</div>
+        <div class="story-content">
+          <div class="story-title">Lip Fillers Guide</div>
+          <div class="story-description">Types of lip fillers, costs, and what to expect from your first appointment.</div>
+          <a href="/stories/lip-fillers-guide/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover dentist">🦷</div>
+        <div class="story-content">
+          <div class="story-title">Find Best Dentist</div>
+          <div class="story-description">Tips for finding and choosing the right dental provider in your area.</div>
+          <a href="/stories/find-best-dentist/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover iv">💧</div>
+        <div class="story-content">
+          <div class="story-title">IV Therapy Benefits</div>
+          <div class="story-description">7 science-backed benefits of IV nutrient therapy and vitamin infusions.</div>
+          <a href="/stories/iv-therapy-benefits/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover hormone">🧬</div>
+        <div class="story-content">
+          <div class="story-title">Hormone Therapy Guide</div>
+          <div class="story-description">Is hormone therapy right for you? Complete guide to options and considerations.</div>
+          <a href="/stories/hormone-therapy-guide/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+
+      <div class="story-card">
+        <div class="story-cover chiro">🔄</div>
+        <div class="story-content">
+          <div class="story-title">Chiropractor Benefits</div>
+          <div class="story-description">10 science-backed reasons to see a chiropractor for wellness and pain relief.</div>
+          <a href="/stories/chiropractor-benefits/" class="story-link">Read Story →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-bottom">
+    © 2026 Clinovyr. All rights reserved. |
+    Medical information on this site is for informational purposes only. Always consult a qualified healthcare provider.
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+ <head>
+  <link href="//fonts.googleapis.com" rel="dns-prefetch"/>
+  <link href="//fonts.gstatic.com" rel="dns-prefetch"/>
+  <link href="//www.googletagmanager.com" rel="dns-prefetch"/>
+  <meta charset="utf-8"/>
+  <meta content="#2563eb" name="theme-color"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Directorio de Proveedores Médicos y Estéticos — Clinovyr
+  </title>
+  <meta content="Encuentra los mejores proveedores de medicina estética y salud en todo EE.UU. Botox, med spa, cirugía plástica, dentista y más. Presupuestos gratis." name="description"/>
+  <link href="https://clinovyr.com/es/" rel="canonical"/>
+  <meta content="Directorio de Proveedores Médicos y Estéticos — Clinovyr" property="og:title"/>
+  <meta content="Encuentra los mejores proveedores de medicina estética y salud en todo EE.UU. Botox, med spa, cirugía plástica, dentista y más. Presupuestos gratis." property="og:description"/>
+  <meta content="website" property="og:type"/>
+  <meta content="/images/og-default.jpg" property="og:image"/>
+  <meta content="https://clinovyr.com/es/" property="og:url"/>
+  <meta content="index, follow" name="robots"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+   :root {
+  --blue: #2563eb; --blue-light: #3b82f6; --blue-dark: #1d4ed8;
+  --sky: #0ea5e9; --gray-50: #f9fafb; --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb; --gray-600: #4b5563; --gray-900: #111827;
+  --green: #10b981; --white: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, system-ui, sans-serif; color: var(--gray-900); line-height: 1.6; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* Nav */
+nav { background: var(--white); border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 100; }
+.nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; max-width: 1100px; margin: 0 auto; }
+.nav-logo { font-size: 1.25rem; font-weight: 800; color: var(--blue); }
+.nav-links { display: flex; gap: 24px; font-size: 0.9rem; }
+.nav-cta { background: var(--blue); color: var(--white) !important; padding: 8px 18px; border-radius: 8px; font-weight: 600; }
+.nav-cta:hover { background: var(--blue-dark); text-decoration: none !important; }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, #1e40af 0%, #0284c7 100%); color: var(--white); padding: 60px 20px; }
+.hero h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
+.hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin-bottom: 28px; }
+
+/* Sections */
+.section { padding: 60px 20px; }
+.section-alt { background: var(--gray-50); }
+.section-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+.section-sub { color: var(--gray-600); margin-bottom: 36px; }
+
+/* Cards grid */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+.card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 20px; transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.card-icon { font-size: 2rem; margin-bottom: 10px; }
+.card-title { font-weight: 700; margin-bottom: 6px; }
+.card-text { font-size: 0.85rem; color: var(--gray-600); }
+.card-link { display: inline-block; margin-top: 12px; font-size: 0.85rem; font-weight: 600; color: var(--blue); }
+
+/* City grid */
+.city-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.city-link { display: block; background: var(--white); border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px 16px; font-size: 0.88rem; font-weight: 500; color: var(--gray-900); transition: all 0.2s; }
+.city-link:hover { border-color: var(--blue); color: var(--blue); text-decoration: none; box-shadow: 0 2px 8px rgba(37,99,235,0.1); }
+
+/* CTA banner */
+.cta-banner { background: linear-gradient(135deg, #1e40af, #0284c7); color: var(--white); padding: 50px 20px; text-align: center; }
+.cta-banner h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; }
+.btn { display: inline-block; padding: 13px 28px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+.btn-white { background: var(--white); color: var(--blue-dark); }
+.btn-white:hover { background: var(--gray-100); text-decoration: none; }
+
+/* Footer */
+footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; max-width: 1100px; margin: 0 auto 32px; }
+.footer-logo { font-size: 1.3rem; font-weight: 800; color: var(--white); margin-bottom: 10px; }
+.footer-desc { font-size: 0.82rem; opacity: 0.7; }
+.footer-heading { font-weight: 700; color: var(--white); margin-bottom: 12px; font-size: 0.9rem; }
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 8px; }
+.footer-links a { color: var(--gray-200); font-size: 0.82rem; opacity: 0.7; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; text-align: center; font-size: 0.78rem; opacity: 0.6; max-width: 1100px; margin: 0 auto; }
+@media (max-width: 700px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+  <script type="application/ld+json">
+   {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clinovyr",
+  "url": "https://clinovyr.com/es/",
+  "inLanguage": "es",
+  "description": "Directorio de proveedores médicos y estéticos de alta calidad."
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZVEKYV3LTS">
+  </script>
+  <script>
+   window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ZVEKYV3LTS');
+  </script>
+  <meta content="summary_large_image" name="twitter:card"/>
+  <meta content="Directorio de Proveedores Médicos y Estéticos — Clinovyr" name="twitter:title"/>
+  <meta content="Encuentra los mejores proveedores de medicina estética y salud en todo EE.UU." name="twitter:description"/>
+  <meta content="https://clinovyr.com/images/og-default.jpg" name="twitter:image"/>
+  <meta content="@clinovyr" name="twitter:site"/>
+  <link href="https://clinovyr.com/es/" hreflang="x-default" rel="alternate"/>
+  <link href="https://clinovyr.com/es/" hreflang="es" rel="alternate"/>
+  <link href="https://clinovyr.com/" hreflang="en" rel="alternate"/>
+  <script type="speculationrules">
+   {"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}
+  </script>
+ </head>
+ <body>
+  <nav>
+   <div class="nav-inner">
+    <a class="nav-logo" href="./index.html">
+     🏥 Clinovyr
+    </a>
+    <div class="nav-links">
+     <a href="./index.html">
+      Inicio
+     </a>
+     <a href="./index.html#services">
+      Servicios
+     </a>
+     <a href="./index.html#cities">
+      Ciudades
+     </a>
+     <a class="nav-cta" href="#cities">
+      Obtener Presupuestos Gratis
+     </a>
+    </div>
+   </div>
+  </nav>
+  <section class="hero">
+   <div class="container">
+    <h1>
+     Encuentra los Mejores Proveedores Médicos y Estéticos
+    </h1>
+    <p>
+     Accede a nuestro directorio de proveedores verificados en las principales ciudades de EE.UU. Botox, med spa, dentista, cirugía plástica y más. Presupuestos gratis sin compromiso.
+    </p>
+   </div>
+  </section>
+  <section class="section">
+   <div class="container">
+    <h2 class="section-title" id="services">
+     Servicios Populares
+    </h2>
+    <p class="section-sub">
+     Encuentra especialistas en los servicios médicos y estéticos más solicitados.
+    </p>
+    <div class="cards-grid">
+     <div class="card">
+      <div class="card-icon">
+       💉
+      </div>
+      <div class="card-title">
+       Botox y Rellenos
+      </div>
+      <div class="card-text">
+       Inyecciones de botox y rellenos dérmicos para un aspecto más joven.
+      </div>
+      <a class="card-link" href="./cities/">
+       Explorar →
+      </a>
+     </div>
+     <div class="card">
+      <div class="card-icon">
+       ✨
+      </div>
+      <div class="card-title">
+       Med Spa
+      </div>
+      <div class="card-text">
+       Tratamientos de medicina estética sin cirugía en spa médicos certificados.
+      </div>
+      <a class="card-link" href="./cities/">
+       Explorar →
+      </a>
+     </div>
+     <div class="card">
+      <div class="card-icon">
+       🧴
+      </div>
+      <div class="card-title">
+       Depilación Láser
+      </div>
+      <div class="card-text">
+       Depilación láser profesional segura y efectiva para toda el área del cuerpo.
+      </div>
+      <a class="card-link" href="./cities/">
+       Explorar →
+      </a>
+     </div>
+     <div class="card">
+      <div class="card-icon">
+       🦴
+      </div>
+      <div class="card-title">
+       Quiropráctico
+      </div>
+      <div class="card-text">
+       Cuidado quiropráctico especializado para el manejo del dolor de espalda.
+      </div>
+      <a class="card-link" href="./cities/">
+       Explorar →
+      </a>
+     </div>
+     <div class="card">
+      <div class="card-icon">
+       🦷
+      </div>
+      <div class="card-title">
+       Dentista
+      </div>
+      <div class="card-text">
+       Servicios dentales generales y preventivos de calidad.
+      </div>
+      <a class="card-link" href="./cities/">
+       Explorar →
+      </a>
+     </div>
+     <div class="card">
+      <div class="card-icon">
+       ✨
+      </div>
+      <div class="card-title">
+       Dentista Cosmético
+      </div>
+      <div class="card-text">
+       Blanqueamiento, carillas e implantes dentales para una sonrisa perfecta.
+      </div>
+      <a class="card-link" href="./cities/">
+       Explorar →
+      </a>
+     </div>
+     <div class="card">
+      <div class="card-icon">
+       🏥
+      </div>
+      <div class="card-title">
+       Cirugía Plástica
+      </div>
+      <div class="card-text">
+       Procedimientos de cirugía plástica realizados por cirujanos certificados.
+      </div>
+      <a class="card-link" href="./cities/">
+       Explorar →
+      </a>
+     </div>
+     <div class="card">
+      <div class="card-icon">
+       🔬
+      </div>
+      <div class="card-title">
+       Dermatólogo
+      </div>
+      <div class="card-text">
+       Cuidado dermatológico especializado para problemas de piel.
+      </div>
+      <a class="card-link" href="./cities/">
+       Explorar →
+      </a>
+     </div>
+    </div>
+   </div>
+  </section>
+  <section class="section section-alt">
+   <div class="container">
+    <h2 class="section-title" id="cities">
+     Principales Ciudades
+    </h2>
+    <p class="section-sub">
+     Encuentra proveedores en tu ciudad.
+    </p>
+    <div class="city-grid">
+     <a class="city-link" href="./cities/new-york-ny/">
+      Nueva York, NY
+     </a>
+     <a class="city-link" href="./cities/los-angeles-ca/">
+      Los Ángeles, CA
+     </a>
+     <a class="city-link" href="./cities/miami-fl/">
+      Miami, FL
+     </a>
+     <a class="city-link" href="./cities/chicago-il/">
+      Chicago, IL
+     </a>
+     <a class="city-link" href="./cities/houston-tx/">
+      Houston, TX
+     </a>
+     <a class="city-link" href="./cities/dallas-tx/">
+      Dallas, TX
+     </a>
+     <a class="city-link" href="./cities/san-diego-ca/">
+      San Diego, CA
+     </a>
+     <a class="city-link" href="./cities/phoenix-az/">
+      Phoenix, AZ
+     </a>
+     <a class="city-link" href="./cities/san-antonio-tx/">
+      San Antonio, TX
+     </a>
+     <a class="city-link" href="./cities/austin-tx/">
+      Austin, TX
+     </a>
+    </div>
+   </div>
+  </section>
+  <section class="cta-banner">
+   <div class="container">
+    <h2>
+     ¿Listo para encontrar el mejor proveedor?
+    </h2>
+    <p>
+     Conéctate con especialistas verificados en tu ciudad hoy mismo. Presupuestos gratis sin compromiso.
+    </p>
+    <a class="btn btn-white" href="./cities/">
+     Comenzar →
+    </a>
+   </div>
+  </section>
+  <footer>
+   <div class="footer-grid">
+    <div>
+     <div class="footer-logo">
+      🏥 Clinovyr
+     </div>
+     <div class="footer-desc">
+      Directorio de proveedores médicos y estéticos de alta calidad.
+     </div>
+    </div>
+    <div>
+     <div class="footer-heading">
+      Acerca de
+     </div>
+     <ul class="footer-links">
+      <li>
+       <a href="./index.html">
+        Inicio
+       </a>
+      </li>
+      <li>
+       <a href="./index.html#services">
+        Servicios
+       </a>
+      </li>
+      <li>
+       <a href="./index.html#cities">
+        Ciudades
+       </a>
+      </li>
+     </ul>
+    </div>
+    <div>
+     <div class="footer-heading">
+      Servicios
+     </div>
+     <ul class="footer-links">
+      <li>
+       <a href="./cities/">
+        Botox y Rellenos
+       </a>
+      </li>
+      <li>
+       <a href="./cities/">
+        Med Spa
+       </a>
+      </li>
+      <li>
+       <a href="./cities/">
+        Depilación Láser
+       </a>
+      </li>
+     </ul>
+    </div>
+    <div>
+     <div class="footer-heading">
+      Empresa
+     </div>
+     <ul class="footer-links">
+      <li>
+       <a href="https://clinovyr.com/">
+        English Version
+       </a>
+      </li>
+      <li>
+       <a href="./index.html">
+        Versión Española
+       </a>
+      </li>
+     </ul>
+    </div>
+   </div>
+   <div class="footer-bottom">
+    © 2026 Clinovyr. Todos los derechos reservados.
+   </div>
+  </footer>
+ </body>
+</html>
