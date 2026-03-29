@@ -156,75 +156,162 @@ footer { background: var(--gray-900); color: var(--gray-200); padding: 40px 20px
 </div>
 </nav>
 <section class="hero">
-  <div style="max-width:800px;margin:0 auto;text-align:center">
-    <div class="hero-badge">🏥 For Healthcare Providers</div>
-    <h1>Get More Patients with Clinovyr</h1>
-    <p>We connect high-intent patients searching for your services with verified practices like yours. No monthly fees to start — pay only for results.</p>
+  <div class="hero-grid">
+    <div>
+      <div class="hero-badge">✅ For Healthcare Providers</div>
+      <h1>Get More Patients.<br>Pay Only for Results.</h1>
+      <p>Clinovyr connects high-intent patients in 50+ US cities with verified practices like yours. No setup fees. No contracts. Cancel anytime.</p>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Cities Covered</div></div>
+        <div class="stat-item"><div class="stat-num">17</div><div class="stat-label">Specialties</div></div>
+        <div class="stat-item"><div class="stat-num">$0</div><div class="stat-label">Setup Cost</div></div>
+        <div class="stat-item"><div class="stat-num">24h</div><div class="stat-label">Response Time</div></div>
+      </div>
+    </div>
+    <div class="lead-form-wrap" id="lead-form">
+      <h3>Get Your Free Listing Review</h3>
+      <p>We'll contact you within 24 hours to discuss your city and specialty.</p>
+      <form action="https://formspree.io/f/xkovevqk" method="POST">
+        <input type="hidden" name="lead_type" value="provider_signup">
+        <div class="form-group"><input type="text" name="practice_name" placeholder="Practice Name" required></div>
+        <div class="form-group"><input type="text" name="name" placeholder="Your Name" required></div>
+        <div class="form-group"><input type="email" name="email" placeholder="Email Address" required></div>
+        <div class="form-group"><input type="tel" name="phone" placeholder="Phone Number" required></div>
+        <div class="form-group">
+          <select name="specialty">
+            <option value="">Select Your Specialty</option>
+            <option value="dentist">Dentist</option><option value="cosmetic-dentist">Cosmetic Dentist</option><option value="orthodontist">Orthodontist</option><option value="chiropractor">Chiropractor</option><option value="med-spa">Med Spa</option><option value="botox-fillers">Botox & Fillers</option><option value="laser-hair-removal">Laser Hair Removal</option><option value="body-contouring">Body Contouring</option><option value="skin-care-facials">Skin Care & Facials</option><option value="weight-loss-clinic">Weight Loss Clinic</option><option value="iv-therapy">IV Therapy</option><option value="hormone-therapy">Hormone Therapy</option><option value="plastic-surgery">Plastic Surgery</option><option value="dermatologist">Dermatologist</option><option value="hair-restoration">Hair Restoration</option><option value="fertility-clinic">Fertility Clinic</option><option value="lasik-eye-surgery">LASIK Eye Surgery</option>
+          </select>
+        </div>
+        <div class="form-group"><input type="text" name="city" placeholder="Your City, State" required></div>
+        <button type="submit" class="form-submit">Request Free Listing Review →</button>
+      </form>
+      <p class="form-privacy">🔒 Your information is private. No spam, ever.</p>
+    </div>
   </div>
 </section>
+
+<!-- Trust Bar -->
+<div style="background:#f0f7ff;border-bottom:1px solid #dbeafe;padding:14px 20px;text-align:center;font-size:0.88rem;color:#1d4ed8;font-weight:500">
+  ✓ No setup fees &nbsp;·&nbsp; ✓ Cancel anytime &nbsp;·&nbsp; ✓ Exclusive city slots available &nbsp;·&nbsp; ✓ Leads delivered same day
+</div>
+
 <section class="section">
   <div class="container">
     <h2 class="section-title" style="text-align:center">How It Works</h2>
-    <div class="cards-grid" style="max-width:800px;margin:0 auto">
+    <p class="section-sub" style="text-align:center">Get qualified patient leads in 3 simple steps</p>
+    <div class="cards-grid" style="max-width:860px;margin:0 auto">
       <div class="card">
         <div class="card-icon">🎯</div>
-        <div class="card-title">1. Choose Your Coverage</div>
-        <div class="card-text">Select your city, specialty, and how many leads you want per month. You're in full control.</div>
+        <div class="card-title">1. Choose Your Territory</div>
+        <div class="card-text">Select your city, specialty, and monthly lead volume. Exclusive territory options available in most markets.</div>
       </div>
       <div class="card">
         <div class="card-icon">📋</div>
-        <div class="card-title">2. Get Verified Leads</div>
-        <div class="card-text">We send you patient name, phone, email, and what they're looking for — ready to contact.</div>
+        <div class="card-title">2. Receive Verified Leads</div>
+        <div class="card-text">Get patient name, phone, email, and service intent delivered directly to your inbox — ready to contact same day.</div>
       </div>
       <div class="card">
         <div class="card-icon">💰</div>
-        <div class="card-title">3. Only Pay for Results</div>
-        <div class="card-text">Choose pay-per-lead or a featured monthly listing. No upfront cost, cancel anytime.</div>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:40px">
-      <h2 style="margin-bottom:12px">Pricing</h2>
-      <div class="cards-grid" style="max-width:900px;margin:0 auto">
-        <div class="card" style="border:2px solid var(--blue)">
-          <div class="card-title" style="font-size:1.1rem">Pay Per Lead</div>
-          <div style="font-size:1.8rem;font-weight:800;color:var(--blue);margin:8px 0">$75–$300 <span style="font-size:0.9rem;font-weight:400;color:var(--gray-600)">/lead</span></div>
-          <div class="card-text">Only pay when we send you a qualified patient inquiry. Price varies by specialty and city.</div>
-        </div>
-        <div class="card">
-          <div class="card-title" style="font-size:1.1rem">Featured Listing</div>
-          <div style="font-size:1.8rem;font-weight:800;color:var(--blue);margin:8px 0">$499 <span style="font-size:0.9rem;font-weight:400;color:var(--gray-600)">/month</span></div>
-          <div class="card-text">Top placement on all relevant city and specialty pages. Includes up to 20 leads/month.</div>
-        </div>
-        <div class="card">
-          <div class="card-title" style="font-size:1.1rem">Exclusive Territory</div>
-          <div style="font-size:1.8rem;font-weight:800;color:var(--blue);margin:8px 0">$999 <span style="font-size:0.9rem;font-weight:400;color:var(--gray-600)">/month</span></div>
-          <div class="card-text">Exclusive featured placement in your city. All leads in your specialty go to you first.</div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:40px">
-      <h2 style="margin-bottom:20px">Get Listed Today</h2>
-      <div style="max-width:500px;margin:0 auto" class="lead-form-wrap">
-        <h3>Start Getting More Patients</h3>
-        <p>Fill out the form below and we'll reach out within 24 hours.</p>
-        <form action="https://formspree.io/f/xkovevqk" method="POST">
-          <input type="hidden" name="lead_type" value="provider_signup">
-          <div class="form-group"><input type="text" name="practice_name" placeholder="Practice Name" required></div>
-          <div class="form-group"><input type="text" name="name" placeholder="Your Name" required></div>
-          <div class="form-group"><input type="email" name="email" placeholder="Email Address" required></div>
-          <div class="form-group"><input type="tel" name="phone" placeholder="Phone Number" required></div>
-          <div class="form-group">
-            <select name="specialty">
-              <option value="">Select Your Specialty</option>
-              <option value="dentist">Dentist</option><option value="cosmetic-dentist">Cosmetic Dentist</option><option value="orthodontist">Orthodontist</option><option value="chiropractor">Chiropractor</option><option value="med-spa">Med Spa</option><option value="botox-fillers">Botox & Fillers</option><option value="laser-hair-removal">Laser Hair Removal</option><option value="body-contouring">Body Contouring</option><option value="skin-care-facials">Skin Care & Facials</option><option value="weight-loss-clinic">Weight Loss Clinic</option><option value="iv-therapy">IV Therapy</option><option value="hormone-therapy">Hormone Therapy</option><option value="plastic-surgery">Plastic Surgery</option><option value="dermatologist">Dermatologist</option><option value="hair-restoration">Hair Restoration</option><option value="fertility-clinic">Fertility Clinic</option><option value="lasik-eye-surgery">LASIK Eye Surgery</option>
-            </select>
-          </div>
-          <div class="form-group"><input type="text" name="city" placeholder="Your City, State" required></div>
-          <button type="submit" class="form-submit">Get Started →</button>
-        </form>
+        <div class="card-title">3. Pay Only for Results</div>
+        <div class="card-text">Pay per qualified lead or choose a featured monthly plan. No upfront cost, no long-term contracts.</div>
       </div>
     </div>
   </div>
+</section>
+
+<!-- Specialties -->
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="section-title" style="text-align:center">Specialties We Serve</h2>
+    <p class="section-sub" style="text-align:center">We generate leads for 17 medical and aesthetic specialties across 50+ US cities</p>
+    <div class="treatments-grid" style="max-width:900px;margin:0 auto">
+      <div class="treatment-pill">🦷 Dentist</div>
+      <div class="treatment-pill">✨ Cosmetic Dentist</div>
+      <div class="treatment-pill">🦷 Orthodontist</div>
+      <div class="treatment-pill">🧘 Chiropractor</div>
+      <div class="treatment-pill">💆 Med Spa</div>
+      <div class="treatment-pill">💉 Botox & Fillers</div>
+      <div class="treatment-pill">🔬 Laser Hair Removal</div>
+      <div class="treatment-pill">🏋 Body Contouring</div>
+      <div class="treatment-pill">🌿 Skin Care & Facials</div>
+      <div class="treatment-pill">⚖️ Weight Loss Clinic</div>
+      <div class="treatment-pill">💧 IV Therapy</div>
+      <div class="treatment-pill">🩺 Hormone Therapy</div>
+      <div class="treatment-pill">🔪 Plastic Surgery</div>
+      <div class="treatment-pill">👁 Dermatologist</div>
+      <div class="treatment-pill">💇 Hair Restoration</div>
+      <div class="treatment-pill">🤱 Fertility Clinic</div>
+      <div class="treatment-pill">👁 LASIK Eye Surgery</div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title" style="text-align:center">Simple, Transparent Pricing</h2>
+    <p class="section-sub" style="text-align:center">No hidden fees. No long-term contracts. Start small and scale.</p>
+    <div class="cards-grid" style="max-width:900px;margin:0 auto">
+      <div class="card">
+        <div class="card-title" style="font-size:1.1rem">Pay Per Lead</div>
+        <div style="font-size:1.8rem;font-weight:800;color:var(--blue);margin:8px 0">$75–$300 <span style="font-size:0.9rem;font-weight:400;color:var(--gray-600)">/lead</span></div>
+        <div class="card-text">Only pay when we deliver a qualified patient inquiry. Price varies by specialty and city competitiveness.</div>
+        <div style="margin-top:12px;font-size:0.82rem;color:#15803d;font-weight:600">✓ No minimums &nbsp; ✓ Cancel anytime</div>
+      </div>
+      <div class="card" style="border:2px solid var(--blue)">
+        <div style="background:var(--blue);color:#fff;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:8px">MOST POPULAR</div>
+        <div class="card-title" style="font-size:1.1rem">Featured Listing</div>
+        <div style="font-size:1.8rem;font-weight:800;color:var(--blue);margin:8px 0">$499 <span style="font-size:0.9rem;font-weight:400;color:var(--gray-600)">/month</span></div>
+        <div class="card-text">Top placement on all relevant city and specialty pages. Includes up to 20 leads/month + priority support.</div>
+        <div style="margin-top:12px;font-size:0.82rem;color:#15803d;font-weight:600">✓ Top of results &nbsp; ✓ Verified badge</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="font-size:1.1rem">Exclusive Territory</div>
+        <div style="font-size:1.8rem;font-weight:800;color:var(--blue);margin:8px 0">$999 <span style="font-size:0.9rem;font-weight:400;color:var(--gray-600)">/month</span></div>
+        <div class="card-text">Lock in exclusive placement in your city. All leads in your specialty are routed to you first. Limited slots.</div>
+        <div style="margin-top:12px;font-size:0.82rem;color:#15803d;font-weight:600">✓ Exclusive slots &nbsp; ✓ Account manager</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section-alt">
+  <div class="container" style="max-width:760px">
+    <h2 class="section-title" style="text-align:center">Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">How quickly will I start receiving leads?</div>
+      <div class="faq-a">Most providers receive their first lead within 3–7 days of activation. High-demand specialties like med spa, dentist, and botox typically see leads within 24–48 hours.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What information comes with each lead?</div>
+      <div class="faq-a">Every lead includes the patient's name, phone number, email address, the service they're looking for, and their city. You can contact them directly via phone or email.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Are there any setup fees or contracts?</div>
+      <div class="faq-a">No setup fees, no contracts. Pay-per-lead plans are charged only when we deliver a lead. Monthly plans are billed monthly with no long-term commitment — cancel any time.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What cities and specialties do you cover?</div>
+      <div class="faq-a">We currently cover 50+ US cities including New York, Los Angeles, Chicago, Houston, Phoenix, San Diego, Austin, and more — across 17 medical and aesthetic specialties.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What if a lead is invalid or not qualified?</div>
+      <div class="faq-a">We stand behind our lead quality. If a lead has invalid contact information or doesn't match your specialty, contact us within 48 hours and we'll issue a credit or replacement.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I get exclusive leads for my city?</div>
+      <div class="faq-a">Yes — our Exclusive Territory plan gives you first-access to all leads in your specialty within your city. Slots are limited to one provider per specialty per city. Inquire early to lock in your market.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Bottom CTA -->
+<section class="cta-banner">
+  <h2>Ready to Fill Your Schedule?</h2>
+  <p>Join practices in 50+ cities using Clinovyr to attract high-intent patients. No setup fee, no commitment.</p>
+  <a href="#lead-form" class="btn btn-white">Get Your Free Listing Review →</a>
 </section>
 <footer>
 <div class="footer-grid">
