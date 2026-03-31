@@ -50,6 +50,16 @@ h1{font-size:1.9rem;font-weight:800;line-height:1.3;margin-bottom:1rem;}
 .cta-box h3{color:#fff;margin-bottom:0.75rem;font-size:1.3rem;}
 .cta-box p{color:#bfdbfe;margin-bottom:1.25rem;}
 .cta-btn{display:inline-block;background:#fff;color:#1d4ed8!important;padding:0.75rem 2rem;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;}
+.inline-lead-form{background:linear-gradient(135deg,#1d4ed8,#2563eb);border-radius:16px;padding:2rem 2rem 1.5rem;margin:2rem 0;color:#fff;}
+.inline-lead-form h3{color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:0.4rem;}
+.inline-lead-form p.form-subhead{color:#bfdbfe;font-size:0.9rem;margin-bottom:1.25rem;}
+.lead-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;}
+.lead-form-grid input,.lead-form-grid select,.lead-form-single input{width:100%;padding:0.7rem 0.9rem;border:none;border-radius:8px;font-size:0.9rem;background:#fff;color:#111827;outline:none;}
+.lead-form-single{margin-bottom:0.75rem;}
+.lead-submit{width:100%;background:#10b981;color:#fff;border:none;padding:0.85rem;border-radius:8px;font-size:1rem;font-weight:800;cursor:pointer;transition:background 0.15s;margin-top:0.25rem;}
+.lead-submit:hover{background:#059669;}
+.form-privacy-note{font-size:0.72rem;color:#bfdbfe;text-align:center;margin-top:0.6rem;}
+@media(max-width:580px){.lead-form-grid{grid-template-columns:1fr;}}
 .city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin:1.5rem 0;}
 .city-card{border:1px solid #e5e7eb;border-radius:8px;padding:1rem 1.25rem;}
 .city-card strong{display:block;font-size:0.95rem;margin-bottom:0.3rem;}
@@ -233,10 +243,32 @@ footer a{color:#9ca3af;}
   <h3>Best Botox in Sacramento</h3>
   <p>Sacramento offers solid mid-range pricing at $12–$16/unit. Midtown and East Sacramento have concentrated options. Because Sacramento is sunny year-round, many patients combine Botox with laser treatments — look for practices that offer both if you're interested in a comprehensive approach.</p>
 
-  <div class="cta-box">
-    <h3>Find a Verified Botox Provider Near You</h3>
-    <p>Compare credentials, pricing, and patient reviews — free and no obligation.</p>
-    <a href="/services/botox/" class="cta-btn">Find Botox Providers →</a>
+  <div class="inline-lead-form">
+    <h3>🎯 Find a Verified Botox Provider Near You — Free</h3>
+    <p class="form-subhead">Tell us your city and we'll connect you with licensed, credentialed Botox providers. No commitment required.</p>
+    <form action="https://formspree.io/f/xkovevqk" method="POST">
+      <input type="hidden" name="service" value="Botox & Fillers">
+      <input type="hidden" name="source" value="clinovyr-botox-blog">
+      <div class="lead-form-grid">
+        <input type="text" name="name" placeholder="Your Full Name" required>
+        <input type="tel" name="phone" placeholder="Phone Number" required>
+      </div>
+      <div class="lead-form-grid">
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="text" name="city" placeholder="Your City" required>
+      </div>
+      <div class="lead-form-single">
+        <select name="timeline">
+          <option value="">When do you want to start?</option>
+          <option value="asap">As soon as possible</option>
+          <option value="1month">Within 1 month</option>
+          <option value="3months">Within 3 months</option>
+          <option value="exploring">Just exploring options</option>
+        </select>
+      </div>
+      <button type="submit" class="lead-submit">✅ Get My Free Quotes →</button>
+    </form>
+    <p class="form-privacy-note">🔒 Your info is private. We only share it with verified local providers.</p>
   </div>
 
   <h2>Frequently Asked Questions</h2>

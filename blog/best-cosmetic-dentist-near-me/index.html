@@ -50,6 +50,16 @@ h1{font-size:1.9rem;font-weight:800;line-height:1.3;margin-bottom:1rem;}
 .cta-box h3{color:#fff;margin-bottom:0.75rem;font-size:1.3rem;}
 .cta-box p{color:#bfdbfe;margin-bottom:1.25rem;}
 .cta-btn{display:inline-block;background:#fff;color:#1d4ed8!important;padding:0.75rem 2rem;border-radius:8px;font-weight:700;text-decoration:none;font-size:1rem;}
+.inline-lead-form{background:linear-gradient(135deg,#1d4ed8,#2563eb);border-radius:16px;padding:2rem 2rem 1.5rem;margin:2rem 0;color:#fff;}
+.inline-lead-form h3{color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:0.4rem;}
+.inline-lead-form p.form-subhead{color:#bfdbfe;font-size:0.9rem;margin-bottom:1.25rem;}
+.lead-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;}
+.lead-form-grid input,.lead-form-grid select,.lead-form-single input{width:100%;padding:0.7rem 0.9rem;border:none;border-radius:8px;font-size:0.9rem;background:#fff;color:#111827;outline:none;}
+.lead-form-single{margin-bottom:0.75rem;}
+.lead-submit{width:100%;background:#10b981;color:#fff;border:none;padding:0.85rem;border-radius:8px;font-size:1rem;font-weight:800;cursor:pointer;transition:background 0.15s;margin-top:0.25rem;}
+.lead-submit:hover{background:#059669;}
+.form-privacy-note{font-size:0.72rem;color:#bfdbfe;text-align:center;margin-top:0.6rem;}
+@media(max-width:580px){.lead-form-grid{grid-template-columns:1fr;}}
 .city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin:1.5rem 0;}
 .city-card{border:1px solid #e5e7eb;border-radius:8px;padding:1rem 1.25rem;}
 .city-card strong{display:block;font-size:0.95rem;margin-bottom:0.3rem;}
@@ -183,10 +193,35 @@ footer a{color:#9ca3af;}
     <li class="x">Zero discussion of insurance, financing, or what's covered before quoting a price</li>
   </ul>
 
-  <div class="cta-box">
-    <h3>Find a Top-Rated Cosmetic Dentist Near You</h3>
-    <p>Compare verified providers in your city. Free consultations available.</p>
-    <a href="/services/dental/" class="cta-btn">Find Cosmetic Dentists →</a>
+  <div class="inline-lead-form">
+    <h3>🎯 Get Free Quotes from Top Cosmetic Dentists Near You</h3>
+    <p class="form-subhead">Tell us your city and we'll match you with vetted cosmetic dentists. Free consultations available, no obligation.</p>
+    <form action="https://formspree.io/f/xkovevqk" method="POST">
+      <input type="hidden" name="service" value="Cosmetic Dentistry">
+      <input type="hidden" name="source" value="clinovyr-dentist-blog">
+      <div class="lead-form-grid">
+        <input type="text" name="name" placeholder="Your Full Name" required>
+        <input type="tel" name="phone" placeholder="Phone Number" required>
+      </div>
+      <div class="lead-form-grid">
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="text" name="city" placeholder="Your City" required>
+      </div>
+      <div class="lead-form-single">
+        <select name="procedure">
+          <option value="">What procedure are you interested in?</option>
+          <option value="veneers">Veneers / Smile Makeover</option>
+          <option value="whitening">Teeth Whitening</option>
+          <option value="bonding">Dental Bonding</option>
+          <option value="implants">Dental Implants</option>
+          <option value="invisalign">Invisalign / Clear Aligners</option>
+          <option value="orthodontics">Traditional Orthodontics</option>
+          <option value="other">Other / Not Sure Yet</option>
+        </select>
+      </div>
+      <button type="submit" class="lead-submit">✅ Get My Free Consultation Quotes →</button>
+    </form>
+    <p class="form-privacy-note">🔒 Your info is private. We only share it with verified local providers.</p>
   </div>
 
   <h2>How to Find the Best Orthodontist Near You</h2>
