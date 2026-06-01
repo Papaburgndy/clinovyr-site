@@ -22,5 +22,9 @@
   },
   "observability": {
     "enabled": true
+  },
+  // Runs before `wrangler deploy` (Workers Git integration often skips a separate build step)
+  "build": {
+    "command": "npx opennextjs-cloudflare build"
   }
 }
