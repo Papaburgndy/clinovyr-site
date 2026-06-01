@@ -1,0 +1,39 @@
+{
+  "referenceDate": "2026-06-01T18:00:00.000Z",
+  "companyName": "Granite Bay Dental",
+  "scenarios": [
+    {
+      "label": "appointment_today",
+      "appointment": {
+        "id": "apt-001",
+        "customer_name": "Jane Doe",
+        "phone": "+19165551234",
+        "email": "jane@example.com",
+        "appointmentDate": "2026-06-01T14:00:00.000Z"
+      },
+      "expectedAction": "none"
+    },
+    {
+      "label": "appointment_yesterday",
+      "appointment": {
+        "id": "apt-002",
+        "customer_name": "John Smith",
+        "phone": "+19165559876",
+        "email": "john@example.com",
+        "appointmentDate": "2026-05-31T10:00:00.000Z"
+      },
+      "expectedAction": "sms"
+    },
+    {
+      "label": "appointment_three_days_ago",
+      "appointment": {
+        "id": "apt-003",
+        "customer_name": "Maria Garcia",
+        "phone": "+19165554321",
+        "email": "maria@example.com",
+        "appointmentDate": "2026-05-29T09:30:00.000Z"
+      },
+      "expectedAction": "email"
+    }
+  ]
+}

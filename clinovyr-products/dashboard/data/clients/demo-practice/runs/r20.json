@@ -1,0 +1,9 @@
+{
+  "id": "r20",
+  "automationId": "auto-billing",
+  "automationName": "Insurance Claim Prep",
+  "timestamp": "2026-05-27T18:00:00Z",
+  "status": "success",
+  "tasksProcessed": 5,
+  "durationMs": 11200
+}

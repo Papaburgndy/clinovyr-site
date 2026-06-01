@@ -1,0 +1,274 @@
+{
+  "name": "{{CLIENT_NAME}} - Monthly Client Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "e6f7a8b9-6001-4a5b-9c0d-666666666601",
+      "name": "1st of Month 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 320]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://analyticsdata.googleapis.com/v1beta/properties/{{CLIENT_GA4_PROPERTY_ID}}:runReport",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleAnalyticsOAuth2",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": []
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"dateRanges\": [{ \"startDate\": \"30daysAgo\", \"endDate\": \"yesterday\" }],\n  \"metrics\": [{ \"name\": \"sessions\" }, { \"name\": \"conversions\" }],\n  \"dimensions\": [{ \"name\": \"sessionDefaultChannelGroup\" }]\n}",
+        "options": {}
+      },
+      "id": "e6f7a8b9-6002-4a5b-9c0d-666666666602",
+      "name": "Pull GA4 KPIs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 180],
+      "credentials": {
+        "googleAnalyticsOAuth2": {
+          "id": "{{CLIENT_GA_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Analytics"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.hubapi.com/crm/v3/objects/deals?limit=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "e6f7a8b9-6003-4a5b-9c0d-666666666603",
+      "name": "Pull HubSpot Deals",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 320],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CLIENT_HUBSPOT_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} HubSpot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ '{{CLIENT_CUSTOM_KPI_WEBHOOK_URL}}' }}",
+        "options": {}
+      },
+      "id": "e6f7a8b9-6004-4a5b-9c0d-666666666604",
+      "name": "Pull Custom KPI Webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 460]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "e6f7a8b9-6005-4a5b-9c0d-666666666605",
+      "name": "Merge KPI Sources",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [560, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst kpiBundle = {\n  reportMonth: new Date().toISOString().slice(0, 7),\n  ga4: items[0]?.json ?? {},\n  hubspot: items[1]?.json ?? {},\n  custom: items[2]?.json ?? items[items.length - 1]?.json ?? {}\n};\nreturn [{ json: kpiBundle }];"
+      },
+      "id": "e6f7a8b9-6006-4a5b-9c0d-666666666606",
+      "name": "Structure KPI Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{CLIENT_ANTHROPIC_MODEL}}\",\n  \"max_tokens\": 1500,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write an executive monthly performance narrative for {{CLIENT_NAME}}. Audience: business owner. Tone: clear, confident, actionable. Data: \" + JSON.stringify($json) + \". Include: highlights, concerns, 3 recommendations. Markdown format.\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "e6f7a8b9-6007-4a5b-9c0d-666666666607",
+      "name": "Claude Narrative Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1040, 320],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CLIENT_ANTHROPIC_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const narrative = $input.first().json.content?.[0]?.text ?? 'Report unavailable';\nconst month = $('Structure KPI Payload').first().json.reportMonth;\nconst html = `<html><body><h1>{{CLIENT_NAME}} — ${month} Report</h1><pre>${narrative}</pre></body></html>`;\nreturn [{ json: { month, narrative, html, filename: `report-${month}.html` } }];"
+      },
+      "id": "e6f7a8b9-6008-4a5b-9c0d-666666666608",
+      "name": "Build PDF HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ '{{CLIENT_PDF_SERVICE_URL}}' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ html: $json.html, filename: $json.filename }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "e6f7a8b9-6009-4a5b-9c0d-666666666609",
+      "name": "Generate PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 320]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ '{{CLIENT_FROM_EMAIL}}' }}",
+        "toEmail": "={{ '{{CLIENT_REPORT_RECIPIENT_EMAIL}}' }}",
+        "subject": "={{ '{{CLIENT_NAME}}' }} — Monthly Performance Report {{ $('Build PDF HTML').item.json.month }}",
+        "emailType": "text",
+        "message": "=Please find attached your monthly performance report for {{ $('Build PDF HTML').item.json.month }}.\n\nSummary excerpt:\n{{ $('Build PDF HTML').item.json.narrative.slice(0, 500) }}...\n\n— Clinovyr Automation",
+        "options": {
+          "attachments": "={{ $binary.data ? 'data' : '' }}"
+        }
+      },
+      "id": "e6f7a8b9-6010-4a5b-9c0d-666666666610",
+      "name": "Email Client Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1820, 320],
+      "credentials": {
+        "smtp": {
+          "id": "{{CLIENT_SMTP_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_SHEETS_REPORTS_ID}}' }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Report Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sent_at": "={{ $now.toISO() }}",
+            "month": "={{ $('Build PDF HTML').item.json.month }}",
+            "recipient": "={{ '{{CLIENT_REPORT_RECIPIENT_EMAIL}}' }}",
+            "status": "sent"
+          }
+        },
+        "options": {}
+      },
+      "id": "e6f7a8b9-6011-4a5b-9c0d-666666666611",
+      "name": "Log Report Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2080, 320],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "{{CLIENT_GOOGLE_SHEETS_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "1st of Month 8am": {
+      "main": [
+        [
+          { "node": "Pull GA4 KPIs", "type": "main", "index": 0 },
+          { "node": "Pull HubSpot Deals", "type": "main", "index": 0 },
+          { "node": "Pull Custom KPI Webhook", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Pull GA4 KPIs": {
+      "main": [[{ "node": "Merge KPI Sources", "type": "main", "index": 0 }]]
+    },
+    "Pull HubSpot Deals": {
+      "main": [[{ "node": "Merge KPI Sources", "type": "main", "index": 1 }]]
+    },
+    "Pull Custom KPI Webhook": {
+      "main": [[{ "node": "Merge KPI Sources", "type": "main", "index": 2 }]]
+    },
+    "Merge KPI Sources": {
+      "main": [[{ "node": "Structure KPI Payload", "type": "main", "index": 0 }]]
+    },
+    "Structure KPI Payload": {
+      "main": [[{ "node": "Claude Narrative Report", "type": "main", "index": 0 }]]
+    },
+    "Claude Narrative Report": {
+      "main": [[{ "node": "Build PDF HTML", "type": "main", "index": 0 }]]
+    },
+    "Build PDF HTML": {
+      "main": [[{ "node": "Generate PDF", "type": "main", "index": 0 }]]
+    },
+    "Generate PDF": {
+      "main": [[{ "node": "Email Client Report", "type": "main", "index": 0 }]]
+    },
+    "Email Client Report": {
+      "main": [[{ "node": "Log Report Sent", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "{{CLIENT_TIMEZONE}}"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "{{N8N_INSTANCE_ID}}",
+    "templateId": "monthly-client-report"
+  },
+  "pinData": {},
+  "tags": []
+}

@@ -1,0 +1,9 @@
+{
+  "id": "sierra-construction-run-21",
+  "automationId": "sc-invoice",
+  "automationName": "Progress Invoice Drafts",
+  "timestamp": "2026-05-07T10:23:00.000Z",
+  "status": "success",
+  "tasksProcessed": 7,
+  "durationMs": 18821
+}

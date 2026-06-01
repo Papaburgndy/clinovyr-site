@@ -1,0 +1,49 @@
+{
+  "name": "clinovyr-playbooks",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "test:e2e": "playwright test",
+    "validate:content": "ts-node --project tsconfig.cli.json scripts/validate-playbooks.ts",
+    "verify:pdfs": "ts-node --project tsconfig.cli.json scripts/verify-pdfs.ts",
+    "load-test": "ts-node --project tsconfig.cli.json scripts/load-test-generation.ts",
+    "load-test:queue": "ts-node --project tsconfig.cli.json scripts/load-test-generation.ts queue",
+    "generate": "ts-node --project tsconfig.cli.json src/generate-playbook.ts",
+    "generate:all": "ts-node --project tsconfig.cli.json src/generate-playbook.ts --all",
+    "build-pdf": "ts-node --project tsconfig.cli.json src/build-pdf.ts",
+    "build-pdf:all": "ts-node --project tsconfig.cli.json src/build-pdf.ts --all"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
+    "@react-pdf/renderer": "^4.5.1",
+    "clsx": "^2.1.1",
+    "next": "15.5.18",
+    "pdf-parse": "^1.1.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "resend": "^6.12.4",
+    "stripe": "^18.1.0",
+    "tailwind-merge": "^3.6.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "^1.51.1",
+    "@types/jest": "^29.5.14",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.27.0",
+    "eslint-config-next": "15.5.18",
+    "jest": "^29.7.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3"
+  }
+}

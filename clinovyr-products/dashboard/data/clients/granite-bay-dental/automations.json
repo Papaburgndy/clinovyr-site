@@ -1,0 +1,290 @@
+[
+  {
+    "id": "gbd-intake",
+    "name": "New Patient Intake",
+    "description": "Processes intake forms and verifies insurance eligibility.",
+    "status": "running",
+    "runCount": 48,
+    "successRate": 97.9,
+    "lastRun": "2026-06-01T08:17:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 3,
+    "recentRuns": [
+      {
+        "id": "granite-bay-dental-run-283",
+        "timestamp": "2026-06-01T08:17:00.000Z",
+        "status": "success",
+        "tasksProcessed": 3,
+        "durationMs": 3913
+      },
+      {
+        "id": "granite-bay-dental-run-277",
+        "timestamp": "2026-05-29T14:23:00.000Z",
+        "status": "success",
+        "tasksProcessed": 13,
+        "durationMs": 7752
+      },
+      {
+        "id": "granite-bay-dental-run-271",
+        "timestamp": "2026-05-27T12:36:00.000Z",
+        "status": "success",
+        "tasksProcessed": 5,
+        "durationMs": 6938
+      },
+      {
+        "id": "granite-bay-dental-run-265",
+        "timestamp": "2026-05-25T12:58:00.000Z",
+        "status": "success",
+        "tasksProcessed": 13,
+        "durationMs": 14198
+      },
+      {
+        "id": "granite-bay-dental-run-259",
+        "timestamp": "2026-05-22T10:44:00.000Z",
+        "status": "success",
+        "tasksProcessed": 14,
+        "durationMs": 7649
+      }
+    ]
+  },
+  {
+    "id": "gbd-reminders",
+    "name": "Appointment Reminders",
+    "description": "Sends SMS and email reminders 48h and 24h before visits.",
+    "status": "running",
+    "runCount": 48,
+    "successRate": 97.9,
+    "lastRun": "2026-06-01T07:49:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 8,
+    "recentRuns": [
+      {
+        "id": "granite-bay-dental-run-284",
+        "timestamp": "2026-06-01T07:49:00.000Z",
+        "status": "success",
+        "tasksProcessed": 8,
+        "durationMs": 13819
+      },
+      {
+        "id": "granite-bay-dental-run-278",
+        "timestamp": "2026-05-30T14:31:00.000Z",
+        "status": "success",
+        "tasksProcessed": 2,
+        "durationMs": 3102
+      },
+      {
+        "id": "granite-bay-dental-run-272",
+        "timestamp": "2026-05-27T15:47:00.000Z",
+        "status": "success",
+        "tasksProcessed": 10,
+        "durationMs": 8197
+      },
+      {
+        "id": "granite-bay-dental-run-266",
+        "timestamp": "2026-05-25T08:26:00.000Z",
+        "status": "success",
+        "tasksProcessed": 11,
+        "durationMs": 4712
+      },
+      {
+        "id": "granite-bay-dental-run-260",
+        "timestamp": "2026-05-22T11:18:00.000Z",
+        "status": "success",
+        "tasksProcessed": 5,
+        "durationMs": 5650
+      }
+    ]
+  },
+  {
+    "id": "gbd-recall",
+    "name": "Hygiene Recall Outreach",
+    "description": "Identifies overdue patients and drafts recall messages.",
+    "status": "running",
+    "runCount": 47,
+    "successRate": 95.7,
+    "lastRun": "2026-05-30T09:20:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 0,
+    "recentRuns": [
+      {
+        "id": "granite-bay-dental-run-279",
+        "timestamp": "2026-05-30T09:20:00.000Z",
+        "status": "success",
+        "tasksProcessed": 2,
+        "durationMs": 19932
+      },
+      {
+        "id": "granite-bay-dental-run-273",
+        "timestamp": "2026-05-28T10:17:00.000Z",
+        "status": "success",
+        "tasksProcessed": 15,
+        "durationMs": 5594
+      },
+      {
+        "id": "granite-bay-dental-run-267",
+        "timestamp": "2026-05-25T10:20:00.000Z",
+        "status": "success",
+        "tasksProcessed": 17,
+        "durationMs": 3452
+      },
+      {
+        "id": "granite-bay-dental-run-261",
+        "timestamp": "2026-05-23T18:32:00.000Z",
+        "status": "success",
+        "tasksProcessed": 1,
+        "durationMs": 7762
+      },
+      {
+        "id": "granite-bay-dental-run-255",
+        "timestamp": "2026-05-21T10:15:00.000Z",
+        "status": "success",
+        "tasksProcessed": 7,
+        "durationMs": 14209
+      }
+    ]
+  },
+  {
+    "id": "gbd-referrals",
+    "name": "Specialist Referral Drafts",
+    "description": "Drafts referral letters from visit notes for review.",
+    "status": "running",
+    "runCount": 47,
+    "successRate": 95.7,
+    "lastRun": "2026-05-31T16:39:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 0,
+    "recentRuns": [
+      {
+        "id": "granite-bay-dental-run-280",
+        "timestamp": "2026-05-31T16:39:00.000Z",
+        "status": "success",
+        "tasksProcessed": 3,
+        "durationMs": 11864
+      },
+      {
+        "id": "granite-bay-dental-run-274",
+        "timestamp": "2026-05-28T08:09:00.000Z",
+        "status": "success",
+        "tasksProcessed": 11,
+        "durationMs": 6081
+      },
+      {
+        "id": "granite-bay-dental-run-268",
+        "timestamp": "2026-05-26T07:03:00.000Z",
+        "status": "success",
+        "tasksProcessed": 18,
+        "durationMs": 9448
+      },
+      {
+        "id": "granite-bay-dental-run-262",
+        "timestamp": "2026-05-24T10:36:00.000Z",
+        "status": "success",
+        "tasksProcessed": 3,
+        "durationMs": 11540
+      },
+      {
+        "id": "granite-bay-dental-run-256",
+        "timestamp": "2026-05-21T11:03:00.000Z",
+        "status": "success",
+        "tasksProcessed": 18,
+        "durationMs": 14967
+      }
+    ]
+  },
+  {
+    "id": "gbd-billing",
+    "name": "Claim Prep Assistant",
+    "description": "Pre-fills claim forms and flags missing documentation.",
+    "status": "error",
+    "runCount": 47,
+    "successRate": 95.7,
+    "lastRun": "2026-05-31T18:39:00.000Z",
+    "lastError": "Upstream API timeout — retry scheduled",
+    "tasksThisMonth": 0,
+    "recentRuns": [
+      {
+        "id": "granite-bay-dental-run-281",
+        "timestamp": "2026-05-31T18:39:00.000Z",
+        "status": "success",
+        "tasksProcessed": 2,
+        "durationMs": 6103
+      },
+      {
+        "id": "granite-bay-dental-run-275",
+        "timestamp": "2026-05-28T08:36:00.000Z",
+        "status": "success",
+        "tasksProcessed": 17,
+        "durationMs": 12685
+      },
+      {
+        "id": "granite-bay-dental-run-269",
+        "timestamp": "2026-05-26T16:38:00.000Z",
+        "status": "success",
+        "tasksProcessed": 9,
+        "durationMs": 5799
+      },
+      {
+        "id": "granite-bay-dental-run-263",
+        "timestamp": "2026-05-24T07:28:00.000Z",
+        "status": "success",
+        "tasksProcessed": 2,
+        "durationMs": 16965
+      },
+      {
+        "id": "granite-bay-dental-run-257",
+        "timestamp": "2026-05-22T17:17:00.000Z",
+        "status": "success",
+        "tasksProcessed": 12,
+        "durationMs": 3404
+      }
+    ]
+  },
+  {
+    "id": "gbd-reviews",
+    "name": "Post-Visit Review Requests",
+    "description": "Sends review invitations after completed appointments.",
+    "status": "paused",
+    "runCount": 47,
+    "successRate": 97.9,
+    "lastRun": "2026-06-01T13:52:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 11,
+    "recentRuns": [
+      {
+        "id": "granite-bay-dental-run-282",
+        "timestamp": "2026-06-01T13:52:00.000Z",
+        "status": "success",
+        "tasksProcessed": 11,
+        "durationMs": 5533
+      },
+      {
+        "id": "granite-bay-dental-run-276",
+        "timestamp": "2026-05-29T12:36:00.000Z",
+        "status": "success",
+        "tasksProcessed": 18,
+        "durationMs": 8636
+      },
+      {
+        "id": "granite-bay-dental-run-270",
+        "timestamp": "2026-05-26T07:22:00.000Z",
+        "status": "success",
+        "tasksProcessed": 13,
+        "durationMs": 14836
+      },
+      {
+        "id": "granite-bay-dental-run-264",
+        "timestamp": "2026-05-25T16:23:00.000Z",
+        "status": "success",
+        "tasksProcessed": 12,
+        "durationMs": 21269
+      },
+      {
+        "id": "granite-bay-dental-run-258",
+        "timestamp": "2026-05-22T11:29:00.000Z",
+        "status": "success",
+        "tasksProcessed": 14,
+        "durationMs": 15045
+      }
+    ]
+  }
+]

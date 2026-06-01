@@ -1,0 +1,99 @@
+[
+  {
+    "id": "granite-bay-dental-evt-13",
+    "timestamp": "2026-06-01T19:53:56.014Z",
+    "type": "report_generated",
+    "message": "Monthly performance report generated"
+  },
+  {
+    "id": "granite-bay-dental-evt-1",
+    "timestamp": "2026-06-01T13:52:00.000Z",
+    "type": "automation_run",
+    "message": "Post-Visit Review Requests completed — 11 tasks processed",
+    "automationId": "gbd-reviews"
+  },
+  {
+    "id": "granite-bay-dental-evt-14",
+    "timestamp": "2026-06-01T13:52:00.000Z",
+    "type": "settings_updated",
+    "message": "Post-Visit Review Requests paused by administrator",
+    "automationId": "gbd-reviews"
+  },
+  {
+    "id": "granite-bay-dental-evt-2",
+    "timestamp": "2026-06-01T08:17:00.000Z",
+    "type": "automation_run",
+    "message": "New Patient Intake completed — 3 tasks processed",
+    "automationId": "gbd-intake"
+  },
+  {
+    "id": "granite-bay-dental-evt-3",
+    "timestamp": "2026-06-01T07:49:00.000Z",
+    "type": "automation_run",
+    "message": "Appointment Reminders completed — 8 tasks processed",
+    "automationId": "gbd-reminders"
+  },
+  {
+    "id": "granite-bay-dental-evt-4",
+    "timestamp": "2026-05-31T18:39:00.000Z",
+    "type": "automation_run",
+    "message": "Claim Prep Assistant completed — 2 tasks processed",
+    "automationId": "gbd-billing"
+  },
+  {
+    "id": "granite-bay-dental-evt-5",
+    "timestamp": "2026-05-31T16:39:00.000Z",
+    "type": "automation_run",
+    "message": "Specialist Referral Drafts completed — 3 tasks processed",
+    "automationId": "gbd-referrals"
+  },
+  {
+    "id": "granite-bay-dental-evt-6",
+    "timestamp": "2026-05-30T14:31:00.000Z",
+    "type": "automation_run",
+    "message": "Appointment Reminders completed — 2 tasks processed",
+    "automationId": "gbd-reminders"
+  },
+  {
+    "id": "granite-bay-dental-evt-7",
+    "timestamp": "2026-05-30T09:20:00.000Z",
+    "type": "automation_run",
+    "message": "Hygiene Recall Outreach completed — 2 tasks processed",
+    "automationId": "gbd-recall"
+  },
+  {
+    "id": "granite-bay-dental-evt-8",
+    "timestamp": "2026-05-29T14:23:00.000Z",
+    "type": "automation_run",
+    "message": "New Patient Intake completed — 13 tasks processed",
+    "automationId": "gbd-intake"
+  },
+  {
+    "id": "granite-bay-dental-evt-9",
+    "timestamp": "2026-05-29T12:36:00.000Z",
+    "type": "automation_run",
+    "message": "Post-Visit Review Requests completed — 18 tasks processed",
+    "automationId": "gbd-reviews"
+  },
+  {
+    "id": "granite-bay-dental-evt-10",
+    "timestamp": "2026-05-28T10:17:00.000Z",
+    "type": "automation_run",
+    "message": "Hygiene Recall Outreach completed — 15 tasks processed",
+    "automationId": "gbd-recall"
+  },
+  {
+    "id": "granite-bay-dental-evt-11",
+    "timestamp": "2026-05-28T08:36:00.000Z",
+    "type": "automation_run",
+    "message": "Claim Prep Assistant completed — 17 tasks processed",
+    "automationId": "gbd-billing"
+  },
+  {
+    "id": "granite-bay-dental-evt-12",
+    "timestamp": "2026-05-28T08:09:00.000Z",
+    "type": "automation_run",
+    "message": "Specialist Referral Drafts completed — 11 tasks processed",
+    "automationId": "gbd-referrals"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "id": "granite-bay-dental-run-178",
+  "automationId": "gbd-referrals",
+  "automationName": "Specialist Referral Drafts",
+  "timestamp": "2026-04-29T15:50:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1569,
+  "message": "Upstream API timeout — retry scheduled"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "roseville-realty-run-321",
+  "automationId": "rrg-leads",
+  "automationName": "Lead Qualification",
+  "timestamp": "2026-03-11T08:30:00.000Z",
+  "status": "success",
+  "tasksProcessed": 10,
+  "durationMs": 4067
+}

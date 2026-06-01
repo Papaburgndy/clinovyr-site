@@ -1,0 +1,10 @@
+{
+  "id": "sierra-construction-run-8",
+  "automationId": "sc-schedule",
+  "automationName": "Crew Schedule Sync",
+  "timestamp": "2026-05-04T16:53:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1854,
+  "message": "Upstream API timeout — retry scheduled"
+}

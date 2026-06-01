@@ -1,0 +1,10 @@
+{
+  "id": "roseville-realty-run-360",
+  "automationId": "rrg-docs",
+  "automationName": "Transaction Document Prep",
+  "timestamp": "2026-03-24T17:45:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1931,
+  "message": "Upstream API timeout — retry scheduled"
+}

@@ -1,0 +1,146 @@
+[
+  {
+    "id": "sc-bid",
+    "name": "Bid Request Triage",
+    "description": "Classifies inbound bid requests and assigns project managers.",
+    "status": "running",
+    "runCount": 36,
+    "successRate": 100,
+    "lastRun": "2026-06-01T17:46:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 12,
+    "recentRuns": [
+      {
+        "id": "sierra-construction-run-106",
+        "timestamp": "2026-06-01T17:46:00.000Z",
+        "status": "success",
+        "tasksProcessed": 9,
+        "durationMs": 16322
+      },
+      {
+        "id": "sierra-construction-run-103",
+        "timestamp": "2026-06-01T07:44:00.000Z",
+        "status": "success",
+        "tasksProcessed": 3,
+        "durationMs": 8616
+      },
+      {
+        "id": "sierra-construction-run-100",
+        "timestamp": "2026-05-29T08:55:00.000Z",
+        "status": "success",
+        "tasksProcessed": 10,
+        "durationMs": 21345
+      },
+      {
+        "id": "sierra-construction-run-94",
+        "timestamp": "2026-05-28T18:59:00.000Z",
+        "status": "success",
+        "tasksProcessed": 11,
+        "durationMs": 21083
+      },
+      {
+        "id": "sierra-construction-run-97",
+        "timestamp": "2026-05-28T17:45:00.000Z",
+        "status": "success",
+        "tasksProcessed": 6,
+        "durationMs": 10358
+      }
+    ]
+  },
+  {
+    "id": "sc-schedule",
+    "name": "Crew Schedule Sync",
+    "description": "Syncs field crew assignments with project timelines.",
+    "status": "running",
+    "runCount": 36,
+    "successRate": 94.4,
+    "lastRun": "2026-06-01T12:33:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 21,
+    "recentRuns": [
+      {
+        "id": "sierra-construction-run-104",
+        "timestamp": "2026-06-01T12:33:00.000Z",
+        "status": "success",
+        "tasksProcessed": 6,
+        "durationMs": 15139
+      },
+      {
+        "id": "sierra-construction-run-107",
+        "timestamp": "2026-06-01T07:57:00.000Z",
+        "status": "success",
+        "tasksProcessed": 15,
+        "durationMs": 5357
+      },
+      {
+        "id": "sierra-construction-run-101",
+        "timestamp": "2026-05-30T12:59:00.000Z",
+        "status": "success",
+        "tasksProcessed": 1,
+        "durationMs": 6294
+      },
+      {
+        "id": "sierra-construction-run-98",
+        "timestamp": "2026-05-28T10:45:00.000Z",
+        "status": "success",
+        "tasksProcessed": 17,
+        "durationMs": 6346
+      },
+      {
+        "id": "sierra-construction-run-95",
+        "timestamp": "2026-05-28T09:21:00.000Z",
+        "status": "success",
+        "tasksProcessed": 7,
+        "durationMs": 13868
+      }
+    ]
+  },
+  {
+    "id": "sc-invoice",
+    "name": "Progress Invoice Drafts",
+    "description": "Drafts progress invoices from job cost data.",
+    "status": "running",
+    "runCount": 35,
+    "successRate": 97.1,
+    "lastRun": "2026-06-01T07:05:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 3,
+    "recentRuns": [
+      {
+        "id": "sierra-construction-run-105",
+        "timestamp": "2026-06-01T07:05:00.000Z",
+        "status": "success",
+        "tasksProcessed": 3,
+        "durationMs": 11510
+      },
+      {
+        "id": "sierra-construction-run-102",
+        "timestamp": "2026-05-31T16:52:00.000Z",
+        "status": "success",
+        "tasksProcessed": 2,
+        "durationMs": 14770
+      },
+      {
+        "id": "sierra-construction-run-99",
+        "timestamp": "2026-05-29T17:03:00.000Z",
+        "status": "success",
+        "tasksProcessed": 7,
+        "durationMs": 10558
+      },
+      {
+        "id": "sierra-construction-run-93",
+        "timestamp": "2026-05-28T13:48:00.000Z",
+        "status": "success",
+        "tasksProcessed": 13,
+        "durationMs": 2261
+      },
+      {
+        "id": "sierra-construction-run-96",
+        "timestamp": "2026-05-28T10:33:00.000Z",
+        "status": "success",
+        "tasksProcessed": 14,
+        "durationMs": 6112
+      }
+    ]
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "roseville-realty-evt-13",
+    "timestamp": "2026-06-01T19:53:56.052Z",
+    "type": "report_generated",
+    "message": "Monthly performance report generated"
+  },
+  {
+    "id": "roseville-realty-evt-1",
+    "timestamp": "2026-06-01T18:47:00.000Z",
+    "type": "automation_run",
+    "message": "Lead Qualification completed — 8 tasks processed",
+    "automationId": "rrg-leads"
+  },
+  {
+    "id": "roseville-realty-evt-2",
+    "timestamp": "2026-06-01T16:44:00.000Z",
+    "type": "automation_run",
+    "message": "Listing Description Generator completed — 12 tasks processed",
+    "automationId": "rrg-listings"
+  },
+  {
+    "id": "roseville-realty-evt-3",
+    "timestamp": "2026-06-01T13:29:00.000Z",
+    "type": "automation_run",
+    "message": "Lead Qualification completed — 10 tasks processed",
+    "automationId": "rrg-leads"
+  },
+  {
+    "id": "roseville-realty-evt-4",
+    "timestamp": "2026-06-01T11:41:00.000Z",
+    "type": "automation_run",
+    "message": "Listing Description Generator completed — 11 tasks processed",
+    "automationId": "rrg-listings"
+  },
+  {
+    "id": "roseville-realty-evt-5",
+    "timestamp": "2026-06-01T09:06:00.000Z",
+    "type": "automation_run",
+    "message": "Buyer Follow-Up Sequences completed — 8 tasks processed",
+    "automationId": "rrg-followup"
+  },
+  {
+    "id": "roseville-realty-evt-6",
+    "timestamp": "2026-06-01T07:40:00.000Z",
+    "type": "automation_run",
+    "message": "Transaction Document Prep completed — 18 tasks processed",
+    "automationId": "rrg-docs"
+  },
+  {
+    "id": "roseville-realty-evt-7",
+    "timestamp": "2026-05-31T15:42:00.000Z",
+    "type": "automation_run",
+    "message": "Transaction Document Prep completed — 2 tasks processed",
+    "automationId": "rrg-docs"
+  },
+  {
+    "id": "roseville-realty-evt-8",
+    "timestamp": "2026-05-29T10:40:00.000Z",
+    "type": "automation_run",
+    "message": "Buyer Follow-Up Sequences completed — 12 tasks processed",
+    "automationId": "rrg-followup"
+  },
+  {
+    "id": "roseville-realty-evt-9",
+    "timestamp": "2026-05-29T09:36:00.000Z",
+    "type": "automation_run",
+    "message": "Lead Qualification completed — 6 tasks processed",
+    "automationId": "rrg-leads"
+  },
+  {
+    "id": "roseville-realty-evt-10",
+    "timestamp": "2026-05-29T08:57:00.000Z",
+    "type": "automation_run",
+    "message": "Listing Description Generator completed — 5 tasks processed",
+    "automationId": "rrg-listings"
+  },
+  {
+    "id": "roseville-realty-evt-11",
+    "timestamp": "2026-05-28T18:36:00.000Z",
+    "type": "automation_run",
+    "message": "Buyer Follow-Up Sequences completed — 7 tasks processed",
+    "automationId": "rrg-followup"
+  },
+  {
+    "id": "roseville-realty-evt-12",
+    "timestamp": "2026-05-28T15:02:00.000Z",
+    "type": "automation_run",
+    "message": "Lead Qualification completed — 9 tasks processed",
+    "automationId": "rrg-leads"
+  }
+]

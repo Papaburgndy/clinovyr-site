@@ -1,0 +1,92 @@
+[
+  {
+    "id": "sierra-construction-evt-13",
+    "timestamp": "2026-06-01T19:53:56.138Z",
+    "type": "report_generated",
+    "message": "Monthly performance report generated"
+  },
+  {
+    "id": "sierra-construction-evt-1",
+    "timestamp": "2026-06-01T17:46:00.000Z",
+    "type": "automation_run",
+    "message": "Bid Request Triage completed — 9 tasks processed",
+    "automationId": "sc-bid"
+  },
+  {
+    "id": "sierra-construction-evt-2",
+    "timestamp": "2026-06-01T12:33:00.000Z",
+    "type": "automation_run",
+    "message": "Crew Schedule Sync completed — 6 tasks processed",
+    "automationId": "sc-schedule"
+  },
+  {
+    "id": "sierra-construction-evt-3",
+    "timestamp": "2026-06-01T07:57:00.000Z",
+    "type": "automation_run",
+    "message": "Crew Schedule Sync completed — 15 tasks processed",
+    "automationId": "sc-schedule"
+  },
+  {
+    "id": "sierra-construction-evt-4",
+    "timestamp": "2026-06-01T07:44:00.000Z",
+    "type": "automation_run",
+    "message": "Bid Request Triage completed — 3 tasks processed",
+    "automationId": "sc-bid"
+  },
+  {
+    "id": "sierra-construction-evt-5",
+    "timestamp": "2026-06-01T07:05:00.000Z",
+    "type": "automation_run",
+    "message": "Progress Invoice Drafts completed — 3 tasks processed",
+    "automationId": "sc-invoice"
+  },
+  {
+    "id": "sierra-construction-evt-6",
+    "timestamp": "2026-05-31T16:52:00.000Z",
+    "type": "automation_run",
+    "message": "Progress Invoice Drafts completed — 2 tasks processed",
+    "automationId": "sc-invoice"
+  },
+  {
+    "id": "sierra-construction-evt-7",
+    "timestamp": "2026-05-30T12:59:00.000Z",
+    "type": "automation_run",
+    "message": "Crew Schedule Sync completed — 1 tasks processed",
+    "automationId": "sc-schedule"
+  },
+  {
+    "id": "sierra-construction-evt-8",
+    "timestamp": "2026-05-29T17:03:00.000Z",
+    "type": "automation_run",
+    "message": "Progress Invoice Drafts completed — 7 tasks processed",
+    "automationId": "sc-invoice"
+  },
+  {
+    "id": "sierra-construction-evt-9",
+    "timestamp": "2026-05-29T08:55:00.000Z",
+    "type": "automation_run",
+    "message": "Bid Request Triage completed — 10 tasks processed",
+    "automationId": "sc-bid"
+  },
+  {
+    "id": "sierra-construction-evt-10",
+    "timestamp": "2026-05-28T18:59:00.000Z",
+    "type": "automation_run",
+    "message": "Bid Request Triage completed — 11 tasks processed",
+    "automationId": "sc-bid"
+  },
+  {
+    "id": "sierra-construction-evt-11",
+    "timestamp": "2026-05-28T17:45:00.000Z",
+    "type": "automation_run",
+    "message": "Bid Request Triage completed — 6 tasks processed",
+    "automationId": "sc-bid"
+  },
+  {
+    "id": "sierra-construction-evt-12",
+    "timestamp": "2026-05-28T13:48:00.000Z",
+    "type": "automation_run",
+    "message": "Progress Invoice Drafts completed — 13 tasks processed",
+    "automationId": "sc-invoice"
+  }
+]

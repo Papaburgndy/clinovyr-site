@@ -1,0 +1,294 @@
+{
+  "name": "{{CLIENT_NAME}} - Review Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 18 * * *"
+            }
+          ]
+        }
+      },
+      "id": "b3c4d5e6-3001-4a5b-9c0d-333333333301",
+      "name": "Daily 6pm Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 200]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "{{CLIENT_WEBHOOK_PATH}}/review-trigger",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "b3c4d5e6-3002-4a5b-9c0d-333333333302",
+      "name": "Manual Review Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 400],
+      "webhookId": "b3c4d5e6-3002-4a5b-9c0d-333333333302"
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_SHEETS_CUSTOMERS_ID}}' }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Completed Services",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "b3c4d5e6-3003-4a5b-9c0d-333333333303",
+      "name": "Read Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [280, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "{{CLIENT_GOOGLE_SHEETS_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = Date.now();\nconst minMs = 24 * 60 * 60 * 1000;\nconst maxMs = 48 * 60 * 60 * 1000;\nconst items = $input.all();\nconst eligible = [];\nfor (const item of items) {\n  const row = item.json;\n  const completedAt = row.completed_at ?? row.service_date;\n  if (!completedAt || row.review_sent === 'yes') continue;\n  const completedMs = new Date(completedAt).getTime();\n  const age = now - completedMs;\n  if (age >= minMs && age <= maxMs) {\n    eligible.push({ json: row });\n  }\n}\nif (eligible.length === 0) {\n  return [{ json: { skip: true, reason: 'no_eligible_rows' } }];\n}\nreturn eligible;"
+      },
+      "id": "b3c4d5e6-3004-4a5b-9c0d-333333333304",
+      "name": "Filter 24-48h Ago",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [540, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "has-rows",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "notEquals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b3c4d5e6-3005-4a5b-9c0d-333333333305",
+      "name": "Has Eligible Customers",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{CLIENT_ANTHROPIC_MODEL}}\",\n  \"max_tokens\": 200,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a warm, personalized SMS (under 320 chars) asking {{ $json.customer_name }} for a Google review after their {{ $json.service_type }} at {{CLIENT_NAME}}. Include review link placeholder {{CLIENT_REVIEW_URL}}. No hashtags.\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "b3c4d5e6-3006-4a5b-9c0d-333333333306",
+      "name": "Claude Personalized Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1060, 220],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CLIENT_ANTHROPIC_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $('Filter 24-48h Ago').item.json;\nconst ai = $input.first().json;\nconst smsBody = ai.content?.[0]?.text ?? `Hi ${row.customer_name}, we'd love your feedback: {{CLIENT_REVIEW_URL}}`;\nreturn [{ json: { ...row, smsBody } }];"
+      },
+      "id": "b3c4d5e6-3007-4a5b-9c0d-333333333307",
+      "name": "Merge SMS Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 220]
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "={{ '{{CLIENT_TWILIO_FROM}}' }}",
+        "to": "={{ $json.phone }}",
+        "message": "={{ $json.smsBody }}"
+      },
+      "id": "b3c4d5e6-3008-4a5b-9c0d-333333333308",
+      "name": "Send Review SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1580, 220],
+      "credentials": {
+        "twilioApi": {
+          "id": "{{CLIENT_TWILIO_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Twilio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_SHEETS_CUSTOMERS_ID}}' }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Completed Services",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "review_sent": "yes",
+            "review_sent_at": "={{ $now.toISO() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "b3c4d5e6-3009-4a5b-9c0d-333333333309",
+      "name": "Track Review Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1840, 220],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "{{CLIENT_GOOGLE_SHEETS_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 48,
+        "unit": "hours"
+      },
+      "id": "b3c4d5e6-3010-4a5b-9c0d-333333333310",
+      "name": "Wait 48h No Response",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2100, 220],
+      "webhookId": "b3c4d5e6-3010-4a5b-9c0d-333333333310"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "no-review",
+              "leftValue": "={{ $json.review_received ?? 'no' }}",
+              "rightValue": "yes",
+              "operator": { "type": "string", "operation": "notEquals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b3c4d5e6-3011-4a5b-9c0d-333333333311",
+      "name": "Still No Review",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2360, 220]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ '{{CLIENT_FROM_EMAIL}}' }}",
+        "toEmail": "={{ $('Merge SMS Body').item.json.email }}",
+        "subject": "We'd still love your feedback — {{CLIENT_NAME}}",
+        "emailType": "html",
+        "message": "=<p>Hi {{ $('Merge SMS Body').item.json.customer_name }},</p><p>Thank you again for choosing us. If you have a moment, a quick review helps our local team tremendously:</p><p><a href=\"{{CLIENT_REVIEW_URL}}\">Leave a review</a></p><p>— {{CLIENT_NAME}}</p>"
+      },
+      "id": "b3c4d5e6-3012-4a5b-9c0d-333333333312",
+      "name": "Follow-Up Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [2620, 180],
+      "credentials": {
+        "smtp": {
+          "id": "{{CLIENT_SMTP_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} SMTP"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily 6pm Schedule": {
+      "main": [[{ "node": "Read Google Sheets", "type": "main", "index": 0 }]]
+    },
+    "Manual Review Webhook": {
+      "main": [[{ "node": "Read Google Sheets", "type": "main", "index": 0 }]]
+    },
+    "Read Google Sheets": {
+      "main": [[{ "node": "Filter 24-48h Ago", "type": "main", "index": 0 }]]
+    },
+    "Filter 24-48h Ago": {
+      "main": [[{ "node": "Has Eligible Customers", "type": "main", "index": 0 }]]
+    },
+    "Has Eligible Customers": {
+      "main": [
+        [{ "node": "Claude Personalized Request", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Claude Personalized Request": {
+      "main": [[{ "node": "Merge SMS Body", "type": "main", "index": 0 }]]
+    },
+    "Merge SMS Body": {
+      "main": [[{ "node": "Send Review SMS", "type": "main", "index": 0 }]]
+    },
+    "Send Review SMS": {
+      "main": [[{ "node": "Track Review Sent", "type": "main", "index": 0 }]]
+    },
+    "Track Review Sent": {
+      "main": [[{ "node": "Wait 48h No Response", "type": "main", "index": 0 }]]
+    },
+    "Wait 48h No Response": {
+      "main": [[{ "node": "Still No Review", "type": "main", "index": 0 }]]
+    },
+    "Still No Review": {
+      "main": [[{ "node": "Follow-Up Email", "type": "main", "index": 0 }], []]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "{{CLIENT_TIMEZONE}}"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "{{N8N_INSTANCE_ID}}",
+    "templateId": "review-generation"
+  },
+  "pinData": {},
+  "tags": []
+}

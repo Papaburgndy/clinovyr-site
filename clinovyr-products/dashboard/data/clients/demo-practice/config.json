@@ -1,0 +1,35 @@
+{
+  "clientName": "Demo Medical Practice",
+  "email": "demo@demopractice.com",
+  "plan": "growth",
+  "mrr": 2499,
+  "escalationEmail": "office@demopractice.com",
+  "notificationPreferences": {
+    "emailReports": true,
+    "emailErrors": true,
+    "emailWeeklySummary": false
+  },
+  "businessHours": {
+    "monday": { "open": "08:00", "close": "17:00" },
+    "tuesday": { "open": "08:00", "close": "17:00" },
+    "wednesday": { "open": "08:00", "close": "17:00" },
+    "thursday": { "open": "08:00", "close": "17:00" },
+    "friday": { "open": "08:00", "close": "15:00" },
+    "saturday": null,
+    "sunday": null
+  },
+  "faq": [
+    {
+      "question": "What insurance plans do you accept?",
+      "answer": "We accept most major PPO plans including Blue Cross, Aetna, and UnitedHealthcare. Call our front desk to verify your specific plan."
+    },
+    {
+      "question": "How do I schedule an appointment?",
+      "answer": "Call us at (916) 555-0142 or use our online patient portal. Same-day appointments are often available for urgent concerns."
+    },
+    {
+      "question": "Where are you located?",
+      "answer": "We are at 123 Granite Bay Blvd, Suite 200, Granite Bay, CA 95746. Free parking is available in the building lot."
+    }
+  ]
+}

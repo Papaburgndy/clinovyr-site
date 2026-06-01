@@ -1,0 +1,262 @@
+{
+  "name": "{{CLIENT_NAME}} - Medical Appointment Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "{{CLIENT_WEBHOOK_PATH}}/appointment-booked",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "f8a1b2c3-1001-4a5b-9c0d-111111111101",
+      "name": "Appointment Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "f8a1b2c3-1001-4a5b-9c0d-111111111101"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body ?? $input.first().json;\nconst patient = {\n  id: body.patient_id ?? body.patientId,\n  name: body.patient_name ?? body.patientName,\n  phone: body.phone ?? body.mobile,\n  appointmentAt: body.appointment_at ?? body.appointmentAt,\n  provider: body.provider_name ?? body.provider,\n  location: body.location ?? '{{CLIENT_LOCATION}}'\n};\nif (!patient.phone || !patient.appointmentAt) {\n  throw new Error('Missing phone or appointment_at');\n}\nconst apptMs = new Date(patient.appointmentAt).getTime();\nconst hoursUntil = (apptMs - Date.now()) / (1000 * 60 * 60);\nreturn [{ json: { ...patient, hoursUntil, appointmentIso: new Date(apptMs).toISOString() } }];"
+      },
+      "id": "f8a1b2c3-1002-4a5b-9c0d-111111111102",
+      "name": "Extract Patient",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-more-than-24h",
+              "leftValue": "={{ $json.hoursUntil }}",
+              "rightValue": 24,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f8a1b2c3-1003-4a5b-9c0d-111111111103",
+      "name": "More Than 24h Until Appt",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "={{ $env.CLIENT_TWILIO_FROM ?? '{{CLIENT_TWILIO_FROM}}' }}",
+        "to": "={{ $json.phone }}",
+        "message": "={{ '{{CLIENT_NAME}}' }}: Hi {{ $json.name }}, your appointment with {{ $json.provider }} is in 3 days on {{ $json.appointmentIso }}. Reply CONFIRM or call {{CLIENT_PHONE}}."
+      },
+      "id": "f8a1b2c3-1004-4a5b-9c0d-111111111104",
+      "name": "SMS 72h Reminder",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [780, 200],
+      "credentials": {
+        "twilioApi": {
+          "id": "{{CLIENT_TWILIO_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Twilio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 48,
+        "unit": "hours"
+      },
+      "id": "f8a1b2c3-1005-4a5b-9c0d-111111111105",
+      "name": "Wait 48 Hours",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1040, 200],
+      "webhookId": "f8a1b2c3-1005-4a5b-9c0d-111111111105"
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "={{ $env.CLIENT_TWILIO_FROM ?? '{{CLIENT_TWILIO_FROM}}' }}",
+        "to": "={{ $('Extract Patient').item.json.phone }}",
+        "message": "={{ '{{CLIENT_NAME}}' }}: Reminder — your appointment is tomorrow. Location: {{ $('Extract Patient').item.json.location }}. Reply C to confirm."
+      },
+      "id": "f8a1b2c3-1006-4a5b-9c0d-111111111106",
+      "name": "SMS 24h Reminder",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1300, 200],
+      "credentials": {
+        "twilioApi": {
+          "id": "{{CLIENT_TWILIO_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Twilio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 22,
+        "unit": "hours"
+      },
+      "id": "f8a1b2c3-1007-4a5b-9c0d-111111111107",
+      "name": "Wait 22 Hours",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1560, 200],
+      "webhookId": "f8a1b2c3-1007-4a5b-9c0d-111111111107"
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "={{ $env.CLIENT_TWILIO_FROM ?? '{{CLIENT_TWILIO_FROM}}' }}",
+        "to": "={{ $('Extract Patient').item.json.phone }}",
+        "message": "={{ '{{CLIENT_NAME}}' }}: Your appointment is in about 2 hours. Please arrive 10 minutes early. Need to reschedule? Call {{CLIENT_PHONE}}."
+      },
+      "id": "f8a1b2c3-1008-4a5b-9c0d-111111111108",
+      "name": "SMS 2h Reminder",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1820, 200],
+      "credentials": {
+        "twilioApi": {
+          "id": "{{CLIENT_TWILIO_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Twilio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_SHEETS_LOG_ID}}' }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Appointment Reminders",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "patient_id": "={{ $('Extract Patient').item.json.id }}",
+            "patient_name": "={{ $('Extract Patient').item.json.name }}",
+            "phone": "={{ $('Extract Patient').item.json.phone }}",
+            "appointment_at": "={{ $('Extract Patient').item.json.appointmentIso }}",
+            "sequence": "72h,24h,2h",
+            "status": "completed"
+          }
+        },
+        "options": {}
+      },
+      "id": "f8a1b2c3-1009-4a5b-9c0d-111111111109",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2080, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "{{CLIENT_GOOGLE_SHEETS_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_SHEETS_LOG_ID}}' }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Appointment Reminders",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "patient_id": "={{ $json.id }}",
+            "patient_name": "={{ $json.name }}",
+            "phone": "={{ $json.phone }}",
+            "appointment_at": "={{ $json.appointmentIso }}",
+            "sequence": "skipped",
+            "status": "within_24h_no_sequence"
+          }
+        },
+        "options": {}
+      },
+      "id": "f8a1b2c3-1010-4a5b-9c0d-111111111110",
+      "name": "Log Skipped (Within 24h)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [780, 420],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "{{CLIENT_GOOGLE_SHEETS_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Appointment Webhook": {
+      "main": [[{ "node": "Extract Patient", "type": "main", "index": 0 }]]
+    },
+    "Extract Patient": {
+      "main": [[{ "node": "More Than 24h Until Appt", "type": "main", "index": 0 }]]
+    },
+    "More Than 24h Until Appt": {
+      "main": [
+        [{ "node": "SMS 72h Reminder", "type": "main", "index": 0 }],
+        [{ "node": "Log Skipped (Within 24h)", "type": "main", "index": 0 }]
+      ]
+    },
+    "SMS 72h Reminder": {
+      "main": [[{ "node": "Wait 48 Hours", "type": "main", "index": 0 }]]
+    },
+    "Wait 48 Hours": {
+      "main": [[{ "node": "SMS 24h Reminder", "type": "main", "index": 0 }]]
+    },
+    "SMS 24h Reminder": {
+      "main": [[{ "node": "Wait 22 Hours", "type": "main", "index": 0 }]]
+    },
+    "Wait 22 Hours": {
+      "main": [[{ "node": "SMS 2h Reminder", "type": "main", "index": 0 }]]
+    },
+    "SMS 2h Reminder": {
+      "main": [[{ "node": "Log to Google Sheets", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "{{CLIENT_TIMEZONE}}"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "{{N8N_INSTANCE_ID}}",
+    "templateId": "medical-appointment-reminder"
+  },
+  "pinData": {},
+  "tags": []
+}

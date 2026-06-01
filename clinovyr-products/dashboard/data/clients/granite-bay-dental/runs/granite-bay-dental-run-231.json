@@ -1,0 +1,10 @@
+{
+  "id": "granite-bay-dental-run-231",
+  "automationId": "gbd-recall",
+  "automationName": "Hygiene Recall Outreach",
+  "timestamp": "2026-05-13T18:15:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1273,
+  "message": "Upstream API timeout — retry scheduled"
+}

@@ -1,0 +1,194 @@
+[
+  {
+    "id": "rrg-leads",
+    "name": "Lead Qualification",
+    "description": "Scores inbound leads and routes hot prospects to agents.",
+    "status": "running",
+    "runCount": 147,
+    "successRate": 98,
+    "lastRun": "2026-06-01T18:47:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 18,
+    "recentRuns": [
+      {
+        "id": "roseville-realty-run-581",
+        "timestamp": "2026-06-01T18:47:00.000Z",
+        "status": "success",
+        "tasksProcessed": 8,
+        "durationMs": 9824
+      },
+      {
+        "id": "roseville-realty-run-585",
+        "timestamp": "2026-06-01T13:29:00.000Z",
+        "status": "success",
+        "tasksProcessed": 10,
+        "durationMs": 13830
+      },
+      {
+        "id": "roseville-realty-run-577",
+        "timestamp": "2026-05-29T09:36:00.000Z",
+        "status": "success",
+        "tasksProcessed": 6,
+        "durationMs": 10722
+      },
+      {
+        "id": "roseville-realty-run-573",
+        "timestamp": "2026-05-28T15:02:00.000Z",
+        "status": "success",
+        "tasksProcessed": 9,
+        "durationMs": 10832
+      },
+      {
+        "id": "roseville-realty-run-569",
+        "timestamp": "2026-05-27T16:54:00.000Z",
+        "status": "success",
+        "tasksProcessed": 16,
+        "durationMs": 12840
+      }
+    ]
+  },
+  {
+    "id": "rrg-listings",
+    "name": "Listing Description Generator",
+    "description": "Drafts MLS-ready listing copy from property notes.",
+    "status": "running",
+    "runCount": 147,
+    "successRate": 95.9,
+    "lastRun": "2026-06-01T16:44:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 23,
+    "recentRuns": [
+      {
+        "id": "roseville-realty-run-582",
+        "timestamp": "2026-06-01T16:44:00.000Z",
+        "status": "success",
+        "tasksProcessed": 12,
+        "durationMs": 15728
+      },
+      {
+        "id": "roseville-realty-run-586",
+        "timestamp": "2026-06-01T11:41:00.000Z",
+        "status": "success",
+        "tasksProcessed": 11,
+        "durationMs": 5317
+      },
+      {
+        "id": "roseville-realty-run-578",
+        "timestamp": "2026-05-29T08:57:00.000Z",
+        "status": "success",
+        "tasksProcessed": 5,
+        "durationMs": 21184
+      },
+      {
+        "id": "roseville-realty-run-574",
+        "timestamp": "2026-05-28T07:41:00.000Z",
+        "status": "success",
+        "tasksProcessed": 18,
+        "durationMs": 12170
+      },
+      {
+        "id": "roseville-realty-run-570",
+        "timestamp": "2026-05-27T18:19:00.000Z",
+        "status": "success",
+        "tasksProcessed": 10,
+        "durationMs": 8642
+      }
+    ]
+  },
+  {
+    "id": "rrg-followup",
+    "name": "Buyer Follow-Up Sequences",
+    "description": "Personalized nurture emails based on search activity.",
+    "status": "running",
+    "runCount": 146,
+    "successRate": 92.5,
+    "lastRun": "2026-06-01T09:06:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 8,
+    "recentRuns": [
+      {
+        "id": "roseville-realty-run-583",
+        "timestamp": "2026-06-01T09:06:00.000Z",
+        "status": "success",
+        "tasksProcessed": 8,
+        "durationMs": 17048
+      },
+      {
+        "id": "roseville-realty-run-579",
+        "timestamp": "2026-05-29T10:40:00.000Z",
+        "status": "success",
+        "tasksProcessed": 12,
+        "durationMs": 4818
+      },
+      {
+        "id": "roseville-realty-run-571",
+        "timestamp": "2026-05-28T18:36:00.000Z",
+        "status": "success",
+        "tasksProcessed": 7,
+        "durationMs": 21167
+      },
+      {
+        "id": "roseville-realty-run-575",
+        "timestamp": "2026-05-28T09:44:00.000Z",
+        "status": "success",
+        "tasksProcessed": 13,
+        "durationMs": 8037
+      },
+      {
+        "id": "roseville-realty-run-567",
+        "timestamp": "2026-05-27T18:11:00.000Z",
+        "status": "success",
+        "tasksProcessed": 4,
+        "durationMs": 8449
+      }
+    ]
+  },
+  {
+    "id": "rrg-docs",
+    "name": "Transaction Document Prep",
+    "description": "Assembles disclosure packets from CRM milestones.",
+    "status": "running",
+    "runCount": 146,
+    "successRate": 93.2,
+    "lastRun": "2026-06-01T07:40:00.000Z",
+    "lastError": null,
+    "tasksThisMonth": 18,
+    "recentRuns": [
+      {
+        "id": "roseville-realty-run-584",
+        "timestamp": "2026-06-01T07:40:00.000Z",
+        "status": "success",
+        "tasksProcessed": 18,
+        "durationMs": 11157
+      },
+      {
+        "id": "roseville-realty-run-580",
+        "timestamp": "2026-05-31T15:42:00.000Z",
+        "status": "success",
+        "tasksProcessed": 2,
+        "durationMs": 8174
+      },
+      {
+        "id": "roseville-realty-run-576",
+        "timestamp": "2026-05-28T14:00:00.000Z",
+        "status": "success",
+        "tasksProcessed": 13,
+        "durationMs": 11611
+      },
+      {
+        "id": "roseville-realty-run-572",
+        "timestamp": "2026-05-28T12:43:00.000Z",
+        "status": "success",
+        "tasksProcessed": 16,
+        "durationMs": 3851
+      },
+      {
+        "id": "roseville-realty-run-568",
+        "timestamp": "2026-05-27T17:04:00.000Z",
+        "status": "success",
+        "tasksProcessed": 15,
+        "durationMs": 20079
+      }
+    ]
+  }
+]

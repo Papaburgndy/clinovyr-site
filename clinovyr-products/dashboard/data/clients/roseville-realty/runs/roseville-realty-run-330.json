@@ -1,0 +1,10 @@
+{
+  "id": "roseville-realty-run-330",
+  "automationId": "rrg-listings",
+  "automationName": "Listing Description Generator",
+  "timestamp": "2026-03-13T17:22:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 849,
+  "message": "Upstream API timeout — retry scheduled"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "granite-bay-dental-run-223",
+  "automationId": "gbd-intake",
+  "automationName": "New Patient Intake",
+  "timestamp": "2026-05-12T16:04:00.000Z",
+  "status": "success",
+  "tasksProcessed": 10,
+  "durationMs": 8228
+}

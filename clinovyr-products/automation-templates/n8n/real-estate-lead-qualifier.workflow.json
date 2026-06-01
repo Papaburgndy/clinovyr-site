@@ -1,0 +1,257 @@
+{
+  "name": "{{CLIENT_NAME}} - Real Estate Lead Qualifier",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "{{CLIENT_WEBHOOK_PATH}}/new-lead",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "a2b3c4d5-2001-4a5b-9c0d-222222222201",
+      "name": "Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 320],
+      "webhookId": "a2b3c4d5-2001-4a5b-9c0d-222222222201"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body ?? $input.first().json;\nconst lead = {\n  id: body.lead_id ?? body.id,\n  name: body.name,\n  email: body.email,\n  phone: body.phone,\n  source: body.source ?? 'website',\n  message: body.message ?? body.notes ?? '',\n  budget: body.budget,\n  timeline: body.timeline,\n  propertyInterest: body.property_interest ?? body.propertyInterest\n};\nreturn [{ json: lead }];"
+      },
+      "id": "a2b3c4d5-2002-4a5b-9c0d-222222222202",
+      "name": "Parse Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{CLIENT_ANTHROPIC_MODEL}}\",\n  \"max_tokens\": 256,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Score this real estate lead 1-10 (10 = ready to buy/sell now). Reply JSON only: {\\\"score\\\": number, \\\"reason\\\": string}. Lead: \" + JSON.stringify($json)\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "a2b3c4d5-2003-4a5b-9c0d-222222222203",
+      "name": "Claude Lead Score",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 320],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CLIENT_ANTHROPIC_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $('Parse Lead').first().json;\nconst raw = $input.first().json;\nlet score = 5;\nlet reason = 'Default score';\ntry {\n  const text = raw.content?.[0]?.text ?? raw.message ?? JSON.stringify(raw);\n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    const parsed = JSON.parse(match[0]);\n    score = Number(parsed.score) || score;\n    reason = parsed.reason || reason;\n  }\n} catch (e) {\n  reason = 'Parse error: ' + e.message;\n}\nreturn [{ json: { ...lead, score, reason, tier: score >= 7 ? 'hot' : score >= 4 ? 'warm' : 'cold' } }];"
+      },
+      "id": "a2b3c4d5-2004-4a5b-9c0d-222222222204",
+      "name": "Normalize Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 320]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "hot-lead",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 7,
+              "operator": { "type": "number", "operation": "gte" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a2b3c4d5-2005-4a5b-9c0d-222222222205",
+      "name": "Score >= 7 Hot",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1040, 320]
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "={{ '{{CLIENT_TWILIO_FROM}}' }}",
+        "to": "={{ '{{CLIENT_AGENT_PHONE}}' }}",
+        "message": "=HOT LEAD ({{ $json.score }}/10): {{ $json.name }} — {{ $json.phone }}. {{ $json.reason }}. Source: {{ $json.source }}"
+      },
+      "id": "a2b3c4d5-2006-4a5b-9c0d-222222222206",
+      "name": "SMS Agent Hot Lead",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1300, 180],
+      "credentials": {
+        "twilioApi": {
+          "id": "{{CLIENT_TWILIO_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Twilio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "warm-lead",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 4,
+              "operator": { "type": "number", "operation": "gte" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a2b3c4d5-2007-4a5b-9c0d-222222222207",
+      "name": "Score 4-6 Warm",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1300, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ '{{CLIENT_DRIP_WEBHOOK_URL}}' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ email: $json.email, name: $json.name, sequence: 'warm-nurture', score: $json.score }) }}",
+        "options": {}
+      },
+      "id": "a2b3c4d5-2008-4a5b-9c0d-222222222208",
+      "name": "Enqueue Drip Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 360]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ '{{CLIENT_FROM_EMAIL}}' }}",
+        "toEmail": "={{ $json.email }}",
+        "subject": "Thanks for reaching out — {{CLIENT_NAME}}",
+        "emailType": "text",
+        "message": "=Hi {{ $json.name }},\n\nThank you for your interest. We'll follow up when we have listings that match your criteria.\n\n— {{CLIENT_NAME}}\n{{CLIENT_PHONE}}"
+      },
+      "id": "a2b3c4d5-2009-4a5b-9c0d-222222222209",
+      "name": "Auto-Reply Cold Lead",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1560, 520],
+      "credentials": {
+        "smtp": {
+          "id": "{{CLIENT_SMTP_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_SHEETS_LEADS_ID}}' }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Lead Qualification",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.toISO() }}",
+            "lead_id": "={{ $json.id }}",
+            "name": "={{ $json.name }}",
+            "email": "={{ $json.email }}",
+            "phone": "={{ $json.phone }}",
+            "score": "={{ $json.score }}",
+            "tier": "={{ $json.tier }}",
+            "reason": "={{ $json.reason }}",
+            "source": "={{ $json.source }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "a2b3c4d5-2010-4a5b-9c0d-222222222210",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1820, 320],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "{{CLIENT_GOOGLE_SHEETS_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Lead Webhook": {
+      "main": [[{ "node": "Parse Lead", "type": "main", "index": 0 }]]
+    },
+    "Parse Lead": {
+      "main": [[{ "node": "Claude Lead Score", "type": "main", "index": 0 }]]
+    },
+    "Claude Lead Score": {
+      "main": [[{ "node": "Normalize Score", "type": "main", "index": 0 }]]
+    },
+    "Normalize Score": {
+      "main": [[{ "node": "Score >= 7 Hot", "type": "main", "index": 0 }]]
+    },
+    "Score >= 7 Hot": {
+      "main": [
+        [{ "node": "SMS Agent Hot Lead", "type": "main", "index": 0 }],
+        [{ "node": "Score 4-6 Warm", "type": "main", "index": 0 }]
+      ]
+    },
+    "SMS Agent Hot Lead": {
+      "main": [[{ "node": "Log to Google Sheets", "type": "main", "index": 0 }]]
+    },
+    "Score 4-6 Warm": {
+      "main": [
+        [{ "node": "Enqueue Drip Campaign", "type": "main", "index": 0 }],
+        [{ "node": "Auto-Reply Cold Lead", "type": "main", "index": 0 }]
+      ]
+    },
+    "Enqueue Drip Campaign": {
+      "main": [[{ "node": "Log to Google Sheets", "type": "main", "index": 0 }]]
+    },
+    "Auto-Reply Cold Lead": {
+      "main": [[{ "node": "Log to Google Sheets", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "{{CLIENT_TIMEZONE}}"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "{{N8N_INSTANCE_ID}}",
+    "templateId": "real-estate-lead-qualifier"
+  },
+  "pinData": {},
+  "tags": []
+}

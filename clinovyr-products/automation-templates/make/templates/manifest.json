@@ -1,0 +1,93 @@
+{
+  "version": "1.0.0",
+  "templates": [
+    {
+      "id": "lead-followup-email",
+      "name": "Lead Follow-Up Email Sequence",
+      "description": "Automatically sends a timed follow-up email when a new lead is captured in your CRM, keeping prospects warm without manual outreach.",
+      "vertical": ["real-estate", "law", "medical", "all"],
+      "tools": ["Make.com", "{{CRM_TYPE}}", "{{EMAIL_PROVIDER}}"],
+      "setupTimeMinutes": 45,
+      "estimatedROI": "Recovers 15–25% of leads that would otherwise go cold within 48 hours",
+      "file": "lead-followup-email.blueprint.json",
+      "customizationGuide": "guides/lead-followup-email.md"
+    },
+    {
+      "id": "appointment-reminder-sms",
+      "name": "Appointment Reminder SMS",
+      "description": "Sends SMS reminders 24 hours and 2 hours before scheduled appointments, reducing no-shows and last-minute cancellations.",
+      "vertical": ["medical", "med-spa", "all"],
+      "tools": ["Make.com", "{{CRM_TYPE}}", "Twilio"],
+      "setupTimeMinutes": 60,
+      "estimatedROI": "Reduces no-show rates by 20–35% for appointment-based businesses",
+      "file": "appointment-reminder-sms.blueprint.json",
+      "customizationGuide": "guides/appointment-reminder-sms.md"
+    },
+    {
+      "id": "review-request",
+      "name": "Post-Service Review Request",
+      "description": "Triggers a review request email or SMS after a completed service or transaction, routing happy clients to Google or Yelp.",
+      "vertical": ["medical", "med-spa", "construction", "retail", "all"],
+      "tools": ["Make.com", "{{CRM_TYPE}}", "{{EMAIL_PROVIDER}}"],
+      "setupTimeMinutes": 40,
+      "estimatedROI": "Generates 3–5 new reviews per month with zero staff effort",
+      "file": "review-request.blueprint.json",
+      "customizationGuide": "guides/review-request.md"
+    },
+    {
+      "id": "new-client-onboarding",
+      "name": "New Client Onboarding",
+      "description": "Kicks off a multi-step onboarding sequence when a deal closes or a new patient signs up — welcome email, intake forms, and internal team notification.",
+      "vertical": ["law", "medical", "real-estate", "all"],
+      "tools": ["Make.com", "{{CRM_TYPE}}", "{{EMAIL_PROVIDER}}", "Google Forms"],
+      "setupTimeMinutes": 75,
+      "estimatedROI": "Cuts onboarding admin time by 2–4 hours per new client",
+      "file": "new-client-onboarding.blueprint.json",
+      "customizationGuide": "guides/new-client-onboarding.md"
+    },
+    {
+      "id": "invoice-followup",
+      "name": "Invoice Follow-Up",
+      "description": "Monitors overdue invoices and sends escalating reminder emails at 7, 14, and 30 days past due.",
+      "vertical": ["construction", "law", "all"],
+      "tools": ["Make.com", "QuickBooks", "{{EMAIL_PROVIDER}}"],
+      "setupTimeMinutes": 50,
+      "estimatedROI": "Accelerates payment collection by an average of 8–12 days",
+      "file": "invoice-followup.blueprint.json",
+      "customizationGuide": "guides/invoice-followup.md"
+    },
+    {
+      "id": "monthly-report",
+      "name": "Monthly Performance Report",
+      "description": "Pulls KPI data from your CRM and email platform, compiles a summary, and emails it to stakeholders on the first of each month.",
+      "vertical": ["real-estate", "medical", "all"],
+      "tools": ["Make.com", "{{CRM_TYPE}}", "{{EMAIL_PROVIDER}}", "Google Sheets"],
+      "setupTimeMinutes": 90,
+      "estimatedROI": "Saves 3–5 hours of manual reporting per month",
+      "file": "monthly-report.blueprint.json",
+      "customizationGuide": "guides/monthly-report.md"
+    },
+    {
+      "id": "social-content-publish",
+      "name": "Social Content Publish",
+      "description": "Publishes approved content from a Google Sheet or Airtable to LinkedIn and Facebook on a scheduled cadence.",
+      "vertical": ["retail", "med-spa", "real-estate", "all"],
+      "tools": ["Make.com", "Google Sheets", "LinkedIn", "Facebook"],
+      "setupTimeMinutes": 55,
+      "estimatedROI": "Maintains consistent social presence without a dedicated marketing hire",
+      "file": "social-content-publish.blueprint.json",
+      "customizationGuide": "guides/social-content-publish.md"
+    },
+    {
+      "id": "ai-chatbot-escalation",
+      "name": "AI Chatbot Escalation",
+      "description": "Routes website chatbot conversations to a human team member via Slack or email when the AI detects high intent or frustration.",
+      "vertical": ["medical", "law", "real-estate", "all"],
+      "tools": ["Make.com", "{{WEBHOOK_URL}}", "Slack", "OpenAI"],
+      "setupTimeMinutes": 80,
+      "estimatedROI": "Captures 10–20% more qualified leads from website visitors",
+      "file": "ai-chatbot-escalation.blueprint.json",
+      "customizationGuide": "guides/ai-chatbot-escalation.md"
+    }
+  ]
+}

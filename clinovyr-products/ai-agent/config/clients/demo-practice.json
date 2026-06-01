@@ -1,0 +1,18 @@
+{
+  "clientId": "demo-practice",
+  "businessName": "Granite Bay Family Medicine",
+  "hours": "Monday–Friday 8:00 AM – 5:00 PM; Saturday 9:00 AM – 12:00 PM",
+  "bookingLink": "https://book.demo-practice.com/appointments",
+  "escalationEmail": "staff@demo-practice.com",
+  "escalationFrom": "Clinovyr Agent <agent@clinovyr.com>",
+  "faqs": [
+    {
+      "keywords": ["insurance", "take insurance", "accept insurance"],
+      "answer": "We accept most major PPO plans including Blue Cross, Aetna, and UnitedHealthcare. Call our front desk to verify your specific plan."
+    },
+    {
+      "keywords": ["parking", "where to park"],
+      "answer": "Free parking is available in the lot behind our building on Douglas Boulevard."
+    }
+  ]
+}

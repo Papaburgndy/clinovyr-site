@@ -1,0 +1,9 @@
+{
+  "id": "granite-bay-dental-run-71",
+  "automationId": "gbd-billing",
+  "automationName": "Claim Prep Assistant",
+  "timestamp": "2026-03-26T11:37:00.000Z",
+  "status": "success",
+  "tasksProcessed": 14,
+  "durationMs": 19310
+}

@@ -1,0 +1,9 @@
+{
+  "id": "sierra-construction-run-55",
+  "automationId": "sc-bid",
+  "automationName": "Bid Request Triage",
+  "timestamp": "2026-05-18T14:11:00.000Z",
+  "status": "success",
+  "tasksProcessed": 10,
+  "durationMs": 4606
+}

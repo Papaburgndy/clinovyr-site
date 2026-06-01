@@ -1,0 +1,10 @@
+{
+  "id": "r13",
+  "automationId": "auto-referrals",
+  "automationName": "Referral Letter Drafting",
+  "timestamp": "2026-05-26T10:45:00Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 500,
+  "message": "Missing visit notes for patient ID 4421"
+}

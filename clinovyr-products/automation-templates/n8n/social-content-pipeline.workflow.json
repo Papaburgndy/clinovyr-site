@@ -1,0 +1,269 @@
+{
+  "name": "{{CLIENT_NAME}} - Social Content Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "c4d5e6f7-4001-4a5b-9c0d-444444444401",
+      "name": "Monday 9am Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{CLIENT_ANTHROPIC_MODEL}}\",\n  \"max_tokens\": 2048,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Create 5 social posts for {{CLIENT_NAME}} ({{CLIENT_INDUSTRY}} in {{CLIENT_LOCATION}}). Brand voice: professional, local, helpful. Return JSON array: [{\\\"title\\\",\\\"body\\\",\\\"platform\\\",\\\"hashtags\\\"}]. Platforms: LinkedIn, Instagram mix.\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "c4d5e6f7-4002-4a5b-9c0d-444444444402",
+      "name": "Claude Generate 5 Posts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CLIENT_ANTHROPIC_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst text = raw.content?.[0]?.text ?? '[]';\nlet posts = [];\ntry {\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  posts = match ? JSON.parse(match[0]) : [];\n} catch (e) {\n  posts = [{ title: 'Draft', body: text.slice(0, 500), platform: 'linkedin', hashtags: '' }];\n}\nconst weekOf = new Date().toISOString().slice(0, 10);\nreturn posts.map((p, i) => ({\n  json: {\n    ...p,\n    post_id: `week-${weekOf}-${i + 1}`,\n    status: 'pending_approval',\n    week_of: weekOf\n  }\n}));"
+      },
+      "id": "c4d5e6f7-4003-4a5b-9c0d-444444444403",
+      "name": "Parse Posts Array",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [540, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_AIRTABLE_BASE_ID}}' }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_AIRTABLE_CONTENT_TABLE}}' }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Post ID": "={{ $json.post_id }}",
+            "Title": "={{ $json.title }}",
+            "Body": "={{ $json.body }}",
+            "Platform": "={{ $json.platform }}",
+            "Hashtags": "={{ $json.hashtags }}",
+            "Status": "={{ $json.status }}",
+            "Week Of": "={{ $json.week_of }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "c4d5e6f7-4004-4a5b-9c0d-444444444404",
+      "name": "Airtable Pending Approval",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2,
+      "position": [800, 300],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "{{CLIENT_AIRTABLE_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "{{CLIENT_WEBHOOK_PATH}}/content-approved",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "c4d5e6f7-4005-4a5b-9c0d-444444444405",
+      "name": "Approval Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [1060, 300],
+      "webhookId": "c4d5e6f7-4005-4a5b-9c0d-444444444405"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "approved",
+              "leftValue": "={{ ($json.body?.status ?? $json.status) }}",
+              "rightValue": "approved",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c4d5e6f7-4006-4a5b-9c0d-444444444406",
+      "name": "Status Approved",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1320, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_AIRTABLE_BASE_ID}}' }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_AIRTABLE_CONTENT_TABLE}}' }}",
+          "mode": "id"
+        },
+        "id": "={{ $json.body?.record_id ?? $json.record_id }}",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "approved",
+            "Approved At": "={{ $now.toISO() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "c4d5e6f7-4007-4a5b-9c0d-444444444407",
+      "name": "Update Airtable Approved",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2,
+      "position": [1580, 220],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "{{CLIENT_AIRTABLE_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ '{{CLIENT_BUFFER_API_URL}}' }}/updates/create",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": {{ JSON.stringify($json.body?.post_body ?? $json.post_body) }},\n  \"profile_ids\": [\"{{CLIENT_BUFFER_PROFILE_ID}}\"],\n  \"scheduled_at\": {{ JSON.stringify($json.body?.scheduled_at ?? $json.scheduled_at) }}\n}",
+        "options": {}
+      },
+      "id": "c4d5e6f7-4008-4a5b-9c0d-444444444408",
+      "name": "Publish via Buffer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1840, 220],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{CLIENT_BUFFER_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Buffer API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_AIRTABLE_BASE_ID}}' }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_AIRTABLE_CONTENT_TABLE}}' }}",
+          "mode": "id"
+        },
+        "id": "={{ $('Approval Webhook').item.json.body?.record_id ?? $('Approval Webhook').item.json.record_id }}",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "published",
+            "Published At": "={{ $now.toISO() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "c4d5e6f7-4009-4a5b-9c0d-444444444409",
+      "name": "Mark Published in Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2,
+      "position": [2100, 220],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "{{CLIENT_AIRTABLE_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Airtable"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Monday 9am Schedule": {
+      "main": [[{ "node": "Claude Generate 5 Posts", "type": "main", "index": 0 }]]
+    },
+    "Claude Generate 5 Posts": {
+      "main": [[{ "node": "Parse Posts Array", "type": "main", "index": 0 }]]
+    },
+    "Parse Posts Array": {
+      "main": [[{ "node": "Airtable Pending Approval", "type": "main", "index": 0 }]]
+    },
+    "Approval Webhook": {
+      "main": [[{ "node": "Status Approved", "type": "main", "index": 0 }]]
+    },
+    "Status Approved": {
+      "main": [
+        [{ "node": "Update Airtable Approved", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Update Airtable Approved": {
+      "main": [[{ "node": "Publish via Buffer", "type": "main", "index": 0 }]]
+    },
+    "Publish via Buffer": {
+      "main": [[{ "node": "Mark Published in Airtable", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "{{CLIENT_TIMEZONE}}"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "{{N8N_INSTANCE_ID}}",
+    "templateId": "social-content-pipeline"
+  },
+  "pinData": {},
+  "tags": []
+}

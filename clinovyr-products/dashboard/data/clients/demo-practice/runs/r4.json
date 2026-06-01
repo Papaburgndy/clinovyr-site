@@ -1,0 +1,10 @@
+{
+  "id": "r4",
+  "automationId": "auto-intake",
+  "automationName": "Patient Intake Processing",
+  "timestamp": "2026-05-30T14:22:00Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1200,
+  "message": "EHR API timeout after 30s"
+}

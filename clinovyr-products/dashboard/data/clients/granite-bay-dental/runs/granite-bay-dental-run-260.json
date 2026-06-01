@@ -1,0 +1,9 @@
+{
+  "id": "granite-bay-dental-run-260",
+  "automationId": "gbd-reminders",
+  "automationName": "Appointment Reminders",
+  "timestamp": "2026-05-22T11:18:00.000Z",
+  "status": "success",
+  "tasksProcessed": 5,
+  "durationMs": 5650
+}

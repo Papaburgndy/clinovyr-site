@@ -1,0 +1,276 @@
+{
+  "name": "{{CLIENT_NAME}} - Invoice Follow-Up",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "{{CLIENT_WEBHOOK_PATH}}/quickbooks-invoice",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "d5e6f7a8-5001-4a5b-9c0d-555555555501",
+      "name": "QuickBooks Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 320],
+      "webhookId": "d5e6f7a8-5001-4a5b-9c0d-555555555501"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body ?? $input.first().json;\nconst invoice = {\n  id: body.Id ?? body.invoice_id,\n  number: body.DocNumber ?? body.invoice_number,\n  customerName: body.CustomerRef?.name ?? body.customer_name,\n  customerEmail: body.BillEmail?.Address ?? body.customer_email,\n  balance: Number(body.Balance ?? body.amount_due ?? 0),\n  dueDate: body.DueDate ?? body.due_date,\n  sentAt: body.MetaData?.CreateTime ?? body.created_at ?? new Date().toISOString()\n};\nif (!invoice.customerEmail) throw new Error('Missing customer email');\nreturn [{ json: invoice }];"
+      },
+      "id": "d5e6f7a8-5002-4a5b-9c0d-555555555502",
+      "name": "Parse Invoice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, 320]
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "days"
+      },
+      "id": "d5e6f7a8-5003-4a5b-9c0d-555555555503",
+      "name": "Wait Day 3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [520, 320],
+      "webhookId": "d5e6f7a8-5003-4a5b-9c0d-555555555503"
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ '{{CLIENT_AR_EMAIL}}' }}",
+        "toEmail": "={{ $('Parse Invoice').item.json.customerEmail }}",
+        "subject": "=Invoice {{ $('Parse Invoice').item.json.number }} — friendly reminder",
+        "emailType": "text",
+        "message": "=Hi {{ $('Parse Invoice').item.json.customerName }},\n\nThis is a friendly reminder that invoice {{ $('Parse Invoice').item.json.number }} for ${{ $('Parse Invoice').item.json.balance }} is due. Pay online: {{CLIENT_PAYMENT_URL}}\n\nThank you,\n{{CLIENT_NAME}} Accounts Receivable"
+      },
+      "id": "d5e6f7a8-5004-4a5b-9c0d-555555555504",
+      "name": "Day 3 Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [780, 320],
+      "credentials": {
+        "smtp": {
+          "id": "{{CLIENT_SMTP_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 4,
+        "unit": "days"
+      },
+      "id": "d5e6f7a8-5005-4a5b-9c0d-555555555505",
+      "name": "Wait to Day 7",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1040, 320],
+      "webhookId": "d5e6f7a8-5005-4a5b-9c0d-555555555505"
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ '{{CLIENT_AR_EMAIL}}' }}",
+        "toEmail": "={{ $('Parse Invoice').item.json.customerEmail }}",
+        "subject": "=Second notice: Invoice {{ $('Parse Invoice').item.json.number }}",
+        "emailType": "text",
+        "message": "=Hi {{ $('Parse Invoice').item.json.customerName }},\n\nInvoice {{ $('Parse Invoice').item.json.number }} remains outstanding (${{ $('Parse Invoice').item.json.balance }}). Please remit at your earliest convenience: {{CLIENT_PAYMENT_URL}}\n\n{{CLIENT_NAME}}"
+      },
+      "id": "d5e6f7a8-5006-4a5b-9c0d-555555555506",
+      "name": "Day 7 Reminder Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1300, 260],
+      "credentials": {
+        "smtp": {
+          "id": "{{CLIENT_SMTP_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_SHEETS_AR_ID}}' }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Call Notes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $now.toISO() }}",
+            "invoice": "={{ $('Parse Invoice').item.json.number }}",
+            "customer": "={{ $('Parse Invoice').item.json.customerName }}",
+            "action": "day_7_call_required",
+            "notes": "Schedule AR call per playbook"
+          }
+        },
+        "options": {}
+      },
+      "id": "d5e6f7a8-5007-4a5b-9c0d-555555555507",
+      "name": "Day 7 Call Note Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1300, 400],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "{{CLIENT_GOOGLE_SHEETS_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "id": "d5e6f7a8-5008-4a5b-9c0d-555555555508",
+      "name": "Wait to Day 14",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1560, 320],
+      "webhookId": "d5e6f7a8-5008-4a5b-9c0d-555555555508"
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ '{{CLIENT_AR_EMAIL}}' }}",
+        "toEmail": "={{ $('Parse Invoice').item.json.customerEmail }}",
+        "subject": "=Final notice: Invoice {{ $('Parse Invoice').item.json.number }}",
+        "emailType": "text",
+        "message": "=Dear {{ $('Parse Invoice').item.json.customerName }},\n\nThis is a formal notice regarding overdue invoice {{ $('Parse Invoice').item.json.number }} (${{ $('Parse Invoice').item.json.balance }}). Payment is required within 5 business days.\n\n{{CLIENT_NAME}}\n{{CLIENT_PHONE}}"
+      },
+      "id": "d5e6f7a8-5009-4a5b-9c0d-555555555509",
+      "name": "Day 14 Formal Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1820, 260],
+      "credentials": {
+        "smtp": {
+          "id": "{{CLIENT_SMTP_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ '{{CLIENT_AR_EMAIL}}' }}",
+        "toEmail": "={{ '{{CLIENT_OWNER_EMAIL}}' }}",
+        "subject": "=OVERDUE FLAG: Invoice {{ $('Parse Invoice').item.json.number }}",
+        "emailType": "text",
+        "message": "=Owner alert: Invoice {{ $('Parse Invoice').item.json.number }} for {{ $('Parse Invoice').item.json.customerName }} (${{ $('Parse Invoice').item.json.balance }}) reached day 14 follow-up. Review AR sheet."
+      },
+      "id": "d5e6f7a8-5010-4a5b-9c0d-555555555510",
+      "name": "Flag Owner",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1820, 400],
+      "credentials": {
+        "smtp": {
+          "id": "{{CLIENT_SMTP_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ '{{CLIENT_SHEETS_AR_ID}}' }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Invoice Follow-Up Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "completed_at": "={{ $now.toISO() }}",
+            "invoice_id": "={{ $('Parse Invoice').item.json.id }}",
+            "invoice_number": "={{ $('Parse Invoice').item.json.number }}",
+            "customer": "={{ $('Parse Invoice').item.json.customerName }}",
+            "balance": "={{ $('Parse Invoice').item.json.balance }}",
+            "sequence": "day3,day7,day14",
+            "owner_flagged": "yes"
+          }
+        },
+        "options": {}
+      },
+      "id": "d5e6f7a8-5011-4a5b-9c0d-555555555511",
+      "name": "Log Completion",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2080, 320],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "{{CLIENT_GOOGLE_SHEETS_CREDENTIAL_ID}}",
+          "name": "{{CLIENT_NAME}} Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "QuickBooks Webhook": {
+      "main": [[{ "node": "Parse Invoice", "type": "main", "index": 0 }]]
+    },
+    "Parse Invoice": {
+      "main": [[{ "node": "Wait Day 3", "type": "main", "index": 0 }]]
+    },
+    "Wait Day 3": {
+      "main": [[{ "node": "Day 3 Email", "type": "main", "index": 0 }]]
+    },
+    "Day 3 Email": {
+      "main": [[{ "node": "Wait to Day 7", "type": "main", "index": 0 }]]
+    },
+    "Wait to Day 7": {
+      "main": [
+        [
+          { "node": "Day 7 Reminder Email", "type": "main", "index": 0 },
+          { "node": "Day 7 Call Note Log", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Day 7 Reminder Email": {
+      "main": [[{ "node": "Wait to Day 14", "type": "main", "index": 0 }]]
+    },
+    "Day 7 Call Note Log": {
+      "main": [[{ "node": "Wait to Day 14", "type": "main", "index": 0 }]]
+    },
+    "Wait to Day 14": {
+      "main": [
+        [
+          { "node": "Day 14 Formal Email", "type": "main", "index": 0 },
+          { "node": "Flag Owner", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Day 14 Formal Email": {
+      "main": [[{ "node": "Log Completion", "type": "main", "index": 0 }]]
+    },
+    "Flag Owner": {
+      "main": [[{ "node": "Log Completion", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "timezone": "{{CLIENT_TIMEZONE}}"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "{{N8N_INSTANCE_ID}}",
+    "templateId": "invoice-followup"
+  },
+  "pinData": {},
+  "tags": []
+}

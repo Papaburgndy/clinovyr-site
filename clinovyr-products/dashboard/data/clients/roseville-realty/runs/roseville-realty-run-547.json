@@ -1,0 +1,10 @@
+{
+  "id": "roseville-realty-run-547",
+  "automationId": "rrg-followup",
+  "automationName": "Buyer Follow-Up Sequences",
+  "timestamp": "2026-05-21T08:27:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1444,
+  "message": "Upstream API timeout — retry scheduled"
+}

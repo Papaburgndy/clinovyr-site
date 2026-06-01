@@ -1,0 +1,9 @@
+{
+  "id": "r2",
+  "automationId": "auto-intake",
+  "automationName": "Patient Intake Processing",
+  "timestamp": "2026-05-31T16:30:00Z",
+  "status": "success",
+  "tasksProcessed": 2,
+  "durationMs": 3100
+}

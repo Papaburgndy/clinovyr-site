@@ -1,0 +1,9 @@
+{
+  "id": "r7",
+  "automationId": "auto-reminders",
+  "automationName": "Appointment Reminders",
+  "timestamp": "2026-05-31T07:00:00Z",
+  "status": "success",
+  "tasksProcessed": 8,
+  "durationMs": 6200
+}

@@ -1,0 +1,70 @@
+[
+  {
+    "id": "evt-1",
+    "timestamp": "2026-06-01T08:15:00Z",
+    "type": "automation_run",
+    "message": "Patient Intake Processing completed — 3 tasks processed",
+    "automationId": "auto-intake"
+  },
+  {
+    "id": "evt-2",
+    "timestamp": "2026-06-01T07:00:00Z",
+    "type": "automation_run",
+    "message": "Appointment Reminders sent — 12 patients notified",
+    "automationId": "auto-reminders"
+  },
+  {
+    "id": "evt-3",
+    "timestamp": "2026-05-31T18:00:00Z",
+    "type": "error",
+    "message": "Insurance Claim Prep failed — Billing API authentication expired",
+    "automationId": "auto-billing"
+  },
+  {
+    "id": "evt-4",
+    "timestamp": "2026-05-31T09:00:00Z",
+    "type": "report_generated",
+    "message": "May 2026 monthly report generated and ready for download"
+  },
+  {
+    "id": "evt-5",
+    "timestamp": "2026-05-30T14:22:00Z",
+    "type": "error",
+    "message": "Patient Intake Processing failed — EHR API timeout",
+    "automationId": "auto-intake"
+  },
+  {
+    "id": "evt-6",
+    "timestamp": "2026-05-29T16:00:00Z",
+    "type": "settings_updated",
+    "message": "Escalation email updated to office@demopractice.com"
+  },
+  {
+    "id": "evt-7",
+    "timestamp": "2026-05-28T11:30:00Z",
+    "type": "automation_run",
+    "message": "Referral Letter Drafting completed — 2 letters drafted",
+    "automationId": "auto-referrals"
+  },
+  {
+    "id": "evt-8",
+    "timestamp": "2026-05-27T18:00:00Z",
+    "type": "automation_run",
+    "message": "Insurance Claim Prep completed — 5 claims prepared",
+    "automationId": "auto-billing"
+  },
+  {
+    "id": "evt-9",
+    "timestamp": "2026-05-26T10:45:00Z",
+    "type": "error",
+    "message": "Referral Letter Drafting failed — missing visit notes",
+    "automationId": "auto-referrals"
+  },
+  {
+    "id": "evt-10",
+    "timestamp": "2026-05-25T14:20:00Z",
+    "type": "automation_run",
+    "message": "Referral Letter Drafting completed — 3 letters drafted",
+    "automationId": "auto-referrals"
+  }
+]

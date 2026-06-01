@@ -1,0 +1,20 @@
+{
+  "name": "clinovyr-make-templates",
+  "version": "1.0.0",
+  "description": "Make.com automation template library and client setup wizard for Clinovyr",
+  "main": "dist/template-manager.js",
+  "scripts": {
+    "wizard": "ts-node src/client-setup-wizard.ts",
+    "build": "tsc"
+  },
+  "keywords": ["make.com", "automation", "templates", "clinovyr"],
+  "author": "Clinovyr",
+  "license": "ISC",
+  "dependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1"
+  }
+}

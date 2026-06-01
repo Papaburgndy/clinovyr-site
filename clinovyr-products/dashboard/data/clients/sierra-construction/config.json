@@ -1,0 +1,47 @@
+{
+  "clientName": "Sierra Construction",
+  "email": "ops@sierraconstruction.test",
+  "plan": "growth",
+  "mrr": 1999,
+  "active": true,
+  "escalationEmail": "ops@sierraconstruction.test",
+  "notificationPreferences": {
+    "emailReports": true,
+    "emailErrors": true,
+    "emailWeeklySummary": false
+  },
+  "businessHours": {
+    "monday": {
+      "open": "08:00",
+      "close": "17:00"
+    },
+    "tuesday": {
+      "open": "08:00",
+      "close": "17:00"
+    },
+    "wednesday": {
+      "open": "08:00",
+      "close": "17:00"
+    },
+    "thursday": {
+      "open": "08:00",
+      "close": "17:00"
+    },
+    "friday": {
+      "open": "08:00",
+      "close": "16:00"
+    },
+    "saturday": null,
+    "sunday": null
+  },
+  "faq": [
+    {
+      "question": "What services does Sierra Construction offer?",
+      "answer": "Contact ops@sierraconstruction.test for service details. Our AI assistant can answer common questions during business hours."
+    },
+    {
+      "question": "How do I reach someone after hours?",
+      "answer": "Leave a message and our automation will route urgent items to the on-call contact."
+    }
+  ]
+}

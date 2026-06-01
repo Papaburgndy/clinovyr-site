@@ -1,0 +1,9 @@
+{
+  "id": "roseville-realty-run-3",
+  "automationId": "rrg-followup",
+  "automationName": "Buyer Follow-Up Sequences",
+  "timestamp": "2025-12-01T10:42:00.000Z",
+  "status": "success",
+  "tasksProcessed": 11,
+  "durationMs": 6286
+}

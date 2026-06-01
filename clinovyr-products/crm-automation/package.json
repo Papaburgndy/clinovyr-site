@@ -1,0 +1,23 @@
+{
+  "name": "crm-automation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "setup": "ts-node setup-crm.ts",
+    "setup:dry-run": "ts-node setup-crm.ts --dry-run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
+    "@hubspot/api-client": "^13.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1"
+  }
+}

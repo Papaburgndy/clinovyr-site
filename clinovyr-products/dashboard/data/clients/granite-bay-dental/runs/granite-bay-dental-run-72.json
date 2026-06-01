@@ -1,0 +1,9 @@
+{
+  "id": "granite-bay-dental-run-72",
+  "automationId": "gbd-reviews",
+  "automationName": "Post-Visit Review Requests",
+  "timestamp": "2026-03-26T07:37:00.000Z",
+  "status": "success",
+  "tasksProcessed": 15,
+  "durationMs": 11090
+}

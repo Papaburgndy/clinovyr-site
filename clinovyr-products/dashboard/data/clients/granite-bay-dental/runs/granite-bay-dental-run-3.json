@@ -1,0 +1,9 @@
+{
+  "id": "granite-bay-dental-run-3",
+  "automationId": "gbd-recall",
+  "automationName": "Hygiene Recall Outreach",
+  "timestamp": "2026-03-02T10:01:00.000Z",
+  "status": "success",
+  "tasksProcessed": 6,
+  "durationMs": 10174
+}

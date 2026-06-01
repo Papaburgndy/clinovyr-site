@@ -1,0 +1,10 @@
+{
+  "id": "granite-bay-dental-run-251",
+  "automationId": "gbd-billing",
+  "automationName": "Claim Prep Assistant",
+  "timestamp": "2026-05-20T17:37:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1894,
+  "message": "Upstream API timeout — retry scheduled"
+}

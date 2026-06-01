@@ -1,0 +1,80 @@
+{
+  "name": "{{COMPANY_NAME}} - AI Chatbot Escalation",
+  "flow": [
+    {
+      "id": 1,
+      "module": "webhook:receiveChatEvent",
+      "version": 1,
+      "parameters": {
+        "url": "{{WEBHOOK_URL}}",
+        "method": "POST"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "openai:analyzeSentiment",
+      "version": 1,
+      "parameters": {
+        "apiKey": "{{API_KEY_OPENAI}}",
+        "prompt": "Analyze this chat for escalation at {{COMPANY_NAME}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "slack:sendMessage",
+      "version": 1,
+      "parameters": {
+        "channel": "#chat-escalations",
+        "text": "{{COMPANY_NAME}} chatbot escalation — review needed for {{visitor.email}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "{{EMAIL_PROVIDER}}:sendEmail",
+      "version": 1,
+      "parameters": {
+        "to": "support@{{COMPANY_NAME}}.com",
+        "subject": "Chat escalation — {{COMPANY_NAME}}",
+        "body": "A website visitor needs human follow-up. CRM: {{CRM_TYPE}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "templateId": "ai-chatbot-escalation",
+    "placeholders": [
+      "{{COMPANY_NAME}}",
+      "{{CRM_TYPE}}",
+      "{{EMAIL_PROVIDER}}",
+      "{{WEBHOOK_URL}}",
+      "{{API_KEY_OPENAI}}"
+    ]
+  }
+}

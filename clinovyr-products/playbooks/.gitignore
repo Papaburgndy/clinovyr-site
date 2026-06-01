@@ -1,0 +1,7 @@
+node_modules/
+.next/
+dist-cli/
+output/
+data/processed-payments.json
+.env.local
+load-test/

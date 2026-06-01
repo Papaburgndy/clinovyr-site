@@ -1,0 +1,63 @@
+{
+  "name": "{{COMPANY_NAME}} - Monthly Report",
+  "flow": [
+    {
+      "id": 1,
+      "module": "schedule:monthlyTrigger",
+      "version": 1,
+      "parameters": {
+        "dayOfMonth": 1,
+        "hour": 8
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "{{CRM_TYPE}}:getMonthlyMetrics",
+      "version": 1,
+      "parameters": {
+        "connection": "{{CRM_TYPE}}",
+        "apiKey": "{{API_KEY_CRM}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "{{EMAIL_PROVIDER}}:sendEmail",
+      "version": 1,
+      "parameters": {
+        "to": "team@{{COMPANY_NAME}}.com",
+        "subject": "{{COMPANY_NAME}} Monthly Performance Report",
+        "body": "Attached is your monthly KPI summary from {{CRM_TYPE}}."
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "templateId": "monthly-report",
+    "placeholders": [
+      "{{COMPANY_NAME}}",
+      "{{CRM_TYPE}}",
+      "{{EMAIL_PROVIDER}}",
+      "{{API_KEY_CRM}}"
+    ]
+  }
+}

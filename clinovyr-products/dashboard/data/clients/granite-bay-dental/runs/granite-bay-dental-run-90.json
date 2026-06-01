@@ -1,0 +1,10 @@
+{
+  "id": "granite-bay-dental-run-90",
+  "automationId": "gbd-reviews",
+  "automationName": "Post-Visit Review Requests",
+  "timestamp": "2026-04-02T15:16:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1381,
+  "message": "Upstream API timeout — retry scheduled"
+}

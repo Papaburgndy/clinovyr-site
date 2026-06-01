@@ -1,0 +1,74 @@
+[
+  {
+    "id": "auto-intake",
+    "name": "Patient Intake Processing",
+    "description": "Extracts new patient forms, validates insurance info, and creates EHR records.",
+    "status": "running",
+    "runCount": 342,
+    "successRate": 98.2,
+    "lastRun": "2026-06-01T08:15:00Z",
+    "lastError": null,
+    "tasksThisMonth": 87,
+    "recentRuns": [
+      { "id": "r1", "timestamp": "2026-06-01T08:15:00Z", "status": "success", "tasksProcessed": 3, "durationMs": 4200 },
+      { "id": "r2", "timestamp": "2026-05-31T16:30:00Z", "status": "success", "tasksProcessed": 2, "durationMs": 3100 },
+      { "id": "r3", "timestamp": "2026-05-31T09:00:00Z", "status": "success", "tasksProcessed": 4, "durationMs": 5800 },
+      { "id": "r4", "timestamp": "2026-05-30T14:22:00Z", "status": "error", "tasksProcessed": 0, "durationMs": 1200, "message": "EHR API timeout after 30s" },
+      { "id": "r5", "timestamp": "2026-05-30T08:10:00Z", "status": "success", "tasksProcessed": 1, "durationMs": 2100 }
+    ]
+  },
+  {
+    "id": "auto-reminders",
+    "name": "Appointment Reminders",
+    "description": "Sends SMS and email reminders 48h and 24h before scheduled appointments.",
+    "status": "running",
+    "runCount": 1205,
+    "successRate": 99.7,
+    "lastRun": "2026-06-01T07:00:00Z",
+    "lastError": null,
+    "tasksThisMonth": 156,
+    "recentRuns": [
+      { "id": "r6", "timestamp": "2026-06-01T07:00:00Z", "status": "success", "tasksProcessed": 12, "durationMs": 8900 },
+      { "id": "r7", "timestamp": "2026-05-31T07:00:00Z", "status": "success", "tasksProcessed": 8, "durationMs": 6200 },
+      { "id": "r8", "timestamp": "2026-05-30T07:00:00Z", "status": "success", "tasksProcessed": 15, "durationMs": 11000 },
+      { "id": "r9", "timestamp": "2026-05-29T07:00:00Z", "status": "success", "tasksProcessed": 11, "durationMs": 7800 },
+      { "id": "r10", "timestamp": "2026-05-28T07:00:00Z", "status": "success", "tasksProcessed": 9, "durationMs": 6500 }
+    ]
+  },
+  {
+    "id": "auto-referrals",
+    "name": "Referral Letter Drafting",
+    "description": "Drafts specialist referral letters from visit notes for physician review.",
+    "status": "paused",
+    "runCount": 89,
+    "successRate": 94.4,
+    "lastRun": "2026-05-28T11:30:00Z",
+    "lastError": null,
+    "tasksThisMonth": 12,
+    "recentRuns": [
+      { "id": "r11", "timestamp": "2026-05-28T11:30:00Z", "status": "success", "tasksProcessed": 2, "durationMs": 15000 },
+      { "id": "r12", "timestamp": "2026-05-27T15:00:00Z", "status": "success", "tasksProcessed": 1, "durationMs": 8200 },
+      { "id": "r13", "timestamp": "2026-05-26T10:45:00Z", "status": "error", "tasksProcessed": 0, "durationMs": 500, "message": "Missing visit notes for patient ID 4421" },
+      { "id": "r14", "timestamp": "2026-05-25T14:20:00Z", "status": "success", "tasksProcessed": 3, "durationMs": 22000 },
+      { "id": "r15", "timestamp": "2026-05-24T09:15:00Z", "status": "success", "tasksProcessed": 1, "durationMs": 9800 }
+    ]
+  },
+  {
+    "id": "auto-billing",
+    "name": "Insurance Claim Prep",
+    "description": "Pre-populates claim forms from EHR billing codes and flags missing documentation.",
+    "status": "error",
+    "runCount": 567,
+    "successRate": 91.0,
+    "lastRun": "2026-05-31T18:00:00Z",
+    "lastError": "Billing API authentication failed — credentials expired",
+    "tasksThisMonth": 45,
+    "recentRuns": [
+      { "id": "r16", "timestamp": "2026-05-31T18:00:00Z", "status": "error", "tasksProcessed": 0, "durationMs": 800, "message": "Billing API authentication failed" },
+      { "id": "r17", "timestamp": "2026-05-30T18:00:00Z", "status": "error", "tasksProcessed": 0, "durationMs": 750, "message": "Billing API authentication failed" },
+      { "id": "r18", "timestamp": "2026-05-29T18:00:00Z", "status": "success", "tasksProcessed": 6, "durationMs": 14000 },
+      { "id": "r19", "timestamp": "2026-05-28T18:00:00Z", "status": "success", "tasksProcessed": 8, "durationMs": 16500 },
+      { "id": "r20", "timestamp": "2026-05-27T18:00:00Z", "status": "success", "tasksProcessed": 5, "durationMs": 11200 }
+    ]
+  }
+]

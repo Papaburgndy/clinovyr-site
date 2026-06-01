@@ -1,0 +1,9 @@
+{
+  "id": "sierra-construction-run-20",
+  "automationId": "sc-schedule",
+  "automationName": "Crew Schedule Sync",
+  "timestamp": "2026-05-07T07:11:00.000Z",
+  "status": "success",
+  "tasksProcessed": 12,
+  "durationMs": 11697
+}

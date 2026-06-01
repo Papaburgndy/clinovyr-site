@@ -1,0 +1,9 @@
+{
+  "id": "roseville-realty-run-264",
+  "automationId": "rrg-docs",
+  "automationName": "Transaction Document Prep",
+  "timestamp": "2026-02-21T18:07:00.000Z",
+  "status": "success",
+  "tasksProcessed": 3,
+  "durationMs": 20763
+}

@@ -1,0 +1,10 @@
+{
+  "id": "granite-bay-dental-run-8",
+  "automationId": "gbd-reminders",
+  "automationName": "Appointment Reminders",
+  "timestamp": "2026-03-03T09:43:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 439,
+  "message": "Upstream API timeout — retry scheduled"
+}

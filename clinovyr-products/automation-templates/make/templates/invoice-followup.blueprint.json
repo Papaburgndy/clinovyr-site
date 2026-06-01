@@ -1,0 +1,63 @@
+{
+  "name": "{{COMPANY_NAME}} - Invoice Follow-Up",
+  "flow": [
+    {
+      "id": 1,
+      "module": "quickbooks:watchOverdueInvoices",
+      "version": 1,
+      "parameters": {
+        "connection": "QuickBooks",
+        "apiKey": "{{API_KEY_QUICKBOOKS}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "{{EMAIL_PROVIDER}}:sendEmail",
+      "version": 1,
+      "parameters": {
+        "to": "{{invoice.clientEmail}}",
+        "subject": "{{COMPANY_NAME}} — Invoice {{invoice.number}} reminder",
+        "body": "This is a friendly reminder that invoice {{invoice.number}} is past due."
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "webhook:logReminder",
+      "version": 1,
+      "parameters": {
+        "url": "{{WEBHOOK_URL}}",
+        "method": "POST"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "templateId": "invoice-followup",
+    "placeholders": [
+      "{{COMPANY_NAME}}",
+      "{{EMAIL_PROVIDER}}",
+      "{{WEBHOOK_URL}}",
+      "{{API_KEY_QUICKBOOKS}}"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "sierra-construction-run-30",
+  "automationId": "sc-invoice",
+  "automationName": "Progress Invoice Drafts",
+  "timestamp": "2026-05-10T10:27:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1926,
+  "message": "Upstream API timeout — retry scheduled"
+}

@@ -1,0 +1,72 @@
+{
+  "version": "1.0.0",
+  "platform": "n8n",
+  "templates": [
+    {
+      "id": "medical-appointment-reminder",
+      "name": "Medical Appointment Reminder",
+      "description": "Webhook-triggered SMS sequence at 72h, 24h, and 2h before appointments with Google Sheets logging. Skips full sequence when booking is within 24 hours.",
+      "vertical": ["medical", "med-spa"],
+      "tools": ["n8n", "Twilio", "Google Sheets", "Webhook"],
+      "setupTimeMinutes": 75,
+      "estimatedROI": "Reduces no-shows by 20–35% with automated reminder cadence",
+      "file": "medical-appointment-reminder.workflow.json",
+      "guide": "guides/medical-appointment-reminder-setup-guide.md"
+    },
+    {
+      "id": "real-estate-lead-qualifier",
+      "name": "Real Estate Lead Qualifier",
+      "description": "Scores inbound leads with Claude (1–10), routes hot leads to agent SMS, warm leads to drip, and cold leads to auto-reply — all logged in Sheets.",
+      "vertical": ["real-estate"],
+      "tools": ["n8n", "Anthropic API", "Twilio", "Google Sheets", "SMTP"],
+      "setupTimeMinutes": 90,
+      "estimatedROI": "Responds to 100% of leads within minutes; prioritizes high-intent prospects",
+      "file": "real-estate-lead-qualifier.workflow.json",
+      "guide": "guides/real-estate-lead-qualifier-setup-guide.md"
+    },
+    {
+      "id": "review-generation",
+      "name": "Review Generation",
+      "description": "Daily schedule or manual webhook pulls completed services from Sheets, sends Claude-personalized review SMS, tracks sends, and emails after 48h with no response.",
+      "vertical": ["medical", "med-spa", "construction", "retail"],
+      "tools": ["n8n", "Google Sheets", "Anthropic API", "Twilio", "SMTP"],
+      "setupTimeMinutes": 70,
+      "estimatedROI": "Generates 3–5 new reviews per month with minimal staff time",
+      "file": "review-generation.workflow.json",
+      "guide": "guides/review-generation-setup-guide.md"
+    },
+    {
+      "id": "social-content-pipeline",
+      "name": "Social Content Pipeline",
+      "description": "Monday morning Claude draft of five posts, Airtable approval queue, and Buffer publish on approval webhook.",
+      "vertical": ["retail", "med-spa", "real-estate", "all"],
+      "tools": ["n8n", "Anthropic API", "Airtable", "Buffer API"],
+      "setupTimeMinutes": 85,
+      "estimatedROI": "Consistent weekly social presence without a dedicated content hire",
+      "file": "social-content-pipeline.workflow.json",
+      "guide": "guides/social-content-pipeline-setup-guide.md"
+    },
+    {
+      "id": "invoice-followup",
+      "name": "Invoice Follow-Up",
+      "description": "QuickBooks webhook starts escalating AR emails at day 3, 7 (with call note), and 14 (formal notice + owner flag) with Sheets logging.",
+      "vertical": ["construction", "law", "all"],
+      "tools": ["n8n", "QuickBooks", "SMTP", "Google Sheets"],
+      "setupTimeMinutes": 65,
+      "estimatedROI": "Accelerates collections by 8–12 days on average",
+      "file": "invoice-followup.workflow.json",
+      "guide": "guides/invoice-followup-setup-guide.md"
+    },
+    {
+      "id": "monthly-client-report",
+      "name": "Monthly Client Report",
+      "description": "First-of-month job aggregates GA4, HubSpot, and custom KPIs; Claude writes narrative; PDF service renders; email to client with log.",
+      "vertical": ["real-estate", "medical", "all"],
+      "tools": ["n8n", "Google Analytics", "HubSpot", "Anthropic API", "PDF service", "SMTP", "Google Sheets"],
+      "setupTimeMinutes": 120,
+      "estimatedROI": "Saves 3–5 hours of manual reporting per client per month",
+      "file": "monthly-client-report.workflow.json",
+      "guide": "guides/monthly-client-report-setup-guide.md"
+    }
+  ]
+}

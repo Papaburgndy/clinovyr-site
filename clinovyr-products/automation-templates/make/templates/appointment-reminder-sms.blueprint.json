@@ -1,0 +1,64 @@
+{
+  "name": "{{COMPANY_NAME}} - Appointment Reminder SMS",
+  "flow": [
+    {
+      "id": 1,
+      "module": "{{CRM_TYPE}}:watchAppointments",
+      "version": 1,
+      "parameters": {
+        "connection": "{{CRM_TYPE}}",
+        "apiKey": "{{API_KEY_CRM}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "twilio:sendSms",
+      "version": 1,
+      "parameters": {
+        "accountSid": "{{API_KEY_TWILIO}}",
+        "to": "{{appointment.phone}}",
+        "body": "{{COMPANY_NAME}} reminder: your appointment is tomorrow at {{appointment.time}}."
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "webhook:notifyStatus",
+      "version": 1,
+      "parameters": {
+        "url": "{{WEBHOOK_URL}}",
+        "method": "POST"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "templateId": "appointment-reminder-sms",
+    "placeholders": [
+      "{{COMPANY_NAME}}",
+      "{{CRM_TYPE}}",
+      "{{WEBHOOK_URL}}",
+      "{{API_KEY_CRM}}",
+      "{{API_KEY_TWILIO}}"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "r17",
+  "automationId": "auto-billing",
+  "automationName": "Insurance Claim Prep",
+  "timestamp": "2026-05-30T18:00:00Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 750,
+  "message": "Billing API authentication failed"
+}

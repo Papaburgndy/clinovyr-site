@@ -1,0 +1,46 @@
+{
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "eslint",
+    "seed": "ts-node scripts/seed-test-data.ts",
+    "test": "jest",
+    "test:report-pdf": "ts-node scripts/verify-report-pdf-size.ts",
+    "test:e2e": "playwright test",
+    "cron:monthly-reports": "ts-node src/cron/monthly-reports.ts",
+    "cron:monthly-reports:dry-run": "ts-node src/cron/monthly-reports.ts --dry-run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
+    "@react-pdf/renderer": "^4.5.1",
+    "clsx": "^2.1.1",
+    "next": "15.5.18",
+    "next-auth": "^5.0.0-beta.31",
+    "nodemailer": "^7.0.13",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "recharts": "^3.8.1",
+    "resend": "^6.12.4",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.52.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.18",
+    "jest": "^29.7.0",
+    "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  }
+}

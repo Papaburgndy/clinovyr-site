@@ -1,0 +1,140 @@
+import { writeMarkdownFile } from "../utils/output.js";
+import type { SetupContext } from "../types.js";
+
+function formatPropertyTable(context: SetupContext): string {
+  if (context.properties.length === 0) {
+    return "_No property results recorded._\n";
+  }
+
+  const rows = context.properties
+    .map(
+      (property) =>
+        `| \`${property.name}\` | ${property.status} | ${property.message ?? "—"} |`,
+    )
+    .join("\n");
+
+  return `| Property | Status | Notes |\n| --- | --- | --- |\n${rows}\n`;
+}
+
+function formatEmailTable(context: SetupContext): string {
+  if (context.emailSequences.length === 0) {
+    return "_No email templates recorded._\n";
+  }
+
+  const rows = context.emailSequences
+    .map(
+      (email) =>
+        `| Day ${email.day} | ${email.name} | ${email.status} | ${email.hubspotId ?? "—"} |`,
+    )
+    .join("\n");
+
+  return `| Day | Name | Status | HubSpot ID |\n| --- | --- | --- | --- |\n${rows}\n`;
+}
+
+function formatApiCalls(context: SetupContext): string {
+  const rows = context.apiCalls
+    .map(
+      (call) =>
+        `| ${call.step} | ${call.method} | \`${call.endpoint}\` | ${call.status} | ${call.message ?? "—"} |`,
+    )
+    .join("\n");
+
+  return `| Step | Method | Endpoint | Status | Notes |\n| --- | --- | --- | --- | --- |\n${rows}\n`;
+}
+
+export async function runReportStep(context: SetupContext): Promise<void> {
+  console.log("\n=== STEP 6 — Setup Report ===");
+
+  context.completedAt = new Date().toISOString();
+
+  const report = `# HubSpot CRM Setup Complete — ${context.config.companyName}
+
+**Client ID:** \`${context.config.clientId}\`  
+**Industry:** ${context.config.industry}  
+**Mode:** ${context.dryRun ? "Dry run (no HubSpot writes)" : "Live setup"}  
+**Started:** ${context.startedAt}  
+**Completed:** ${context.completedAt}
+
+## Summary
+
+Automated CRM setup for ${context.config.companyName}. This report documents audit findings, custom properties, AI lead scoring, email sequences, dashboard configuration, and testing steps.
+
+## Step 1 — Audit
+
+- Export: \`output/crm-audit-${context.config.clientId}.json\`
+- Errors during audit: ${context.audit?.errors.length ?? 0}
+
+## Step 2 — Custom Properties
+
+${formatPropertyTable(context)}
+
+## Step 3 — AI Lead Scoring
+
+- Scoring module: \`scoreLead(leadData)\` in \`src/steps/lead-scoring.ts\`
+- Model: \`claude-sonnet-4-6\`
+- Sample score: ${context.leadScoring?.sampleScore ? `${context.leadScoring.sampleScore.score}/100 — ${context.leadScoring.sampleScore.reason}` : "_Not available_"}
+- Workflow stub: \`output/workflow-stub-lead-scoring-${context.config.clientId}.json\`
+
+### Manual workflow setup
+
+${(context.leadScoring?.workflowStub.manualSteps ?? [])
+  .map((step, index) => `${index + 1}. ${step}`)
+  .join("\n")}
+
+## Step 4 — Email Sequences
+
+${formatEmailTable(context)}
+
+- Full export: \`output/email-sequence-${context.config.clientId}.json\`
+- Enrollment stub: \`output/workflow-stub-email-sequence-${context.config.clientId}.json\`
+
+## Step 5 — Dashboard
+
+- Dashboard name: **${context.dashboard.name}**
+- Setup file: \`output/dashboard-setup-${context.config.clientId}.json\`
+
+### Widgets
+
+${context.dashboard.widgets
+  .map(
+    (widget) =>
+      `- **${widget.title}** (${widget.type})\n  ${widget.setupInstructions}`,
+  )
+  .join("\n")}
+
+## API Call Log
+
+${formatApiCalls(context)}
+
+## Testing Instructions
+
+1. **Verify properties** — HubSpot → Settings → Properties → Contact properties. Confirm \`ai_lead_score\`, \`lead_source_detail\`, \`last_contacted_by_ai\`, and \`escalate_to_human\` exist.
+2. **Test lead scoring** — Create a test contact in Lead stage. Run \`scoreLead()\` with sample data or connect your workflow webhook.
+3. **Review email templates** — Marketing → Email. Search for templates prefixed with \`${context.config.clientId}-day-\`. Send test emails to yourself.
+4. **Build workflows** — Follow stubs in \`output/workflow-stub-*.json\` to create lead scoring and nurture workflows in HubSpot UI.
+5. **Build dashboard** — Follow \`output/dashboard-setup-${context.config.clientId}.json\` to add four reports to a shared dashboard.
+6. **End-to-end test** — Submit a test lead, confirm property writes, workflow enrollment, and first sequence email.
+
+## Output Files
+
+| File | Description |
+| --- | --- |
+| \`output/crm-audit-${context.config.clientId}.json\` | Full CRM audit snapshot |
+| \`output/workflow-stub-lead-scoring-${context.config.clientId}.json\` | Lead scoring workflow manual steps |
+| \`output/email-sequence-${context.config.clientId}.json\` | Generated nurture email content |
+| \`output/workflow-stub-email-sequence-${context.config.clientId}.json\` | Email enrollment workflow steps |
+| \`output/dashboard-setup-${context.config.clientId}.json\` | Dashboard widget instructions |
+| \`output/setup-complete-${context.config.clientId}.md\` | This report |
+
+---
+
+_Generated by Clinovyr CRM Automation CLI_
+`;
+
+  const reportPath = writeMarkdownFile(
+    `output/setup-complete-${context.config.clientId}.md`,
+    report,
+  );
+
+  console.log(`  ✓ Setup report written: ${reportPath}`);
+}

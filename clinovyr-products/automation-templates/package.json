@@ -1,0 +1,19 @@
+{
+  "name": "clinovyr-automation-templates-validation",
+  "version": "1.0.0",
+  "description": "Validation suite for Clinovyr n8n and Make.com automation templates",
+  "private": true,
+  "scripts": {
+    "validate": "ts-node src/validate-all.ts",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.10.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

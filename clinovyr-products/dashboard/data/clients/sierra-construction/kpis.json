@@ -1,0 +1,32 @@
+{
+  "tasksAutomated": 961,
+  "hoursSaved": 139,
+  "automationsRunning": 3,
+  "roiEstimate": 6255,
+  "tasksByMonth": [
+    {
+      "month": "Jan",
+      "tasks": 0
+    },
+    {
+      "month": "Feb",
+      "tasks": 0
+    },
+    {
+      "month": "Mar",
+      "tasks": 0
+    },
+    {
+      "month": "Apr",
+      "tasks": 0
+    },
+    {
+      "month": "May",
+      "tasks": 925
+    },
+    {
+      "month": "Jun",
+      "tasks": 36
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "roseville-realty-run-334",
+  "automationId": "rrg-listings",
+  "automationName": "Listing Description Generator",
+  "timestamp": "2026-03-15T15:18:00.000Z",
+  "status": "success",
+  "tasksProcessed": 2,
+  "durationMs": 9925
+}

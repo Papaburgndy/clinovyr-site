@@ -1,0 +1,10 @@
+{
+  "id": "roseville-realty-run-425",
+  "automationId": "rrg-leads",
+  "automationName": "Lead Qualification",
+  "timestamp": "2026-04-12T14:09:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 644,
+  "message": "Upstream API timeout — retry scheduled"
+}

@@ -1,0 +1,62 @@
+{
+  "name": "{{COMPANY_NAME}} - Lead Follow-Up",
+  "flow": [
+    {
+      "id": 1,
+      "module": "{{CRM_TYPE}}:watchNewLeads",
+      "version": 1,
+      "parameters": {
+        "connection": "{{CRM_TYPE}}",
+        "apiKey": "{{API_KEY_CRM}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "tools:Sleep",
+      "version": 1,
+      "parameters": {
+        "delay": 86400
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "{{EMAIL_PROVIDER}}:sendEmail",
+      "version": 1,
+      "parameters": {
+        "to": "{{lead.email}}",
+        "subject": "{{COMPANY_NAME}} — Thanks for reaching out",
+        "body": "Hi {{lead.firstName}}, thank you for contacting {{COMPANY_NAME}}. We wanted to follow up on your inquiry."
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "templateId": "lead-followup-email",
+    "placeholders": [
+      "{{COMPANY_NAME}}",
+      "{{CRM_TYPE}}",
+      "{{EMAIL_PROVIDER}}",
+      "{{API_KEY_CRM}}"
+    ]
+  }
+}

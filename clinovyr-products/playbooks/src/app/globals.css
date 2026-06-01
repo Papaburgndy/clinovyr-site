@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #0d0f12;
+  --paper: #f5f2ed;
+  --cream: #ede9e2;
+  --accent: #1a6b5a;
+  --accent-light: #2d9e88;
+  --gold: #c49a3c;
+  --muted: #7a7468;
+  --rule: #d8d3ca;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.font-mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}

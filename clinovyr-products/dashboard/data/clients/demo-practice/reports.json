@@ -1,0 +1,26 @@
+[
+  {
+    "id": "report-2026-05",
+    "month": "May",
+    "year": 2026,
+    "filename": "2026-05.pdf",
+    "generatedAt": "2026-06-01T19:49:34.275Z",
+    "sizeKb": 7
+  },
+  {
+    "id": "report-2026-04",
+    "month": "April",
+    "year": 2026,
+    "filename": "demo-practice-april-2026.pdf",
+    "generatedAt": "2026-04-30T09:00:00Z",
+    "sizeKb": 238
+  },
+  {
+    "id": "report-2026-03",
+    "month": "March",
+    "year": 2026,
+    "filename": "demo-practice-march-2026.pdf",
+    "generatedAt": "2026-03-31T09:00:00Z",
+    "sizeKb": 231
+  }
+]

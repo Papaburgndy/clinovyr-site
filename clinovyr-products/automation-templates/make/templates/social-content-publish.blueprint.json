@@ -1,0 +1,60 @@
+{
+  "name": "{{COMPANY_NAME}} - Social Content Publish",
+  "flow": [
+    {
+      "id": 1,
+      "module": "google-sheets:watchRows",
+      "version": 1,
+      "parameters": {
+        "spreadsheetId": "{{API_KEY_SHEETS}}",
+        "sheet": "Content Calendar"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "linkedin:createPost",
+      "version": 1,
+      "parameters": {
+        "text": "{{row.content}} — {{COMPANY_NAME}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "facebook:createPost",
+      "version": 1,
+      "parameters": {
+        "message": "{{row.content}} — {{COMPANY_NAME}}",
+        "webhookCallback": "{{WEBHOOK_URL}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "templateId": "social-content-publish",
+    "placeholders": [
+      "{{COMPANY_NAME}}",
+      "{{WEBHOOK_URL}}",
+      "{{API_KEY_SHEETS}}"
+    ]
+  }
+}

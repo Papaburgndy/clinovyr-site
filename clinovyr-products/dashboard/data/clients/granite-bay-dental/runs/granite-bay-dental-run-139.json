@@ -1,0 +1,10 @@
+{
+  "id": "granite-bay-dental-run-139",
+  "automationId": "gbd-intake",
+  "automationName": "New Patient Intake",
+  "timestamp": "2026-04-15T11:45:00.000Z",
+  "status": "error",
+  "tasksProcessed": 0,
+  "durationMs": 1338,
+  "message": "Upstream API timeout — retry scheduled"
+}

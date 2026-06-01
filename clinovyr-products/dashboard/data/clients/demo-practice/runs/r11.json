@@ -1,0 +1,9 @@
+{
+  "id": "r11",
+  "automationId": "auto-referrals",
+  "automationName": "Referral Letter Drafting",
+  "timestamp": "2026-05-28T11:30:00Z",
+  "status": "success",
+  "tasksProcessed": 2,
+  "durationMs": 15000
+}

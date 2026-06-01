@@ -1,0 +1,9 @@
+{
+  "id": "granite-bay-dental-run-172",
+  "automationId": "gbd-referrals",
+  "automationName": "Specialist Referral Drafts",
+  "timestamp": "2026-04-27T18:36:00.000Z",
+  "status": "success",
+  "tasksProcessed": 13,
+  "durationMs": 20644
+}

@@ -1,0 +1,63 @@
+{
+  "name": "{{COMPANY_NAME}} - New Client Onboarding",
+  "flow": [
+    {
+      "id": 1,
+      "module": "{{CRM_TYPE}}:watchNewClients",
+      "version": 1,
+      "parameters": {
+        "connection": "{{CRM_TYPE}}",
+        "apiKey": "{{API_KEY_CRM}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "{{EMAIL_PROVIDER}}:sendEmail",
+      "version": 1,
+      "parameters": {
+        "to": "{{client.email}}",
+        "subject": "Welcome to {{COMPANY_NAME}}",
+        "body": "We're excited to work with you. Complete your intake form to get started."
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "slack:sendMessage",
+      "version": 1,
+      "parameters": {
+        "channel": "#new-clients",
+        "text": "New client onboarded at {{COMPANY_NAME}}: {{client.name}}"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "templateId": "new-client-onboarding",
+    "placeholders": [
+      "{{COMPANY_NAME}}",
+      "{{CRM_TYPE}}",
+      "{{EMAIL_PROVIDER}}",
+      "{{API_KEY_CRM}}"
+    ]
+  }
+}
