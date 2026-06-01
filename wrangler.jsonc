@@ -1,20 +1,26 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
   "name": "clinovyr-site",
   "compatibility_date": "2026-05-27",
-  "observability": {
-    "enabled": true
-  },
-  "assets": {
-    "directory": "."
-  },
   "compatibility_flags": [
-    "nodejs_compat"
+    "nodejs_compat",
+    "global_fetch_strictly_public"
   ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
       "service": "clinovyr-site"
     }
-  ]
+  ],
+  "images": {
+    "binding": "IMAGES"
+  },
+  "observability": {
+    "enabled": true
+  }
 }

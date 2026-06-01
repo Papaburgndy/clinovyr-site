@@ -1,0 +1,7 @@
+# Copy to .dev.vars for local `npm run preview` (not committed).
+NEXTJS_ENV=development
+
+# Contact API (required in production — set as Worker secrets in Cloudflare)
+# RESEND_API_KEY=re_xxxxxxxx
+# CONTACT_EMAIL=hello@clinovyr.com
+# RESEND_FROM_EMAIL=Clinovyr <notifications@clinovyr.com>
