@@ -4,16 +4,45 @@ This site uses [@opennextjs/cloudflare](https://opennext.js.org/cloudflare/get-s
 
 ## Cloudflare dashboard (Git-connected build)
 
-Use **Workers** (or Workers Builds) with a connected repository.
+Use **Workers** → your Worker → **Settings** → **Builds** with a connected repository.
+
+### Required dashboard settings
 
 | Setting | Value |
 |--------|--------|
-| **Build command** | *(leave empty)* — `wrangler.jsonc` runs OpenNext via `[build].command` |
-| **Deploy command** | `npx wrangler deploy` |
+| **Build command** | *(leave empty)* — `npm run deploy` runs the OpenNext build first |
+| **Deploy command** | `npm run deploy` |
 | **Root directory** | `/` (repository root) |
 | **Node.js version** | **22** or later (Wrangler 4 requires Node ≥ 22) |
 
-Cloudflare runs `npm ci` automatically before deploy. When only `npx wrangler deploy` is configured, Wrangler executes the build command in `wrangler.jsonc` first:
+**Do not use `npx wrangler deploy` as the deploy command.** When Wrangler detects an OpenNext project it redirects to `opennextjs-cloudflare deploy`, which **does not** run the `[build].command` in `wrangler.jsonc`. That produces:
+
+```
+ERROR Could not find compiled Open Next config, did you run the build command?
+```
+
+The `deploy` script in `package.json` always builds before deploy:
+
+```json
+"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+```
+
+### Alternative: separate build and deploy steps
+
+If you prefer Cloudflare to run build and deploy as distinct phases:
+
+| Setting | Value |
+|--------|--------|
+| **Build command** | `npm run build:cloudflare` |
+| **Deploy command** | `npx opennextjs-cloudflare deploy` |
+
+Still **do not** use `npx wrangler deploy` — use the OpenNext CLI for deploy so Wrangler does not hijack the command.
+
+Cloudflare runs `npm ci` automatically before the build/deploy steps.
+
+### Why `wrangler.jsonc` `[build].command` is not enough
+
+`wrangler.jsonc` includes a build hook for direct local `wrangler deploy`:
 
 ```jsonc
 "build": {
@@ -21,15 +50,7 @@ Cloudflare runs `npm ci` automatically before deploy. When only `npx wrangler de
 }
 ```
 
-That invokes `next build` (via the `build` script in `package.json`) and produces `.open-next/` before upload.
-
-Alternative single-step local/CI deploy:
-
-```bash
-npm run deploy
-```
-
-That runs `opennextjs-cloudflare build` then deploys via the OpenNext CLI (which wraps Wrangler).
+That hook runs only when Wrangler itself executes deploy. Workers Builds with deploy command `npx wrangler deploy` triggers OpenNext's wrapper instead, which skips this hook. There is no repo file that overrides Workers Builds deploy settings — configure the dashboard (or [Builds API](https://developers.cloudflare.com/workers/ci-cd/builds/api-reference/)) explicitly.
 
 ## Environment variables / secrets
 
@@ -45,9 +66,16 @@ For local preview with bindings, copy `.dev.vars.example` to `.dev.vars` and fil
 
 ## Verify locally
 
+Requires Node.js 22+ (Wrangler 4).
+
 ```bash
-npx wrangler deploy --dry-run
-# or explicitly:
+# Build only — confirms .open-next/ is produced
+npm run build:cloudflare
+
+# Full build + deploy (same as Cloudflare deploy command)
+npm run deploy
+
+# Dry-run after build (requires Node 22+)
 npm run build:cloudflare && npx wrangler deploy --dry-run
 ```
 

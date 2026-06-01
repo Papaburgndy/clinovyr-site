@@ -23,7 +23,9 @@
   "observability": {
     "enabled": true
   },
-  // Runs before `wrangler deploy` (Workers Git integration often skips a separate build step)
+  // Runs before direct `wrangler deploy` only — NOT when Workers Builds uses
+  // `npx wrangler deploy` (OpenNext hijacks to `opennextjs-cloudflare deploy`).
+  // Cloudflare CI: set deploy command to `npm run deploy` (see DEPLOY.md).
   "build": {
     "command": "npx opennextjs-cloudflare build"
   }
