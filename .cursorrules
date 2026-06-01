@@ -1,0 +1,72 @@
+---
+# CLINOVYR.COM — Cursor Rules
+# AI Business Consulting | Granite Bay, CA
+
+## Project Overview
+This is the marketing website for Clinovyr, an AI consulting firm serving small and mid-size businesses in the Roseville/Granite Bay, California area. The brand is sophisticated, intelligent, and results-focused — not flashy or startup-generic.
+
+## Tech Stack
+- Next.js 15 App Router (TypeScript)
+- Tailwind CSS with custom design tokens
+- Framer Motion for animations
+- Resend for contact form emails
+- Deployed on Vercel
+
+## Design System
+### Colors (define in tailwind.config.ts)
+- ink: #0d0f12 (near-black, primary text/backgrounds)
+- paper: #f5f2ed (warm off-white, light backgrounds)  
+- cream: #ede9e2 (secondary warm background)
+- accent: #1a6b5a (deep teal — primary brand color)
+- accent-light: #2d9e88 (lighter teal for hovers/highlights)
+- gold: #c49a3c (warm gold — secondary accent, use sparingly)
+- muted: #7a7468 (warm gray for secondary text)
+- rule: #d8d3ca (subtle divider color)
+
+### Typography
+- Display/Headings: Cormorant Garamond (serif, elegant, editorial)
+- Body: Instrument Sans (clean, readable)
+- Mono/Labels: DM Mono (technical labels, pricing, tags)
+
+### Design Principles
+- Sophisticated, NOT corporate generic
+- Dark sections contrast with warm paper/cream sections
+- Generous whitespace — never cluttered
+- Animations: subtle fade-ins and slide-ups, never flashy
+- Mobile-first responsive
+
+## Code Standards
+- Always use TypeScript, never plain JS
+- Named exports for all components (never default export for components)
+- File naming: kebab-case for files, PascalCase for component names
+- Server Components by default; only use "use client" when needed for interactivity
+- Use the cn() utility for conditional Tailwind classes
+- Never use inline styles — Tailwind classes only
+- Use semantic HTML (section, article, nav, main, header, footer)
+- Every page must be accessible: proper heading hierarchy, aria labels, keyboard nav
+
+## File Structure
+src/
+  app/          → Next.js App Router pages
+  components/   → Reusable UI components
+    ui/         → Primitive components (Button, Badge, etc.)
+    sections/   → Page sections (Hero, Services, etc.)
+    layout/     → Header, Footer, Navigation
+  lib/          → Utilities, constants, types
+  styles/       → Global CSS
+
+## Content — Clinovyr Brand
+- Company: Clinovyr (clinovyr.com)
+- Location: Granite Bay / Roseville, California
+- Tagline: "Intelligence, Applied."
+- Mission: Help local Placer County businesses implement AI to save time, reduce costs, and grow
+- Target clients: Medical practices, real estate firms, law firms, construction companies, med spas, specialty retail
+- Services: AI Readiness Assessment, Workflow Automation, AI Operations Retainer, Workshops, AI Strategy, Industry Playbooks
+
+## Do Not
+- Do not use purple gradients or generic "AI startup" aesthetics
+- Do not use Arial, Inter, or Roboto as primary fonts
+- Do not add unnecessary npm packages without asking
+- Do not use useEffect for data fetching — use Server Components
+- Do not add placeholder/lorem ipsum text — use real Clinovyr content
+---
