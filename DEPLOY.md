@@ -70,7 +70,7 @@ Set these as **Worker secrets** (or encrypted env vars) in the Cloudflare dashbo
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `RESEND_API_KEY` | Yes | Resend API for `/api/contact` |
-| `CONTACT_EMAIL` | Yes | Inbox for form submissions |
+| `CONTACT_EMAIL` | Yes | Company inbox (clinovyr@gmail.com) for form submissions |
 | `RESEND_FROM_EMAIL` | No | Custom From address (defaults in code) |
 
 For local preview with bindings, copy `.dev.vars.example` to `.dev.vars` and fill in values (`.dev.vars` is gitignored).

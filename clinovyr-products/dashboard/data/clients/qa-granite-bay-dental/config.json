@@ -1,0 +1,38 @@
+{
+  "clientName": "QA Granite Bay Dental",
+  "email": "clinovyr@gmail.com",
+  "plan": "starter",
+  "mrr": 999,
+  "active": true,
+  "escalationEmail": "clinovyr@gmail.com",
+  "notificationPreferences": {
+    "emailReports": false,
+    "emailErrors": false,
+    "emailWeeklySummary": false
+  },
+  "businessHours": {
+    "monday": {
+      "open": "08:00",
+      "close": "17:00"
+    },
+    "tuesday": {
+      "open": "08:00",
+      "close": "17:00"
+    },
+    "wednesday": {
+      "open": "08:00",
+      "close": "17:00"
+    },
+    "thursday": {
+      "open": "08:00",
+      "close": "17:00"
+    },
+    "friday": {
+      "open": "08:00",
+      "close": "16:00"
+    },
+    "saturday": null,
+    "sunday": null
+  },
+  "faq": []
+}

@@ -203,14 +203,14 @@ function addContentSlide(
   }
 
   if (slideData.type === "cta") {
-    slide.addText("[ QR CODE PLACEHOLDER ]", {
+    slide.addText("clinovyr.com\nclinovyr@gmail.com\nGranite Bay, CA", {
       x: 6.5,
       y: 2.2,
       w: 3,
       h: 2,
-      fontSize: 11,
+      fontSize: 12,
       fontFace: "Arial",
-      color: subColor,
+      color: ACCENT,
       align: "center",
       valign: "middle",
       shape: pptx.ShapeType.rect,
@@ -225,14 +225,13 @@ function addContentSlide(
 export async function buildWorkshopPptx(
   outline: WorkshopOutline,
   outputPath: string,
+  dateLabel: string,
 ): Promise<void> {
   const pptx = new PptxGenJS();
   pptx.layout = "LAYOUT_16x9";
   pptx.author = "Clinovyr";
   pptx.company = "Clinovyr";
   pptx.subject = outline.title;
-
-  const dateLabel = "[Workshop Date]";
 
   addTitleSlide(pptx, outline, dateLabel);
 

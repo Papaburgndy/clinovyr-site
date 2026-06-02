@@ -18,8 +18,13 @@ export function getSiteUrl(): string {
   return url.replace(/\/$/, "");
 }
 
+const RESEND_SANDBOX_FROM = "Clinovyr <onboarding@resend.dev>";
+
 export function getFromAddress(): string {
-  return process.env.RESEND_FROM_EMAIL ?? "Clinovyr <hello@clinovyr.com>";
+  if (process.env.RESEND_SANDBOX === "true" || !process.env.RESEND_FROM_EMAIL) {
+    return RESEND_SANDBOX_FROM;
+  }
+  return process.env.RESEND_FROM_EMAIL;
 }
 
 function emailShell(title: string, bodyHtml: string): string {
@@ -67,7 +72,7 @@ export async function sendPlaybookDeliveryEmail(params: {
     </p>
     <p style="margin:0;font-family:system-ui,sans-serif;font-size:14px;color:#7a7468;line-height:1.5;">
       Questions about implementation? Reply to this email or contact
-      <a href="mailto:hello@clinovyr.com" style="color:#1a6b5a;">hello@clinovyr.com</a>.
+      <a href="mailto:clinovyr@gmail.com" style="color:#1a6b5a;">clinovyr@gmail.com</a>.
     </p>`;
 
   const attachments = params.pdfBuffer

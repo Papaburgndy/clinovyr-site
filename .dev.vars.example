@@ -3,5 +3,6 @@ NEXTJS_ENV=development
 
 # Contact API (required in production — set as Worker secrets in Cloudflare)
 # RESEND_API_KEY=re_xxxxxxxx
-# CONTACT_EMAIL=hello@clinovyr.com
-# RESEND_FROM_EMAIL=Clinovyr <notifications@clinovyr.com>
+# CONTACT_EMAIL=clinovyr@gmail.com
+# RESEND_FROM_EMAIL=Clinovyr <onboarding@resend.dev>
+# RESEND_SANDBOX=true

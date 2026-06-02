@@ -10,7 +10,7 @@ This is the marketing website for Clinovyr, an AI consulting firm serving small 
 - Tailwind CSS with custom design tokens
 - Framer Motion for animations
 - Resend for contact form emails
-- Deployed on Vercel
+- Deployed on Cloudflare Workers (OpenNext)
 
 ## Design System
 ### Colors (define in tailwind.config.ts)

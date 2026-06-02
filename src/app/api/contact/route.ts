@@ -20,13 +20,13 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
+const RESEND_SANDBOX_FROM = "Clinovyr <onboarding@resend.dev>";
+
 function getFromAddress(): string {
-  if (process.env.RESEND_FROM_EMAIL) {
-    return process.env.RESEND_FROM_EMAIL;
+  if (process.env.RESEND_SANDBOX === "true" || !process.env.RESEND_FROM_EMAIL) {
+    return RESEND_SANDBOX_FROM;
   }
-  return process.env.NODE_ENV === "production"
-    ? "Clinovyr <notifications@clinovyr.com>"
-    : "Clinovyr <onboarding@resend.dev>";
+  return process.env.RESEND_FROM_EMAIL;
 }
 
 function buildInternalEmailHtml(data: {
@@ -101,6 +101,7 @@ function buildInternalEmailHtml(data: {
 function buildConfirmationEmailHtml(data: {
   fullName: string;
   businessName: string;
+  contactEmail: string;
 }): string {
   return `
 <!DOCTYPE html>
@@ -129,7 +130,7 @@ function buildConfirmationEmailHtml(data: {
                   </td>
                   <td style="width:12px;"></td>
                   <td>
-                    <a href="mailto:hello@clinovyr.com" style="font-family:system-ui,sans-serif;font-size:14px;color:#1a6b5a;text-decoration:none;">hello@clinovyr.com</a>
+                    <a href="mailto:${escapeHtml(data.contactEmail)}" style="font-family:system-ui,sans-serif;font-size:14px;color:#1a6b5a;text-decoration:none;">${escapeHtml(data.contactEmail)}</a>
                   </td>
                 </tr>
               </table>
@@ -219,7 +220,7 @@ export async function POST(request: Request) {
         from,
         to: email,
         subject: "We received your inquiry — Clinovyr",
-        html: buildConfirmationEmailHtml({ fullName, businessName }),
+        html: buildConfirmationEmailHtml({ fullName, businessName, contactEmail }),
       }),
     ]);
 

@@ -109,20 +109,28 @@ Requirements:
 - closingMessage: warm, professional sign-off from Clinovyr`;
 }
 
+function titleFromActionText(text: string, maxLength = 72): string {
+  const firstClause = text.split(/[.·]/)[0]?.trim() ?? text.trim();
+  if (firstClause.length <= maxLength) {
+    return firstClause;
+  }
+  return `${firstClause.slice(0, maxLength - 1).trim()}…`;
+}
+
 function buildDevelopmentFallbackReport(
   formData: AssessmentFormData,
   score: AIReadinessScore,
 ): AssessmentReport {
-  const opportunities = score.topOpportunities.slice(0, 3).map((description, index) => ({
-    title: `Priority opportunity ${index + 1}`,
-    description,
+  const opportunities = score.topOpportunities.slice(0, 3).map((title, index) => ({
+    title,
+    description: title,
     estimatedROI: score.estimatedAnnualROI,
     timeToImplement: index === 0 ? "4–8 weeks" : "6–12 weeks",
     difficulty: (index === 0 ? "Medium" : "Low") as "Low" | "Medium" | "High",
   }));
 
-  const quickWins = score.quickWins.slice(0, 3).map((howTo, index) => ({
-    title: `Quick win ${index + 1}`,
+  const quickWins = score.quickWins.slice(0, 3).map((howTo) => ({
+    title: titleFromActionText(howTo),
     howTo,
     toolsNeeded: [
       formData.crm.includes("None") ? "Lightweight CRM or spreadsheet" : formData.crm[0],

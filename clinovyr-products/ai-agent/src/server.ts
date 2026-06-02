@@ -1,5 +1,35 @@
+import { existsSync, readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createApp } from "./app.js";
 import { createResendClient } from "./lib/resend.js";
+
+function loadEnvLocal(): void {
+  const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+  for (const rel of [".env.local", "../../.env.local"]) {
+    const envPath = join(root, rel);
+    if (!existsSync(envPath)) continue;
+    for (const line of readFileSync(envPath, "utf8").split("\n")) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eq = trimmed.indexOf("=");
+      if (eq === -1) continue;
+      const key = trimmed.slice(0, eq).trim();
+      if (process.env[key]) continue;
+      let value = trimmed.slice(eq + 1).trim();
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1);
+      }
+      process.env[key] = value;
+    }
+    break;
+  }
+}
+
+loadEnvLocal();
 import {
   createMemoryRedis,
   createRedisClient,

@@ -3,5 +3,7 @@ node_modules/
 dist-cli/
 output/
 data/processed-payments.json
-.env.local
+.env*
+!.env.local.example
+!.env.example
 load-test/

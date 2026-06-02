@@ -82,10 +82,10 @@ export function Footer() {
               conversation.
             </p>
             <a
-              href="mailto:hello@clinovyr.com"
+              href="mailto:clinovyr@gmail.com"
               className="mt-4 inline-block font-sans text-sm text-accent-light transition-colors duration-300 hover:text-paper"
             >
-              hello@clinovyr.com
+              clinovyr@gmail.com
             </a>
             <div className="mt-6">
               <a

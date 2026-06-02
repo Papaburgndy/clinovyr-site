@@ -1,0 +1,12 @@
+{
+  "tasksAutomated": 500,
+  "hoursSaved": 72,
+  "automationsRunning": 1,
+  "roiEstimate": 3240,
+  "tasksByMonth": [
+    {
+      "month": "May",
+      "tasks": 500
+    }
+  ]
+}

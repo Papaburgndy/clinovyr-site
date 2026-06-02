@@ -142,8 +142,8 @@ export default async function PlaybookSalesPage({ params }: PageProps) {
             </div>
             <p className="mt-4 text-xs text-muted">
               Secure checkout via Stripe. Questions?{" "}
-              <a href="mailto:hello@clinovyr.com" className="text-accent">
-                hello@clinovyr.com
+              <a href="mailto:clinovyr@gmail.com" className="text-accent">
+                clinovyr@gmail.com
               </a>
             </p>
           </div>

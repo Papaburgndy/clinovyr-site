@@ -20,8 +20,17 @@ export function getSiteUrl(): string {
   return url.replace(/\/$/, "");
 }
 
+const RESEND_SANDBOX_FROM = "Clinovyr <onboarding@resend.dev>";
+
+export function isResendSandbox(): boolean {
+  return process.env.RESEND_SANDBOX === "true";
+}
+
 export function getFromAddress(): string {
-  return process.env.RESEND_FROM_EMAIL ?? "Clinovyr <reports@clinovyr.com>";
+  if (isResendSandbox() || !process.env.RESEND_FROM_EMAIL) {
+    return RESEND_SANDBOX_FROM;
+  }
+  return process.env.RESEND_FROM_EMAIL;
 }
 
 function emailShell(title: string, bodyHtml: string): string {
@@ -96,11 +105,15 @@ export function buildInternalAssessmentEmailHtml(params: {
   return emailShell("New AI Readiness Assessment", body);
 }
 
+const CONTACT_EMAIL_FALLBACK = "clinovyr@gmail.com";
+
 export function buildClientConfirmationEmailHtml(params: {
   formData: AssessmentFormData;
   score: AIReadinessScore;
+  contactEmail?: string;
 }): string {
   const { formData, score } = params;
+  const contactEmail = params.contactEmail ?? CONTACT_EMAIL_FALLBACK;
   const firstName = formData.firstName;
 
   const body = `
@@ -123,54 +136,71 @@ export function buildClientConfirmationEmailHtml(params: {
     </table>
     <p style="margin:0;font-family:system-ui,sans-serif;font-size:14px;color:#7a7468;line-height:1.5;">
       Questions? Reply to this email or contact us at
-      <a href="mailto:hello@clinovyr.com" style="color:#1a6b5a;">hello@clinovyr.com</a>.
+      <a href="mailto:${escapeHtml(contactEmail)}" style="color:#1a6b5a;">${escapeHtml(contactEmail)}</a>.
     </p>`;
 
   return emailShell("Your AI Readiness Report is on the way", body);
 }
 
+export type AssessmentEmailResult = {
+  emailSent: boolean;
+  internalSent: boolean;
+  confirmationSent: boolean;
+  warnings: string[];
+};
+
 export async function sendAssessmentEmails(params: {
   formData: AssessmentFormData;
   score: AIReadinessScore;
   assessmentId: string;
-}): Promise<{ ok: true } | { ok: false; error: string }> {
+}): Promise<AssessmentEmailResult> {
   logResendApiKeyLoaded();
 
   const resendApiKey = process.env.RESEND_API_KEY;
-  const contactEmail = process.env.CONTACT_EMAIL ?? "hello@clinovyr.com";
+  const contactEmail = process.env.CONTACT_EMAIL ?? CONTACT_EMAIL_FALLBACK;
+  const warnings: string[] = [];
 
   if (!resendApiKey) {
-    return { ok: false, error: "Email service is not configured." };
+    warnings.push("Email service is not configured (RESEND_API_KEY missing).");
+    return {
+      emailSent: false,
+      internalSent: false,
+      confirmationSent: false,
+      warnings,
+    };
   }
 
   const resend = new Resend(resendApiKey);
   const from = getFromAddress();
   const siteUrl = getSiteUrl();
   const reportUrl = `${siteUrl}/api/generate-report`;
+  const clientEmail = params.formData.email.trim().toLowerCase();
+  const sandbox = isResendSandbox();
+  const canSendConfirmation =
+    !sandbox || clientEmail === contactEmail.trim().toLowerCase();
 
-  const [internalResult, confirmationResult] = await Promise.all([
-    resend.emails.send({
-      from,
-      to: contactEmail,
-      replyTo: params.formData.email,
-      subject: `AI Readiness Assessment — ${params.formData.companyName}`,
-      html: buildInternalAssessmentEmailHtml({
-        formData: params.formData,
-        score: params.score,
-        assessmentId: params.assessmentId,
-        reportUrl,
-      }),
+  if (sandbox && !canSendConfirmation) {
+    console.warn(
+      "[assessment-email] Skipping client confirmation in Resend sandbox (recipient must be account owner):",
+      params.formData.email,
+    );
+    warnings.push(
+      "Client confirmation skipped in Resend sandbox (only account-owner inbox can receive).",
+    );
+  }
+
+  const internalResult = await resend.emails.send({
+    from,
+    to: contactEmail,
+    replyTo: params.formData.email,
+    subject: `AI Readiness Assessment — ${params.formData.companyName}`,
+    html: buildInternalAssessmentEmailHtml({
+      formData: params.formData,
+      score: params.score,
+      assessmentId: params.assessmentId,
+      reportUrl,
     }),
-    resend.emails.send({
-      from,
-      to: params.formData.email,
-      subject: "Your AI Readiness Report is being prepared — Clinovyr",
-      html: buildClientConfirmationEmailHtml({
-        formData: params.formData,
-        score: params.score,
-      }),
-    }),
-  ]);
+  });
 
   console.log("[assessment-email] Resend internal response:", {
     data: internalResult.data,
@@ -180,17 +210,48 @@ export async function sendAssessmentEmails(params: {
     statusCode: internalResult.error?.statusCode,
   });
 
-  console.log("[assessment-email] Resend confirmation response:", {
-    data: confirmationResult.data,
-    error: confirmationResult.error,
-    errorName: confirmationResult.error?.name,
-    errorMessage: confirmationResult.error?.message,
-    statusCode: confirmationResult.error?.statusCode,
-  });
-
-  if (internalResult.error || confirmationResult.error) {
-    return { ok: false, error: "Failed to send notification emails." };
+  const internalSent = !internalResult.error;
+  if (internalResult.error) {
+    console.error("[assessment-email] Internal notification failed:", internalResult.error);
+    warnings.push("Internal notification email failed.");
   }
 
-  return { ok: true };
+  let confirmationSent = false;
+  if (canSendConfirmation) {
+    const confirmationResult = await resend.emails.send({
+      from,
+      to: params.formData.email,
+      subject: "Your AI Readiness Report is being prepared — Clinovyr",
+      html: buildClientConfirmationEmailHtml({
+        formData: params.formData,
+        score: params.score,
+        contactEmail,
+      }),
+    });
+
+    console.log("[assessment-email] Resend confirmation response:", {
+      data: confirmationResult.data,
+      error: confirmationResult.error,
+      errorName: confirmationResult.error?.name,
+      errorMessage: confirmationResult.error?.message,
+      statusCode: confirmationResult.error?.statusCode,
+    });
+
+    confirmationSent = !confirmationResult.error;
+    if (confirmationResult.error) {
+      console.warn(
+        "[assessment-email] Client confirmation failed:",
+        confirmationResult.error,
+      );
+      warnings.push("Client confirmation email failed.");
+    }
+  }
+
+  const emailSent = internalSent && (confirmationSent || !canSendConfirmation);
+  return {
+    emailSent,
+    internalSent,
+    confirmationSent,
+    warnings,
+  };
 }

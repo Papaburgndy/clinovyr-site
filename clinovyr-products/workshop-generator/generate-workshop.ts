@@ -102,7 +102,7 @@ async function main(): Promise<void> {
 
   const outline = await generateWorkshopOutline(input);
 
-  await buildWorkshopPptx(outline, pptxPath);
+  await buildWorkshopPptx(outline, pptxPath, date);
   writeSpeakerGuide(outline, input, guidePath);
 
   console.log("Done.");

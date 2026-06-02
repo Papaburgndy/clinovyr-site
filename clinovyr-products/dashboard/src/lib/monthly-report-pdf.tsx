@@ -335,7 +335,7 @@ export function MonthlyReportPdfDocument({
         <View style={styles.footer} fixed>
           <Text>Prepared by Clinovyr</Text>
           <Text>clinovyr.com</Text>
-          <Text>hello@clinovyr.com</Text>
+          <Text>clinovyr@gmail.com</Text>
         </View>
       </Page>
       <MethodologyPage />

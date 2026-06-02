@@ -1,5 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+export const maxDuration = 60;
 import { renderAssessmentPdfToBuffer } from "@/lib/assessment-pdf";
 import { logResendApiKeyLoaded } from "@/lib/env-check";
 import { generateAssessmentReport } from "@/lib/report-generator";

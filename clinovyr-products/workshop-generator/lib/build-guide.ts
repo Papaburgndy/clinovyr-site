@@ -46,7 +46,9 @@ export function buildSpeakerGuide(
     }
     lines.push("**Speaker notes:**");
     lines.push("");
-    lines.push(slide.speakerNotes);
+    lines.push(
+      slide.speakerNotes.replace(/\[Facilitator Name\]/gi, "your Clinovyr facilitator"),
+    );
     lines.push("");
     lines.push("---", "");
   }
@@ -56,7 +58,7 @@ export function buildSpeakerGuide(
     "## Closing reminders",
     "",
     "- Collect questions during Q&A; offer Clinovyr AI Readiness Assessment as a next step.",
-    "- Contact: hello@clinovyr.com | https://clinovyr.com",
+    "- Contact: clinovyr@gmail.com | https://clinovyr.com",
     "",
   );
 

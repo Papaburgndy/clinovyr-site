@@ -191,7 +191,7 @@ function buildChapter(
         sections: [
           {
             title: "Next steps with Clinovyr",
-            content: `This playbook is your implementation map. For hands-on support — workflow design, integration build, staff training, and ongoing optimization — contact Clinovyr.\n\nhello@clinovyr.com | clinovyr.com | Granite Bay, California\n\nRecommended path: AI Readiness Assessment → Workflow Automation Sprint → AI Operations Retainer.`,
+            content: `This playbook is your implementation map. For hands-on support — workflow design, integration build, staff training, and ongoing optimization — contact Clinovyr.\n\nclinovyr@gmail.com | clinovyr.com | Granite Bay, California\n\nRecommended path: AI Readiness Assessment → Workflow Automation Sprint → AI Operations Retainer.`,
             callouts: [
               "Schedule a 30-minute discovery call to prioritize your top 3 workflows.",
               "Ask about industry-specific automation templates for Placer County businesses.",

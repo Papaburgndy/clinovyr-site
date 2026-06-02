@@ -341,7 +341,9 @@ async function sendReportEmail(
   }
 
   const from =
-    process.env.EMAIL_FROM ?? "Clinovyr Dashboard <hello@clinovyr.com>";
+    process.env.RESEND_SANDBOX === "true" || !process.env.EMAIL_FROM
+      ? "Clinovyr Dashboard <onboarding@resend.dev>"
+      : process.env.EMAIL_FROM;
   const highlights = narrative.winsThisMonth.slice(0, 3);
   const resend = new Resend(apiKey);
 
@@ -357,7 +359,7 @@ async function sendReportEmail(
         <ul>
           ${highlights.map((item) => `<li>${item}</li>`).join("")}
         </ul>
-        <p>Questions? Reply to this email or contact us at hello@clinovyr.com.</p>
+        <p>Questions? Reply to this email or contact us at clinovyr@gmail.com.</p>
         <p>— Clinovyr<br/>Intelligence, Applied.</p>
       `,
       attachments: [

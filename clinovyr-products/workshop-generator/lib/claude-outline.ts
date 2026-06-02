@@ -25,7 +25,7 @@ function buildPrompt(input: WorkshopInput): string {
 - Agenda timeMinutes must sum to exactly ${durationMinutes}
 - Include a mix of intro, education, demo, exercise, and q&a segments
 - Slides should support the agenda; slideNumber starts at 1 and increments
-- speakerNotes: full facilitator script (2–4 sentences minimum per slide)
+- speakerNotes: full facilitator script (2–4 sentences minimum per slide). Refer to the facilitator as "your Clinovyr facilitator" — never use placeholder names like [Facilitator Name], TBD, or [INSERT]
 - stat slides: one compelling statistic with context in bullets
 - exercise slides: clear hands-on instructions for the audience
 - Final slide must be type "cta" for Clinovyr follow-up
@@ -161,9 +161,9 @@ function buildDevelopmentFallbackOutline(input: WorkshopInput): WorkshopOutline 
         title: "Continue with Clinovyr",
         type: "cta",
         bullets: [
-          "hello@clinovyr.com",
+          "clinovyr@gmail.com",
           "clinovyr.com",
-          "[QR code placeholder — schedule a follow-up]",
+          "Schedule a follow-up at clinovyr.com",
         ],
         speakerNotes:
           "Thank the group. Offer AI Readiness Assessment and retainer options. Collect interest for follow-up call.",

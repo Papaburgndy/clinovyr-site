@@ -4,6 +4,9 @@ import { generateMonthlyReport } from "@/lib/monthly-report";
 import fs from "fs/promises";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user?.email) {

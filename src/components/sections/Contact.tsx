@@ -147,8 +147,8 @@ export function Contact() {
       if (!response.ok) {
         throw new Error(
           response.status === 404
-            ? "Our contact form is being set up. Please email hello@clinovyr.com directly."
-            : "Something went wrong. Please try again or email hello@clinovyr.com.",
+            ? "Our contact form is being set up. Please email clinovyr@gmail.com directly."
+            : "Something went wrong. Please try again or email clinovyr@gmail.com.",
         );
       }
 
@@ -159,7 +159,7 @@ export function Contact() {
       setSubmitError(
         error instanceof Error
           ? error.message
-          : "Something went wrong. Please try again or email hello@clinovyr.com.",
+          : "Something went wrong. Please try again or email clinovyr@gmail.com.",
       );
     }
   }
@@ -199,10 +199,10 @@ export function Contact() {
             <div className="mt-10 space-y-2 font-sans text-sm text-paper/80 md:text-base">
               <p>
                 <a
-                  href="mailto:hello@clinovyr.com"
+                  href="mailto:clinovyr@gmail.com"
                   className="text-accent-light transition-colors hover:text-paper"
                 >
-                  hello@clinovyr.com
+                  clinovyr@gmail.com
                 </a>
                 <span className="mx-3 text-paper/30" aria-hidden="true">
                   |

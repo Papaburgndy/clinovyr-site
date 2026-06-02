@@ -39,17 +39,8 @@ export async function POST(request: Request) {
       assessmentId,
     });
 
-    if (!emailResult.ok) {
-      console.error("[submit-assessment] email failed:", emailResult.error);
-      return NextResponse.json(
-        {
-          error: emailResult.error,
-          assessmentId,
-          score: score.overallScore,
-          tier: score.tier,
-        },
-        { status: 500 },
-      );
+    if (!emailResult.emailSent) {
+      console.warn("[submit-assessment] email incomplete:", emailResult.warnings);
     }
 
     return NextResponse.json({
@@ -57,6 +48,10 @@ export async function POST(request: Request) {
       assessmentId,
       score: score.overallScore,
       tier: score.tier,
+      emailSent: emailResult.emailSent,
+      ...(emailResult.warnings.length > 0 && {
+        emailWarning: emailResult.warnings.join(" "),
+      }),
     });
   } catch (error) {
     console.error("[submit-assessment] unexpected error:", error);

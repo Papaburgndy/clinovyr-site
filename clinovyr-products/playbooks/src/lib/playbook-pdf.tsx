@@ -417,7 +417,7 @@ function BackCover() {
         workflows — from readiness assessments to ongoing operations support.
       </Text>
       <Text style={[styles.backText, { marginTop: 24, color: colors.gold }]}>
-        hello@clinovyr.com{"\n"}clinovyr.com
+        clinovyr@gmail.com{"\n"}clinovyr.com
       </Text>
     </Page>
   );

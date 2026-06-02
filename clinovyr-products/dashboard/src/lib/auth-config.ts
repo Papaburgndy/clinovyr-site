@@ -8,7 +8,10 @@ function getEmailProvider() {
   if (process.env.RESEND_API_KEY) {
     return Resend({
       apiKey: process.env.RESEND_API_KEY,
-      from: process.env.EMAIL_FROM ?? "Clinovyr Dashboard <onboarding@resend.dev>",
+      from:
+        process.env.RESEND_SANDBOX === "true" || !process.env.EMAIL_FROM
+          ? "Clinovyr Dashboard <onboarding@resend.dev>"
+          : process.env.EMAIL_FROM,
     });
   }
 

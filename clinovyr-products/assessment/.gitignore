@@ -37,9 +37,6 @@ yarn-error.log*
 # assessment data (PII)
 /data/
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts

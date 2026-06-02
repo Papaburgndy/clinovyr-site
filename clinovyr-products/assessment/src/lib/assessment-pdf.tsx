@@ -290,7 +290,9 @@ export function AssessmentPdfDocument({
             Ready to turn these insights into measurable results? Clinovyr helps
             Placer County businesses implement AI with clarity and confidence.
           </Text>
-          <Text style={styles.paragraph}>hello@clinovyr.com</Text>
+          <Text style={styles.paragraph}>
+            clinovyr@gmail.com · clinovyr.com
+          </Text>
         </View>
 
         <Text style={styles.sectionTitle}>Closing</Text>

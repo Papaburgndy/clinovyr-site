@@ -1,0 +1,9 @@
+{
+  "id": "qa-run-1",
+  "automationId": "qa-auto-intake",
+  "automationName": "QA Patient Intake",
+  "timestamp": "2026-05-02T09:30:00Z",
+  "status": "error",
+  "tasksProcessed": 10,
+  "durationMs": 120000
+}
