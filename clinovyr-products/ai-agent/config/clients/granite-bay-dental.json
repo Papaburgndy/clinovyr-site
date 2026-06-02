@@ -1,0 +1,26 @@
+{
+  "clientId": "granite-bay-dental",
+  "businessName": "Granite Bay Dental",
+  "hours": "Monday–Friday 8:00 AM – 5:00 PM; Saturday 9:00 AM – 1:00 PM (by appointment)",
+  "bookingLink": "https://granitebaydental.com/book",
+  "escalationEmail": "clinovyr@gmail.com",
+  "escalationFrom": "Clinovyr Agent <onboarding@resend.dev>",
+  "faqs": [
+    {
+      "keywords": ["insurance", "take insurance", "accept insurance", "dental insurance"],
+      "answer": "We accept most major PPO dental plans including Delta Dental, MetLife, and Cigna. Call our Roseville office at (916) 555-0142 to verify your specific plan before your visit."
+    },
+    {
+      "keywords": ["parking", "where to park", "location", "address"],
+      "answer": "We're located at 8200 Sierra College Blvd, Roseville, CA 95661 — in the Granite Bay/Roseville area of Placer County. Free parking is available in the lot in front of the building."
+    },
+    {
+      "keywords": ["cleaning", "hygiene", "checkup", "appointment"],
+      "answer": "Routine cleanings and exams typically take 45–60 minutes. New patients should allow 90 minutes. Book online at granitebaydental.com/book or call during business hours."
+    },
+    {
+      "keywords": ["emergency", "toothache", "pain", "urgent"],
+      "answer": "For dental emergencies during business hours, call (916) 555-0142 and we'll prioritize same-day care when possible. After hours, leave a message and our on-call team will return your call."
+    }
+  ]
+}

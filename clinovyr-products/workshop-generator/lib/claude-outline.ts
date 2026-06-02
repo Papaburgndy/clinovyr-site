@@ -26,6 +26,7 @@ function buildPrompt(input: WorkshopInput): string {
 - Include a mix of intro, education, demo, exercise, and q&a segments
 - Slides should support the agenda; slideNumber starts at 1 and increments
 - speakerNotes: full facilitator script (2–4 sentences minimum per slide). Refer to the facilitator as "your Clinovyr facilitator" — never use placeholder names like [Facilitator Name], TBD, or [INSERT]
+- Contact email is always clinovyr@gmail.com (never hello@clinovyr.com); website is clinovyr.com
 - stat slides: one compelling statistic with context in bullets
 - exercise slides: clear hands-on instructions for the audience
 - Final slide must be type "cta" for Clinovyr follow-up

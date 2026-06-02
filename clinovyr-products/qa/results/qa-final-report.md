@@ -1,33 +1,33 @@
 # CLINOVYR QA FINAL REPORT
-Generated: 2026-06-02T15:27:03.033Z
+Generated: 2026-06-02T20:21:58.576Z
 Overall Verdict: GO
 
 ## Summary
 | Metric | Value |
 |--------|-------|
-| Total Tests | 107 |
+| Total Tests | 106 |
 | Passed | 98 |
 | Failed | 0 |
-| Warnings | 9 |
+| Warnings | 8 |
 | Pass Rate | 92% |
-| Duration | 915.2s |
+| Duration | 930.8s |
 
 ## Deliverables Generated
-- [PASS] A1-PDF: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/assessment/data/reports/1780413109032-qa-test-dental-low.pdf` (16.0KB)
-- [PASS] A1-PDF: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/assessment/data/reports/1780413161173-qa-test-realty-mid.pdf` (15.9KB)
-- [PASS] A1-PDF: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/assessment/data/reports/1780413212202-qa-test-law-high.pdf` (16.0KB)
-- [PASS] W-Medical-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/placer-valley-medical-group-2026-06-02-workshop.pptx` (205.1KB)
-- [PASS] W-Medical-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/placer-valley-medical-group-2026-06-02-workshop-guide.md` (21.4KB)
-- [PASS] W-Real Estate-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/sierra-foothills-realty-2026-06-02-workshop.pptx` (234.6KB)
-- [PASS] W-Real Estate-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/sierra-foothills-realty-2026-06-02-workshop-guide.md` (24.4KB)
-- [PASS] W-Legal-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/roseville-business-law-group-2026-06-02-workshop.pptx` (174.6KB)
-- [PASS] W-Legal-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/roseville-business-law-group-2026-06-02-workshop-guide.md` (17.0KB)
-- [PASS] W-Construction-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/granite-bay-builders-2026-06-02-workshop.pptx` (234.8KB)
-- [PASS] W-Construction-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/granite-bay-builders-2026-06-02-workshop-guide.md` (26.2KB)
-- [PASS] W-Wellness-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/rocklin-med-spa-wellness-2026-06-02-workshop.pptx` (222.3KB)
-- [PASS] W-Wellness-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/rocklin-med-spa-wellness-2026-06-02-workshop-guide.md` (21.2KB)
-- [PASS] W-Retail-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/fountains-retail-partners-2026-06-02-workshop.pptx` (203.2KB)
-- [PASS] W-Retail-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/fountains-retail-partners-2026-06-02-workshop-guide.md` (20.0KB)
+- [PASS] A1-PDF: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/assessment/data/reports/1780430788850-qa-test-dental-low.pdf` (16.0KB)
+- [PASS] A1-PDF: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/assessment/data/reports/1780430839302-qa-test-realty-mid.pdf` (15.6KB)
+- [PASS] A1-PDF: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/assessment/data/reports/1780430889398-qa-test-law-high.pdf` (15.7KB)
+- [PASS] W-Medical-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/placer-valley-medical-group-2026-06-02-workshop.pptx` (245.8KB)
+- [PASS] W-Medical-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/placer-valley-medical-group-2026-06-02-workshop-guide.md` (24.9KB)
+- [PASS] W-Real Estate-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/sierra-foothills-realty-2026-06-02-workshop.pptx` (264.7KB)
+- [PASS] W-Real Estate-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/sierra-foothills-realty-2026-06-02-workshop-guide.md` (26.1KB)
+- [PASS] W-Legal-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/roseville-business-law-group-2026-06-02-workshop.pptx` (200.8KB)
+- [PASS] W-Legal-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/roseville-business-law-group-2026-06-02-workshop-guide.md` (21.1KB)
+- [PASS] W-Construction-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/granite-bay-builders-2026-06-02-workshop.pptx` (230.3KB)
+- [PASS] W-Construction-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/granite-bay-builders-2026-06-02-workshop-guide.md` (20.4KB)
+- [PASS] W-Wellness-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/rocklin-med-spa-wellness-2026-06-02-workshop.pptx` (210.3KB)
+- [PASS] W-Wellness-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/rocklin-med-spa-wellness-2026-06-02-workshop-guide.md` (19.9KB)
+- [PASS] W-Retail-PPTX: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/fountains-retail-partners-2026-06-02-workshop.pptx` (250.5KB)
+- [PASS] W-Retail-GUIDE: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/workshop-generator/output/fountains-retail-partners-2026-06-02-workshop-guide.md` (24.8KB)
 - [PASS] AT-lead-followup-email: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/automation-templates/make/templates/lead-followup-email.blueprint.json` (N/A)
 - [PASS] AT-appointment-reminder-sms: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/automation-templates/make/templates/appointment-reminder-sms.blueprint.json` (N/A)
 - [PASS] AT-review-request: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/automation-templates/make/templates/review-request.blueprint.json` (N/A)
@@ -42,10 +42,9 @@ Overall Verdict: GO
 - [PASS] N8N-real-estate-lead-qualifier.workflow.json: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/automation-templates/n8n/real-estate-lead-qualifier.workflow.json` (9.0KB)
 - [PASS] N8N-review-generation.workflow.json: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/automation-templates/n8n/review-generation.workflow.json` (9.7KB)
 - [PASS] N8N-social-content-pipeline.workflow.json: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/automation-templates/n8n/social-content-pipeline.workflow.json` (8.8KB)
-- [PASS] AGENT-CLIENT: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/ai-agent/config/clients/demo-practice.json` (N/A)
 - [PASS] DASH-SEED: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/dashboard/data/clients/qa-granite-bay-dental` (N/A)
-- [PASS] DASH-REPORT: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/dashboard/data/clients/qa-granite-bay-dental/reports/2026-05.pdf` (17.5KB)
-- [PASS] DASH-PDF-PATH: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/dashboard/data/clients/qa-granite-bay-dental/reports/2026-05.pdf` (17.5KB)
+- [PASS] DASH-REPORT: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/dashboard/data/clients/qa-granite-bay-dental/reports/2026-05.pdf` (17.4KB)
+- [PASS] DASH-PDF-PATH: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/dashboard/data/clients/qa-granite-bay-dental/reports/2026-05.pdf` (17.4KB)
 - [PASS] PB-Medical-GEN: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/playbooks/content/playbooks/medical/v1.json` (128.8KB)
 - [PASS] PB-Medical-JSON: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/playbooks/content/playbooks/medical/v1.json` (N/A)
 - [PASS] PB-Medical-PDF-BUILD: `/Users/tullystroud/Desktop/Clinoyr/clinovyr-products/playbooks/output/pdfs/medical-v1.pdf` (170.0KB)
@@ -75,8 +74,6 @@ Overall Verdict: GO
   Note: STRIPE_SECRET_KEY not set — playbook payments will fail
 - [AT-WIZARD] Client setup wizard (dry run)
   Note: client-setup-wizard.ts is interactive-only (no --config/--dry-run); running programmatic customization instead
-- [AGENT-CONFIG] Client config: granite-bay-dental
-  Note: No granite-bay-dental.json — using demo-practice for live API tests
 - [PB-SERVER] Playbooks dev server
   Note: App reachable at http://localhost:3004/api/health (HTTP 503, status=error — missing STRIPE_* in env)
 - [PB-Medical-STRIPE] Stripe checkout: Medical
