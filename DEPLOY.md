@@ -164,3 +164,49 @@ git push origin main
 ```
 
 Cloudflare rebuilds on push when Git integration is enabled.
+
+## Production stale fix
+
+Use this when **clinovyr.com** shows old marketing copy (e.g. `hello@clinovyr.com`, `$3,500` assessment), **404** on `/auth/register` or `/api/health`, while **git `main`** already has the portal and updated content (e.g. commit `052614dc`).
+
+**Typical root cause:** The live Worker (`clinovyr-site` per `wrangler.jsonc`) is serving an **old OpenNext build**. Git `main` is correct, but **Cloudflare Workers Builds** did not successfully deploy the latest commit (failed build, wrong deploy command, disconnected repo, or deploy never triggered). There is **no** GitHub Actions workflow in this repo—only dashboard Git integration or a manual `npm run deploy`.
+
+**Symptoms on production (stale):**
+
+| Check | Stale | Expected after fix |
+|-------|--------|---------------------|
+| `curl -sS -o /dev/null -w "%{http_code}" https://clinovyr.com/auth/register` | `404` | `200` |
+| `curl -sS https://clinovyr.com/api/health` | HTML 404 page | JSON `ok` |
+| Homepage contact | `hello@clinovyr.com` | `clinovyr@gmail.com` |
+| Assessment price in HTML | `$3,500` | `$5,000` (and no stale `$3,500` in pricing) |
+
+Response header `x-opennext: 1` means traffic **is** on the OpenNext Worker—not a separate static host—but the **bundle is old**.
+
+### Fix (5 steps)
+
+1. **Cloudflare dashboard** → **Workers & Pages** → open **`clinovyr-site`** (name must match `wrangler.jsonc` `"name"`). Confirm custom domain **clinovyr.com** is attached to this Worker, not a different project.
+
+2. **Trigger deployment** from the latest GitHub **`main`** commit (e.g. `052614dc`): **Deployments** → **Retry deployment** or **Create deployment** from `main`. If Builds are disconnected, reconnect the repo and branch `main`.
+
+3. **Verify build settings** (Settings → Builds):
+   - **Deploy command:** `npm run deploy` (recommended), or `npx wrangler deploy` only if postinstall runs OpenNext build in CI (`CI=true` / `WORKERS_CI=1`).
+   - **Node.js:** 22+
+   - Do **not** deploy with a bare `wrangler deploy` on a machine that never ran `opennextjs-cloudflare build` (missing `.open-next/`).
+
+4. **Set secrets** on this Worker (see tables above): at minimum `DATABASE_URL`, `AUTH_SECRET` / `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `SITE_URL`, Stripe, Resend, `CONTACT_EMAIL=clinovyr@gmail.com`, `ADMIN_EMAIL`, etc. Run `npx prisma migrate deploy` against production Postgres outside the Worker.
+
+5. After a **successful** deploy, re-run smoke tests:
+   ```bash
+   ./scripts/post-deploy-smoke.sh
+   ```
+
+### Local redeploy (operator machine)
+
+Requires **Node.js 22+**, `wrangler login` or `CLOUDFLARE_API_TOKEN` + account ID, then from repo root:
+
+```bash
+npm run deploy
+```
+
+This agent environment could not redeploy: no Cloudflare credentials, Wrangler requires Node 22 (local default was Node 20).
+
