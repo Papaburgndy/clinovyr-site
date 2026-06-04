@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CalendlyButton } from "@/components/ui/calendly-button";
+import { INDUSTRIES } from "@/lib/onboarding/constants";
 import { cn } from "@/lib/utils";
 
 const VIEWPORT = { once: true, margin: "-100px" } as const;
@@ -31,17 +32,7 @@ const itemVariants = {
   },
 };
 
-const BUSINESS_TYPES = [
-  "Medical/Dental",
-  "Real Estate",
-  "Legal/Financial",
-  "Construction",
-  "Wellness/Med Spa",
-  "Retail/Hospitality",
-  "Other",
-] as const;
-
-type BusinessType = (typeof BUSINESS_TYPES)[number];
+type BusinessType = (typeof INDUSTRIES)[number];
 
 type FormFields = {
   fullName: string;
@@ -411,7 +402,7 @@ export function Contact() {
                       <option value="" className="bg-ink text-paper">
                         Select your industry
                       </option>
-                      {BUSINESS_TYPES.map((type) => (
+                      {INDUSTRIES.map((type) => (
                         <option
                           key={type}
                           value={type}

@@ -42,39 +42,39 @@ const VERTICALS: {
   icon: LucideIcon;
 }[] = [
   {
-    name: "Medical & Dental Practices",
+    name: "Medical & Dental",
     description:
-      "Patient intake automation, appointment reminders, billing workflows, and referral tracking.",
+      "HIPAA-aware intake workflows, appointment reminders, and follow-up automation — with guidance on compliant AI tool use.",
     icon: Stethoscope,
   },
   {
-    name: "Real Estate & Property Management",
+    name: "Real Estate & Property",
     description:
-      "Lead qualification, listing content generation, CRM automation, and investor reporting.",
+      "Lead qualification, listing content, CRM automation, and nurture sequences for Placer County agents and brokers.",
     icon: Home,
   },
   {
-    name: "Law Firms & Financial Advisors",
+    name: "Legal & Financial",
     description:
-      "Document assistance, client onboarding, compliance monitoring, and research automation.",
+      "Client intake, document drafting assistance, and research workflows with ethics-aware prompts and attorney review checkpoints.",
     icon: Scale,
   },
   {
-    name: "Construction & Contractors",
+    name: "Construction & Contracting",
     description:
-      "Bid generation, project updates, subcontractor coordination, and procurement automation.",
+      "Lead scoring, bid support, project updates, and subcontractor coordination for GCs and specialty trades.",
     icon: HardHat,
   },
   {
-    name: "Med Spas & Wellness Studios",
+    name: "Wellness & Med Spa",
     description:
-      "Booking automation, post-treatment follow-up, loyalty programs, and social content generation.",
+      "Booking automation, post-treatment follow-up, rebooking sequences, and social content — with FTC-aware promotional review.",
     icon: Sparkles,
   },
   {
-    name: "Specialty Retail & Hospitality",
+    name: "Retail & Hospitality",
     description:
-      "Inventory intelligence, win-back campaigns, review management, and loyalty AI.",
+      "Win-back campaigns, review management, personalized email, and social content for local shops and restaurants.",
     icon: ShoppingBag,
   },
 ];

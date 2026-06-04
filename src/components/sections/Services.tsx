@@ -30,45 +30,45 @@ const itemVariants = {
 const SERVICES = [
   {
     tag: "Entry Point",
+    name: "AI Opportunity Audit",
+    description:
+      "Focused 2-session audit identifying your highest-ROI AI automation opportunity, with tool recommendations and a 30-day action plan.",
+    price: "$1,500",
+  },
+  {
+    tag: "Foundation",
     name: "AI Readiness Assessment",
     description:
-      "A structured 2–3 week audit of your operations, data, and workflows. You get a prioritized AI roadmap with ROI estimates and a clear action plan.",
-    price: "$3,500–$7,500",
+      "Full 3-week operational audit with prioritized AI roadmap, ROI estimates, and executive report — delivered through your Clinovyr client portal.",
+    price: "$5,000",
   },
   {
     tag: "Core Service",
-    name: "Workflow Automation",
+    name: "Workflow Automation Sprint",
     description:
-      "Hands-on implementation of AI automations: lead intake, follow-up sequences, scheduling, invoicing, and reporting. Results in 30–60 days.",
-    price: "$8,000–$25,000",
+      "4–6 week hands-on build of 2–3 production automations with training and 30-day post-launch support. Lead intake, follow-up, scheduling, and reporting.",
+    price: "$12,000",
   },
   {
     tag: "Recurring",
     name: "AI Operations Retainer",
     description:
-      "Your fractional Chief AI Officer. Monthly optimization, new automations, staff training, and strategic guidance.",
+      "Fractional AI leadership: monthly optimization, new automations, staff training, and strategic guidance (separate from sprint packages).",
     price: "$2,000–$5,000/mo",
   },
   {
     tag: "Visibility",
     name: "Lunch & Learn Workshops",
     description:
-      "Practical, hands-on AI sessions for your team or organization. Drives adoption and generates referrals.",
-    price: "$1,500–$4,000",
-  },
-  {
-    tag: "High Ticket",
-    name: "AI Strategy & Roadmap",
-    description:
-      "Board-ready AI strategy for growing SMBs. Full operational audit, vendor evaluation, and phased implementation plan.",
-    price: "$12,000–$30,000",
+      "Custom team workshops with branded decks and facilitator guides — in person or Zoom. Scoped to your industry and workflows.",
+    price: "Custom quote",
   },
   {
     tag: "Scalable",
     name: "Industry Playbooks",
     description:
-      "Packaged AI implementation guides built for specific verticals: medical, real estate, legal, construction.",
-    price: "$500–$2,500",
+      "Self-serve implementation guides for medical, real estate, legal, construction, wellness, and retail — purchase at buy.clinovyr.com.",
+    price: "$497",
   },
 ] as const;
 

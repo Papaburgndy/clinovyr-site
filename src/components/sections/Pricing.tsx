@@ -45,15 +45,15 @@ const TIERS = [
   },
   {
     name: "Build + Run",
-    price: "from $15,000",
-    priceNote: "+ $2,500/mo",
+    price: "from $12,000",
+    priceNote: "Sprint · retainer optional",
     featured: true,
     features: [
-      "Full assessment + implementation",
-      "2–3 core automations built & deployed",
+      "Workflow Automation Sprint (4–6 weeks)",
+      "2–3 production automations built & deployed",
       "Staff training & adoption support",
-      "Ongoing monthly retainer included",
-      "Quarterly strategy reviews",
+      "30-day post-launch support included",
+      "Optional monthly retainer from $2,500/mo",
     ],
   },
   {
@@ -179,8 +179,11 @@ export function Pricing() {
           whileInView="visible"
           viewport={VIEWPORT}
         >
-          All engagements start with a free 30-minute discovery call. No
-          commitment required.
+          Need a lighter start?{" "}
+          <span className="text-ink/85">
+            AI Opportunity Audit — $1,500
+          </span>
+          . All engagements begin with a free 30-minute discovery call.
         </motion.p>
       </div>
     </section>
