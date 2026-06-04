@@ -786,6 +786,45 @@ flowchart TD
 
 ---
 
+### 6.3a Client Portal (clinovyr.com — repository root)
+
+The **main-site client portal** lives in the repository root (`/`), not in `clinovyr-products/dashboard`. It serves assessment → Stripe checkout → industry deliverables on the same domain as the marketing site.
+
+| User | Action |
+|------|--------|
+| **Prospect / client** | Register, complete onboarding + survey, pay, download deliverables |
+| **Admin** | `ADMIN_EMAIL` account — pipeline at `/admin` |
+
+#### Key routes
+
+| Route | Purpose |
+|-------|---------|
+| `/auth/register`, `/auth/login` | Email/password auth (NextAuth) |
+| `/onboarding` | Company profile + goals |
+| `/dashboard` | Client home after onboarding |
+| `/dashboard/assessment` | AI readiness survey |
+| `/dashboard/results` | Scores and package recommendation |
+| `/dashboard/deliverables` | Download generated files (paid) |
+| `/dashboard/settings` | Edit company profile |
+| `/dashboard/agent` | AI agent setup links (Retainer clients) |
+| `/admin` | Admin KPIs, clients, orders, deliverables |
+
+#### Deploy & smoke (production)
+
+1. Cloudflare Worker build from repo root — see [`DEPLOYMENT-CHECKLIST.md`](../DEPLOYMENT-CHECKLIST.md) and [`DEPLOY.md`](../DEPLOY.md).
+2. Set Worker secrets (`DATABASE_URL`, `AUTH_SECRET`, Stripe, Resend, `BLOB_READ_WRITE_TOKEN`, `ADMIN_EMAIL`, etc.).
+3. `npx prisma migrate deploy` against production Postgres.
+4. Stripe webhook: `https://clinovyr.com/api/webhooks/stripe`.
+5. Run `./scripts/post-deploy-smoke.sh` from repo root.
+
+Health check: `GET https://clinovyr.com/api/health` → `{ "status": "ok", "app": "clinovyr-portal" }`.
+
+Industry **Other** uses generic deliverable generators (not medical fallback). Six named industries use industry-specific PDF/ZIP generators under `src/lib/deliverables/generators/industries/`.
+
+> **Note:** `clinovyr-products/dashboard` (app.clinovyr.com) is a separate automation KPI dashboard for retainer clients. Do not confuse it with this portal.
+
+---
+
 ### 6.4 Industry Playbooks Store
 
 #### What it does (plain language)

@@ -79,3 +79,4 @@ export {
   normalizeIndustry,
   resolveDeliverableGenerator,
 } from "@/lib/deliverables/generator";
+export { OTHER_DELIVERABLE_GENERATORS } from "@/lib/deliverables/generators/industries/generic";

@@ -117,6 +117,40 @@ export async function getAdminCompany(companyId: string) {
   });
 }
 
+export type AdminDeliverableRow = {
+  orderId: string;
+  companyId: string;
+  companyName: string;
+  product: string;
+  fileCount: number;
+  deliveredAt: Date | null;
+};
+
+export async function getAdminRecentDeliverables(
+  limit = 25,
+): Promise<AdminDeliverableRow[]> {
+  const orders = await prisma.order.findMany({
+    where: { status: "delivered" },
+    include: { company: true },
+    orderBy: { deliveredAt: "desc" },
+    take: limit,
+  });
+
+  return orders.map((order) => {
+    const deliverables = Array.isArray(order.deliverables)
+      ? order.deliverables
+      : [];
+    return {
+      orderId: order.id,
+      companyId: order.companyId,
+      companyName: order.company.name,
+      product: order.product,
+      fileCount: deliverables.length,
+      deliveredAt: order.deliveredAt,
+    };
+  });
+}
+
 export async function getAdminOrders(filters?: {
   status?: string;
   product?: string;

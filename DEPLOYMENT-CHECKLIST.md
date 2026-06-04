@@ -36,13 +36,23 @@ Main site + client portal: **Cloudflare Workers** (OpenNext). See [DEPLOY.md](./
 
 ## Post-deploy smoke tests
 
-Run after deploy (replace host if staging):
+After steps 1–5 (build, secrets, migrate, Stripe webhook, manual checks), run:
+
+```bash
+chmod +x scripts/post-deploy-smoke.sh
+./scripts/post-deploy-smoke.sh
+# Staging: BASE_URL=https://your-preview.workers.dev ./scripts/post-deploy-smoke.sh
+```
+
+Automated checks (replace host if staging):
 
 | Check | Command / URL | Pass criteria |
 |-------|----------------|---------------|
 | Home | `curl -sI https://clinovyr.com/` | HTTP 200 |
 | Register | `curl -sI https://clinovyr.com/auth/register` | HTTP 200 |
+| Health | `curl -s https://clinovyr.com/api/health` | `{"status":"ok","app":"clinovyr-portal"}` |
 | Admin | `curl -sI https://clinovyr.com/admin` | 302/307 to login (not 500) |
+| Dashboard | `curl -sI https://clinovyr.com/dashboard` | 302/307 to login (not 404) |
 | Stripe webhook route | `curl -sI -X POST https://clinovyr.com/api/webhooks/stripe` | 400/401 without signature (not 404) |
 
 **Manual (browser + live keys):**

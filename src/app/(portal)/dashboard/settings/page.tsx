@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CompanySettingsForm } from "@/components/portal/company-settings-form";
 import { getPortalCompany } from "@/lib/portal-data";
 
 export const metadata: Metadata = {
@@ -19,14 +20,13 @@ export default async function SettingsPage() {
           Account Settings
         </h1>
         <p className="mt-3 font-sans text-sm text-paper/60">
-          Profile and notification preferences. Full settings editor coming
-          soon.
+          Update your company profile used for assessments and deliverables.
         </p>
 
         <dl className="mt-8 space-y-4 rounded-sm border border-rule/15 bg-ink/60 p-6 backdrop-blur-sm">
           <div>
             <dt className="font-mono text-[10px] uppercase tracking-wider text-paper/45">
-              Name
+              Account name
             </dt>
             <dd className="mt-1 font-sans text-paper">
               {session.user.name ?? "—"}
@@ -38,23 +38,26 @@ export default async function SettingsPage() {
             </dt>
             <dd className="mt-1 font-sans text-paper">{session.user.email}</dd>
           </div>
-          {company ? (
-            <>
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-wider text-paper/45">
-                  Company
-                </dt>
-                <dd className="mt-1 font-sans text-paper">{company.name}</dd>
-              </div>
-              <div>
-                <dt className="font-mono text-[10px] uppercase tracking-wider text-paper/45">
-                  Industry
-                </dt>
-                <dd className="mt-1 font-sans text-paper">{company.industry}</dd>
-              </div>
-            </>
-          ) : null}
         </dl>
+
+        {company ? (
+          <CompanySettingsForm
+            initial={{
+              name: company.name,
+              industry: company.industry,
+              size: company.size,
+              revenue: company.revenue,
+              city: company.city,
+              state: company.state,
+              phone: company.phone ?? "",
+              website: company.website ?? "",
+            }}
+          />
+        ) : (
+          <p className="mt-6 font-sans text-sm text-paper/60">
+            Complete onboarding first to add your company profile.
+          </p>
+        )}
       </div>
     </div>
   );

@@ -50,6 +50,7 @@ import {
   generateWellnessROICalculator,
   generateWellnessSocialContentPack,
 } from "@/lib/deliverables/generators/industries/wellness";
+import { OTHER_DELIVERABLE_GENERATORS } from "@/lib/deliverables/generators/industries/generic";
 import type {
   DeliverableGenerator,
   GeneratorContext,
@@ -122,6 +123,7 @@ const INDUSTRY_GENERATOR_MAP: Record<string, Record<string, GeneratorFn>> = {
     "executive-presentation": generateRetailSocialContentPack,
     "roi-calculator": generateRetailROICalculator,
   },
+  Other: OTHER_DELIVERABLE_GENERATORS,
 };
 
 const INDUSTRY_ALIASES: Record<string, string> = {
@@ -148,6 +150,7 @@ const INDUSTRY_ALIASES: Record<string, string> = {
   retail: "Retail & Hospitality",
   "retail & hospitality": "Retail & Hospitality",
   hospitality: "Retail & Hospitality",
+  other: "Other",
 };
 
 /** Normalize onboarding/survey industry strings to INDUSTRY_GENERATOR_MAP keys. */
@@ -165,6 +168,22 @@ export function normalizeIndustry(industry: string): string | undefined {
   return undefined;
 }
 
+function getIndustryGeneratorMap(
+  industry: string,
+): Record<string, GeneratorFn> | undefined {
+  const trimmed = industry.trim();
+  if (trimmed in INDUSTRY_GENERATOR_MAP) {
+    return INDUSTRY_GENERATOR_MAP[trimmed];
+  }
+
+  const normalized = normalizeIndustry(trimmed);
+  if (normalized) {
+    return INDUSTRY_GENERATOR_MAP[normalized];
+  }
+
+  return undefined;
+}
+
 /**
  * Resolves the generator for a deliverable key.
  * Industry companies receive industry-specific PDFs, ZIP blueprints, and ROI sheets;
@@ -174,13 +193,8 @@ export function resolveDeliverableGenerator(
   key: string,
   company: Company,
 ): DeliverableGenerator | undefined {
-  const normalized = normalizeIndustry(company.industry);
-  const industryGenerators =
-    INDUSTRY_GENERATOR_MAP[company.industry] ??
-    (normalized ? INDUSTRY_GENERATOR_MAP[normalized] : undefined) ??
-    INDUSTRY_GENERATOR_MAP["Medical & Dental"];
-
-  return industryGenerators[key] ?? GENERATORS[key];
+  const industryGenerators = getIndustryGeneratorMap(company.industry);
+  return industryGenerators?.[key] ?? GENERATORS[key];
 }
 
 function normalizeDeliverableKeys(
@@ -256,16 +270,12 @@ export async function runDeliverableGeneration(
     formData: parseSurveyFormData(company.survey),
   };
 
-  const normalized = normalizeIndustry(company.industry);
-  const industryGenerators =
-    INDUSTRY_GENERATOR_MAP[company.industry] ??
-    (normalized ? INDUSTRY_GENERATOR_MAP[normalized] : undefined) ??
-    INDUSTRY_GENERATOR_MAP["Medical & Dental"];
+  const industryGenerators = getIndustryGeneratorMap(company.industry);
 
   const records: DeliverableRecord[] = [];
 
   for (const key of deliverableKeys) {
-    const generator = industryGenerators[key] ?? GENERATORS[key];
+    const generator = industryGenerators?.[key] ?? GENERATORS[key];
 
     if (!generator) {
       console.warn("[deliverables/generator] unknown deliverable key:", key);
