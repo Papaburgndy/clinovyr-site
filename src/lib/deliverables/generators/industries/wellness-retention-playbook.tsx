@@ -65,7 +65,9 @@ function buildPlaybookFallback(
   company: Company,
   formData: AssessmentFormData | null,
 ): RetentionPlaybookContent {
-  const biz = company.name;
+  const biz = formData?.industry
+    ? `${company.name} (${formData.industry})`
+    : company.name;
   return {
     introduction: `The Wellness Business Client Retention Playbook is ${biz}'s operational guide to turning first-time visitors into lifelong clients. In med spa and wellness economics, retention — not acquisition — drives margin. This playbook maps five lifecycle stages, automated touchpoints, a VIP program template, win-back campaigns, staff training, and the metrics that prove ROI.`,
     retentionPhilosophy:

@@ -486,8 +486,9 @@ Clinovyr · clinovyr.com · clinovyr@gmail.com · Granite Bay, CA
 
 export async function createRealEstateBlueprintZip(
   company: Company,
-  _survey: Survey,
+  survey: Survey,
 ): Promise<Buffer> {
+  void survey;
   const files: Array<{ name: string; content: string }> = [
     {
       name: "lead-qualifier-realtor.blueprint.json",

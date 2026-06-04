@@ -37,3 +37,5 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Build-time placeholder only; runtime uses Worker secrets for DATABASE_URL
+          DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci

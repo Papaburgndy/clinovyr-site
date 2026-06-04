@@ -2,17 +2,35 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
 
+const BUILD_PLACEHOLDER_DATABASE_URL =
+  "postgresql://build:build@localhost:5432/build";
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
   pgPool: Pool | undefined;
 };
 
-function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
+function isNextProductionBuild(): boolean {
+  return (
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    (process.env.CI === "true" && process.env.NODE_ENV === "production")
+  );
+}
 
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is not set");
+function resolveDatabaseUrl(): string {
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
   }
+
+  if (isNextProductionBuild()) {
+    return BUILD_PLACEHOLDER_DATABASE_URL;
+  }
+
+  throw new Error("DATABASE_URL is not set");
+}
+
+function createPrismaClient(): PrismaClient {
+  const connectionString = resolveDatabaseUrl();
 
   const pool = globalForPrisma.pgPool ?? new Pool({ connectionString });
   const adapter = new PrismaPg(pool);
@@ -30,8 +48,20 @@ function createPrismaClient() {
   });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+function getPrismaClient(): PrismaClient {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient();
+  }
+  return globalForPrisma.prisma;
 }
+
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    const client = getPrismaClient();
+    const value = Reflect.get(client, prop, client) as unknown;
+    if (typeof value === "function") {
+      return (value as (...args: unknown[]) => unknown).bind(client);
+    }
+    return value;
+  },
+});

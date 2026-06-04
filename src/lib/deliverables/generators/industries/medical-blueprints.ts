@@ -1,5 +1,4 @@
 import type { Company, Survey } from "@prisma/client";
-import type { AssessmentFormData } from "@/types/assessment";
 import { createZipBuffer } from "@/lib/deliverables/generators/shared";
 import { companySlug } from "@/lib/deliverables/generators/industries/medical-shared";
 
