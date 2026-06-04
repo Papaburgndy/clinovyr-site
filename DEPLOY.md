@@ -20,6 +20,8 @@ Pushing to **`main`** runs [`.github/workflows/deploy-cloudflare.yml`](.github/w
 | `CLOUDFLARE_API_TOKEN` | [Cloudflare dashboard](https://dash.cloudflare.com/profile/api-tokens) → **Create Token** → template **Edit Cloudflare Workers** (or custom token with **Account** → Workers Scripts **Edit** and **Account** → Workers KV/R2/etc. as needed for your account). Copy the token value once. |
 | `CLOUDFLARE_ACCOUNT_ID` | Dashboard → any zone or **Workers & Pages** → right sidebar **Account ID** (32-character hex). |
 
+Cloudflare **Workers & Pages → Git** and **Worker secrets** in the dashboard are separate from **GitHub Actions** secrets. Syncing or setting variables in Cloudflare does **not** create `CLOUDFLARE_API_TOKEN` in this GitHub repo — you must add the two rows in the table below under **GitHub** → **Settings** → **Secrets and variables** → **Actions** (names must match exactly, or use fallbacks `CF_API_TOKEN` / `WRANGLER_API_TOKEN` and `CF_ACCOUNT_ID` as documented in the workflow).
+
 Do **not** commit token values. After both secrets exist, **`git push origin main` deploys production** — you do not need a separate manual `wrangler deploy` for routine releases.
 
 Token must be allowed to deploy Worker **`clinovyr-site`** in the account that owns **clinovyr.com**.

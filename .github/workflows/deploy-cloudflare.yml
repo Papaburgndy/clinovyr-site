@@ -1,5 +1,5 @@
 # Deploy clinovyr-site (OpenNext) to Cloudflare Workers on every push to main.
-# Requires repo secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID — see DEPLOY.md.
+# Requires repo Actions secrets (not Cloudflare dashboard-only secrets) — see DEPLOY.md.
 
 name: Deploy to Cloudflare
 
@@ -16,6 +16,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Wrangler reads CLOUDFLARE_API_TOKEN; accept common alternate secret names from tooling/sync.
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CF_API_TOKEN || secrets.WRANGLER_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CF_ACCOUNT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +30,17 @@ jobs:
           node-version: "22"
           cache: npm
 
+      - name: Verify Cloudflare credentials for GitHub Actions
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN is not set for this job. Add repository secret CLOUDFLARE_API_TOKEN (or CF_API_TOKEN / WRANGLER_API_TOKEN) under Settings → Secrets and variables → Actions. Cloudflare Worker secrets and Workers Git Builds do not populate GitHub Actions secrets."
+            exit 1
+          fi
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID is not set. Add repository secret CLOUDFLARE_ACCOUNT_ID (or CF_ACCOUNT_ID)."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm ci
 
@@ -35,7 +50,5 @@ jobs:
       - name: Build and deploy Worker
         run: npm run deploy
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           # Build-time placeholder only; runtime uses Worker secrets for DATABASE_URL
           DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
