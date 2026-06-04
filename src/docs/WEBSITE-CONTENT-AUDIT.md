@@ -3,7 +3,7 @@
 **Date:** 2026-06-04  
 **Scope:** `src/app/(site)/`, `src/components/sections/*`, `src/components/layout/{Header,Footer}.tsx`  
 **References:** `src/lib/products.ts`, `src/lib/packages.ts`, `src/lib/onboarding/constants.ts`, `clinovyr-products/CLINOVYR-OPERATIONS-MANUAL.md`  
-**Production check:** https://clinovyr.com (HTML snapshot; pre-fix prices still live until deploy)
+**Production check:** See [Production verification](#production-verification) (2026-06-04).
 
 ---
 
@@ -44,7 +44,7 @@ Single-page marketing site (`/` only). No separate `/about`, `/services`, `/cont
 | D4 | Contact API | **PASS** | `/api/contact` exists; uses `CONTACT_EMAIL` env (should be clinovyr@gmail.com in production). | Verify Cloudflare secret. |
 | D5 | HIPAA / legal claims | **PASS** | No “HIPAA compliant” guarantees on site; vertical copy uses awareness/ethics language consistent with medical/legal deliverables. | — |
 | E1 | Separate marketing pages | **WARN** | No dedicated about/services/pricing routes — by design (single scroll page). | Optional future split for SEO. |
-| E2 | Production parity | **WARN** | Live site still shows pre-fix prices until next deploy. | Deploy after merge. |
+| E2 | Production parity | **FAIL** | Live site (2026-06-04) still pre-`0d306dd8` copy; main at `052614dc`. | Redeploy Cloudflare Workers (OpenNext). |
 | F1 | Metadata / OG | **PASS** | `src/app/layout.tsx` — clinovyr.com canonical, Placer County keywords. | — |
 | F2 | Typography / layout | **PASS** | Design tokens, responsive grids, sticky header — no issues found in code review. | — |
 
@@ -77,3 +77,67 @@ Single-page marketing site (`/` only). No separate `/about`, `/services`, `/cont
 2. Set **`CONTACT_EMAIL=clinovyr@gmail.com`** in production if not already.
 3. **Portal follow-up:** replace `getContactEmail()` in portal/checkout copy for consistency.
 4. Consider adding **Privacy** / **Terms** footer links when pages exist.
+
+---
+
+## Production verification
+
+**Date:** 2026-06-04  
+**Method:** `curl -L` against https://clinovyr.com (Cloudflare / OpenNext); HTML text extraction (scripts stripped).  
+**Repo baseline:** `main` @ `052614dc` (`052614dc` email, `0d306dd8` website copy, `4780b444` portal, `a69fa281` polish).  
+**Verdict:** **Deploy lag** — production does not match `main`. No source rollback; redeploy required.
+
+### HTTP status codes
+
+| URL | Status | Notes |
+|-----|--------|-------|
+| https://clinovyr.com/ | **200** | Marketing homepage renders |
+| https://clinovyr.com/auth/register | **404** | Next.js not-found shell (portal not deployed) |
+| https://clinovyr.com/auth/login | **404** | Same |
+| https://clinovyr.com/api/health | **404** | JSON health route absent on live worker |
+| https://clinovyr.com/admin | **404** | Expected login redirect in source; live has no `/admin` route |
+
+### Production vs source checklist
+
+| Check | Production | Source (`main`) | Result |
+|-------|------------|-----------------|--------|
+| Canonical prices ($1,500 / $5,000 / $12,000 / $497) | Services show **$3,500–$7,500**, **$8,000–$25,000**, **$500–$2,500**; pricing tier **from $15,000** | `Services.tsx`, `Pricing.tsx`, `products.ts` | **FAIL** |
+| Product names (Opportunity Audit, Readiness Assessment, Automation Sprint) | **AI Strategy & Roadmap**, **Workflow Automation** (not Sprint); no Opportunity Audit card | `Services.tsx` | **FAIL** |
+| Footer/contact email | **hello@clinovyr.com** (footer + 404 pages) | **clinovyr@gmail.com** (`Footer.tsx`, `Contact.tsx`) | **FAIL** |
+| No hello@clinovyr.com | Present (6× in HTML) | Removed from `src/` | **FAIL** |
+| Six industries + Other (contact) | Six options + Other present | `INDUSTRIES` in `constants.ts` (updated labels) | **WARN** — count OK; labels still legacy (`Medical/Dental`, etc.) |
+| Placer County / local positioning | Placer County, Roseville, Granite Bay in meta + body | Aligned | **PASS** |
+| Portal routes (register/login) | 404 | Routes under `src/app/(auth)/auth/*` | **FAIL** |
+| `/api/health` | 404 | `src/app/api/health/route.ts` | **FAIL** |
+| `/admin` → login | 404 (no redirect) | Portal admin middleware in source | **FAIL** |
+| Page structure (sections, headings) | `#services`, `#pricing`, `#contact`, h1/h2/h3 present | — | **PASS** (layout intact; copy stale) |
+
+### Live pricing snapshot (homepage, 2026-06-04)
+
+Services mono prices observed: `$3,500–$7,500`, `$8,000–$25,000`, `$2,000–$5,000/mo`, `$1,500–$4,000`, `$12,000–$30,000`, `$500–$2,500`. Pricing section **Build + Run** tier: **from $15,000**. No **$497** playbook price on homepage.
+
+### Deploy lag summary
+
+| Item | Value |
+|------|--------|
+| Latest `main` | `052614dc` — fix: align portal contact email with marketing site |
+| Related fixes on `main` not live | `0d306dd8` (copy/prices), `4780b444` (portal), `a69fa281` (health + polish) |
+| Production behavior | Pre-copy-fix marketing build + no portal/health routes |
+| Action | Redeploy Clinovyr app to Cloudflare Workers; confirm `CONTACT_EMAIL=clinovyr@gmail.com` in worker secrets |
+
+### Production PASS / WARN / FAIL (summary table)
+
+| Area | Status |
+|------|--------|
+| Homepage HTTP / layout | **PASS** |
+| Local positioning (Placer County) | **PASS** |
+| Contact industry count (6 + Other) | **WARN** (legacy labels) |
+| Canonical pricing | **FAIL** |
+| Product names | **FAIL** |
+| Marketing email | **FAIL** |
+| Portal auth routes | **FAIL** |
+| API health | **FAIL** |
+| Admin route | **FAIL** |
+| Deploy matches `main` | **FAIL** (deploy lag) |
+
+**Code changes from this verification:** None — source on `main` is correct; issue is deployment only.
