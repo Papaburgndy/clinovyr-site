@@ -22,6 +22,11 @@ if (!isCi) {
 
 console.log("[cloudflare-build] CI detected — prisma generate + opennextjs-cloudflare build");
 
+// Next/OpenNext page & route collection imports Prisma; ensure build never fails on missing secret.
+process.env.DATABASE_URL =
+  process.env.DATABASE_URL ||
+  "postgresql://build:build@localhost:5432/build";
+
 const gen = spawnSync("npx", ["prisma", "generate"], { stdio: "inherit", shell: true });
 if (gen.status !== 0) {
   process.exit(gen.status ?? 1);

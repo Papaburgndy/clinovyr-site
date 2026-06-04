@@ -34,7 +34,7 @@ function buildBidGuideFallback(
   company: Company,
   formData: AssessmentFormData | null,
 ): BidGuideContent {
-  const contractorType = getContractorTypeLabel(company, formData);
+  void formData;
   return {
     intro: `${company.name} wins jobs on speed and clarity — not on who spends the most nights writing proposals. This guide shows exactly how to use AI to draft better bids in half the time. You still price every job. AI organizes scope, flags risks, and writes the client-facing narrative so you can review, adjust numbers, and send within 24–48 hours instead of a week.`,
     timeSavings:

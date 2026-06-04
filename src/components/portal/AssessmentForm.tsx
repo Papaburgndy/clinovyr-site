@@ -10,7 +10,6 @@ import {
   useState,
 } from "react";
 import { Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { validateAssessmentStep } from "@/lib/validate-assessment";
 import { cn } from "@/lib/utils";
 import {
@@ -26,7 +25,6 @@ import {
   SCHEDULING_OPTIONS,
   STEP_LABELS,
   STORAGE_KEY,
-  TIME_DRAINS,
   TOTAL_STEPS,
   type AssessmentFormData,
   type CompanyProfileForAssessment,
