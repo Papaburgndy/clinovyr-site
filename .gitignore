@@ -30,6 +30,7 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.local.example
 
 # cloudflare / wrangler
 .wrangler
@@ -40,3 +41,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# Generated client deliverables (local dev)
+/data/deliverables/
+clinovyr-products/dashboard/data/clients/qa-*/
+clinovyr-products/qa/results/*.json

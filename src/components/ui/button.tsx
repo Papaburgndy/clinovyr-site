@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type ButtonVariant = "primary" | "outline";
+export type ButtonVariant = "primary" | "outline";
 
 type ButtonBaseProps = {
   variant?: ButtonVariant;

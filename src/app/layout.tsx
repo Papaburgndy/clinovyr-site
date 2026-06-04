@@ -4,8 +4,6 @@ import {
   DM_Mono,
   Instrument_Sans,
 } from "next/font/google";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import "./globals.css";
 
 const fontDisplay = Cormorant_Garamond({
@@ -79,11 +77,7 @@ export default function RootLayout({
       lang="en"
       className={`${fontDisplay.variable} ${fontSans.variable} ${fontMono.variable}`}
     >
-      <body className="bg-paper text-ink antialiased">
-        <Header />
-        <main>{children}</main>
-        <Footer />
-      </body>
+      <body className="bg-paper text-ink antialiased">{children}</body>
     </html>
   );
 }

@@ -63,6 +63,64 @@ Cloudflare runs `npm ci` automatically before the build/deploy steps.
 
 That hook runs only when Wrangler itself executes deploy. Workers Builds with deploy command `npx wrangler deploy` triggers OpenNext's wrapper instead, which skips this hook. The repo `postinstall` script (`scripts/cloudflare-build.js`) builds in CI as a fallback; prefer `npm run deploy` in the dashboard when you can change it.
 
+
+## Client portal (clinovyr.com — main Worker)
+
+The root Next.js app now includes **auth**, **client portal** (`/dashboard`, `/onboarding`, `/results`), **survey → Stripe checkout**, **deliverables**, and **admin** (`/admin`). Deploy on the **same** Cloudflare Worker as the marketing site (`clinovyr-site`).
+
+### Database (PostgreSQL)
+
+Prisma requires a reachable Postgres URL at **runtime** and for **migrations** (run outside the Worker):
+
+| Step | Command | Where |
+|------|---------|--------|
+| Generate client | `npx prisma generate` | CI postinstall (`scripts/cloudflare-build.js`) or local |
+| Apply migrations | `npx prisma migrate deploy` | CI job, local shell, or one-off GitHub Action — **not** inside the Worker bundle |
+
+Set `DATABASE_URL` as a Worker secret (Neon, Supabase, Railway Postgres, etc.). Workers do not run `migrate deploy` on each request.
+
+### Production environment variables (main site + portal)
+
+Set in **Cloudflare Worker secrets** (or encrypted env). See `.env.local.example` at repo root.
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `DATABASE_URL` | Yes | Prisma / Postgres |
+| `AUTH_SECRET` or `NEXTAUTH_SECRET` | Yes | Auth.js session signing (`openssl rand -base64 32`) |
+| `NEXTAUTH_URL` | Yes | `https://clinovyr.com` |
+| `SITE_URL` | Yes | Stripe redirects, email links (`https://clinovyr.com`) |
+| `STRIPE_SECRET_KEY` | Yes | Checkout + webhooks |
+| `STRIPE_WEBHOOK_SECRET` | Yes | Verify Stripe webhooks |
+| `STRIPE_PRICE_AUDIT` | No* | Price IDs (*or set real IDs in catalog) |
+| `STRIPE_PRICE_ASSESSMENT` | No* | |
+| `STRIPE_PRICE_SPRINT` | No* | |
+| `RESEND_API_KEY` | Yes | Transactional email |
+| `RESEND_FROM_EMAIL` | Prod | Verified sender after domain setup |
+| `RESEND_SANDBOX` | No | `true` for QA only |
+| `CONTACT_EMAIL` | Yes | Internal notifications inbox |
+| `ADMIN_EMAIL` | Yes | Allowlist for `/admin` |
+| `ANTHROPIC_API_KEY` | Yes** | Deliverable generation (**required for paid deliverables) |
+| `BLOB_READ_WRITE_TOKEN` | Yes*** | Deliverable file storage |
+| `CALENDLY_URL` | No | Booking links |
+
+***Blob storage:** Code uses `@vercel/blob` today. On Cloudflare, either keep Vercel Blob (token only — works from Workers) or migrate to **R2** + S3-compatible API (documented future change).
+
+### Stripe webhook (production)
+
+1. Stripe Dashboard → **Developers** → **Webhooks** → **Add endpoint**
+2. **Endpoint URL:** `https://clinovyr.com/api/webhooks/stripe`
+3. **Events:** `checkout.session.completed` (and any others your handlers expect)
+4. Copy **Signing secret** → `STRIPE_WEBHOOK_SECRET` in Cloudflare
+5. Legacy alias still supported: `https://clinovyr.com/api/stripe/webhook`
+
+Local: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
+
+### Build notes
+
+- Root `tsconfig.json` excludes `clinovyr-products/` and `scripts/` so the main site build does not typecheck product sub-apps.
+- Admin and portal route groups use `export const dynamic = "force-dynamic"` (no DB access at static export time).
+
+
 ## Environment variables / secrets
 
 Set these as **Worker secrets** (or encrypted env vars) in the Cloudflare dashboard for production:

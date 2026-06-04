@@ -20,7 +20,12 @@ if (!isCi) {
   process.exit(0);
 }
 
-console.log("[cloudflare-build] CI detected — running opennextjs-cloudflare build");
+console.log("[cloudflare-build] CI detected — prisma generate + opennextjs-cloudflare build");
+
+const gen = spawnSync("npx", ["prisma", "generate"], { stdio: "inherit", shell: true });
+if (gen.status !== 0) {
+  process.exit(gen.status ?? 1);
+}
 
 const result = spawnSync("npx", ["opennextjs-cloudflare", "build"], {
   stdio: "inherit",

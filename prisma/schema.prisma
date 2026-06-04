@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  company       Company?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Company {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  name                String
+  industry            String
+  size                String
+  revenue             String
+  website             String?
+  phone               String?
+  city                String
+  state               String   @default("CA")
+  notes               Json?
+  onboardingComplete  Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  user                User     @relation(fields: [userId], references: [id])
+  survey              Survey?
+  order               Order?
+}
+
+model Survey {
+  id               String    @id @default(cuid())
+  companyId        String    @unique
+  status           String    @default("incomplete")
+  responses        Json
+  score            Int?
+  tier             String?
+  topOpportunities Json?
+  recommendedPkg   String?
+  estimatedROI     String?
+  executiveSummary   String? @db.Text
+  biggestOpportunity String?
+  readinessStatement String?
+  nextStep           String?
+  completedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  company          Company   @relation(fields: [companyId], references: [id])
+}
+
+model Order {
+  id              String    @id @default(cuid())
+  companyId       String    @unique
+  stripeSessionId String?   @unique
+  stripePaymentId String?
+  product         String
+  amount          Int
+  status          String    @default("pending")
+  deliverables    Json?
+  paidAt          DateTime?
+  deliveredAt     DateTime?
+  createdAt       DateTime  @default(now())
+  company         Company   @relation(fields: [companyId], references: [id])
+  downloads       DeliverableDownload[]
+}
+
+model DeliverableDownload {
+  id              String   @id @default(cuid())
+  orderId         String
+  deliverableType String
+  userId          String
+  downloadedAt    DateTime @default(now())
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([userId])
+}
