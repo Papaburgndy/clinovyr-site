@@ -2,6 +2,36 @@
 
 This site uses [@opennextjs/cloudflare](https://opennext.js.org/cloudflare/get-started) so the Worker serves the OpenNext build output (`.open-next/`), not the repo root. **Do not** set `assets.directory` to `.` — that uploads `node_modules` and fails deploy.
 
+Worker name: **`clinovyr-site`** (see `wrangler.jsonc`).
+
+## GitHub Actions (recommended — push to `main` deploys)
+
+Pushing to **`main`** runs [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml):
+
+1. Node.js **22**
+2. `npm ci` (postinstall may run `scripts/cloudflare-build.js` in CI)
+3. `npx prisma generate`
+4. `npm run deploy` → `opennextjs-cloudflare build && opennextjs-cloudflare deploy`
+
+**One-time setup** (repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**):
+
+| Secret | How to obtain |
+|--------|----------------|
+| `CLOUDFLARE_API_TOKEN` | [Cloudflare dashboard](https://dash.cloudflare.com/profile/api-tokens) → **Create Token** → template **Edit Cloudflare Workers** (or custom token with **Account** → Workers Scripts **Edit** and **Account** → Workers KV/R2/etc. as needed for your account). Copy the token value once. |
+| `CLOUDFLARE_ACCOUNT_ID` | Dashboard → any zone or **Workers & Pages** → right sidebar **Account ID** (32-character hex). |
+
+Do **not** commit token values. After both secrets exist, **`git push origin main` deploys production** — you do not need a separate manual `wrangler deploy` for routine releases.
+
+Token must be allowed to deploy Worker **`clinovyr-site`** in the account that owns **clinovyr.com**.
+
+### Verify the workflow ran
+
+GitHub → **Actions** → **Deploy to Cloudflare** → latest run on your commit should be green. Then:
+
+```bash
+./scripts/post-deploy-smoke.sh
+```
+
 ## Cloudflare dashboard (Git-connected build)
 
 Use **Workers** → your Worker → **Settings** → **Builds** with a connected repository.
@@ -163,13 +193,17 @@ npm run preview
 git push origin main
 ```
 
-Cloudflare rebuilds on push when Git integration is enabled.
+With **GitHub Actions** secrets configured (see above), this workflow deploys **`clinovyr-site`** automatically.
+
+If you still use **Cloudflare Workers Builds** (dashboard Git integration), that path also rebuilds on push — prefer **one** deploy path to avoid duplicate or conflicting deploys. Recommended: **GitHub Actions only**; disable or disconnect dashboard Git deploy if Actions is active.
 
 ## Production stale fix
 
 Use this when **clinovyr.com** shows old marketing copy (e.g. `hello@clinovyr.com`, `$3,500` assessment), **404** on `/auth/register` or `/api/health`, while **git `main`** already has the portal and updated content (e.g. commit `052614dc`).
 
-**Typical root cause:** The live Worker (`clinovyr-site` per `wrangler.jsonc`) is serving an **old OpenNext build**. Git `main` is correct, but **Cloudflare Workers Builds** did not successfully deploy the latest commit (failed build, wrong deploy command, disconnected repo, or deploy never triggered). There is **no** GitHub Actions workflow in this repo—only dashboard Git integration or a manual `npm run deploy`.
+**Typical root cause:** The live Worker (`clinovyr-site` per `wrangler.jsonc`) is serving an **old OpenNext build**. Git `main` is correct, but deploy did not run or failed: missing GitHub secrets, failed **Deploy to Cloudflare** workflow, stale **Cloudflare Workers Builds** settings, or only `git push` without CI configured.
+
+**Fix:** Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (see **GitHub Actions** above), push `main`, confirm the Actions run succeeded, then run smoke tests.
 
 **Symptoms on production (stale):**
 
