@@ -29,7 +29,7 @@ Single-page marketing site (`/` only). No separate `/about`, `/services`, `/cont
 | A4 | Contact industry dropdown | **FAIL → fixed** | Labels (`Medical/Dental`, `Retail/Hospitality`, etc.) did not match onboarding `INDUSTRIES`. | `Contact.tsx` now imports `INDUSTRIES` from `@/lib/onboarding/constants`. |
 | A5 | Vertical industry names | **WARN → fixed** | Display names diverged from onboarding; retail claimed “inventory intelligence” not in deliverable stack. | `Verticals.tsx` aligned names; toned compliance/claims to match deliverable tone (HIPAA-aware, ethics checkpoints, FTC-aware). |
 | B1 | Contact email (marketing) | **PASS** | Footer, Contact section, and error copy use **clinovyr@gmail.com**. | — |
-| B2 | Contact email (portal) | **WARN** | Portal/dashboard still references **hello@clinovyr.com** (out of marketing scope). | Not changed in this pass; track separately. |
+| B2 | Contact email (portal) | **WARN** | Portal/dashboard still references **clinovyr@gmail.com** (via `getContactEmail()` / `CONTACT_EMAIL`) (out of marketing scope). | Not changed in this pass; track separately. |
 | B3 | Vercel references (marketing) | **PASS** | No Vercel mentions in site sections or `(site)` layout. | — |
 | B4 | Vercel (backend) | **WARN** | `@vercel/blob` in deliverable storage; documented as Cloudflare deployment in code comments. | Not marketing copy. |
 | C1 | Local positioning | **PASS** | Hero, Problem, Footer, metadata reference Roseville, Granite Bay, Placer County. | — |
@@ -75,5 +75,5 @@ Single-page marketing site (`/` only). No separate `/about`, `/services`, `/cont
 
 1. **Deploy** marketing site to Cloudflare so production matches corrected prices.
 2. Set **`CONTACT_EMAIL=clinovyr@gmail.com`** in production if not already.
-3. **Portal follow-up:** replace `hello@clinovyr.com` in portal/checkout copy for consistency.
+3. **Portal follow-up:** replace `getContactEmail()` in portal/checkout copy for consistency.
 4. Consider adding **Privacy** / **Terms** footer links when pages exist.

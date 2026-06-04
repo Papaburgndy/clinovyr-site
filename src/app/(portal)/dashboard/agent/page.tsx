@@ -4,6 +4,7 @@ import Link from "next/link";
 import { LockedPage } from "@/components/portal/locked-page";
 import { Button } from "@/components/ui/button";
 import { getPortalCompany } from "@/lib/portal-data";
+import { getContactEmail } from "@/lib/assessment-email";
 
 const AGENT_PRODUCTION_URL = "https://agent.clinovyr.com";
 
@@ -80,7 +81,7 @@ export default async function AgentPage() {
 
         <p className="mt-6 font-sans text-sm text-paper/50">
           {company
-            ? `Configured for ${company.name}. Questions? Email hello@clinovyr.com.`
+            ? `Configured for ${company.name}. Questions? Email ${getContactEmail()}.`
             : "Complete your company profile in settings before agent go-live."}
         </p>
 

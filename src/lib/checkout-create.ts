@@ -8,6 +8,7 @@ import {
   type ClinovyrProductKey,
 } from "@/lib/products";
 import { prisma } from "@/lib/prisma";
+import { getContactEmail } from "@/lib/assessment-email";
 import { getSiteUrl, getStripe, isStripeConfigured } from "@/lib/stripe";
 
 export type CheckoutCreateResult =
@@ -47,7 +48,7 @@ export async function createCheckoutSession(
       ok: false,
       status: 501,
       error:
-        "Stripe checkout is not configured yet. Contact hello@clinovyr.com to complete your purchase.",
+        `Stripe checkout is not configured yet. Contact ${getContactEmail()} to complete your purchase.`,
     };
   }
 
@@ -80,7 +81,7 @@ export async function createCheckoutSession(
       error:
         company.order.status === "paid"
           ? "You already have an active purchase for this account."
-          : "A checkout is already in progress. Refresh your dashboard or contact hello@clinovyr.com.",
+          : `A checkout is already in progress. Refresh your dashboard or contact ${getContactEmail()}.`,
     };
   }
 

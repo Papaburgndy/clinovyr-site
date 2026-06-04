@@ -10,6 +10,7 @@ import {
   resolveProductKey,
   type ClinovyrProductKey,
 } from "@/lib/products";
+import { getContactEmail } from "@/lib/assessment-email";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 
 export const metadata: Metadata = {
@@ -68,7 +69,7 @@ async function resolvePaymentDetails(
         productName: "Your package",
         amountCents: 0,
         verified: false,
-        message: "Payment verification is unavailable. Contact hello@clinovyr.com.",
+        message: `Payment verification is unavailable. Contact ${getContactEmail()}.`,
       }
     );
   }
@@ -121,7 +122,7 @@ async function resolvePaymentDetails(
         productName: "Your package",
         amountCents: 0,
         verified: false,
-        message: "Could not verify this checkout session. Contact hello@clinovyr.com.",
+        message: `Could not verify this checkout session. Contact ${getContactEmail()}.`,
       }
     );
   }

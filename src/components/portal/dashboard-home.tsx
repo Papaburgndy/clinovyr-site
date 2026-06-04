@@ -9,6 +9,7 @@ import {
   parseTopOpportunities,
 } from "@/lib/dashboard-state";
 import { cn } from "@/lib/utils";
+import { getContactEmail } from "@/lib/assessment-email";
 
 type DashboardHomeProps = {
   userName: string | null;
@@ -209,6 +210,7 @@ function StateB({
 }
 
 function StateC() {
+  const contactEmail = getContactEmail();
   return (
     <>
       <div>
@@ -228,10 +230,10 @@ function StateC() {
         <p className="mt-6 font-sans text-sm text-paper/55">
           Questions while you wait?{" "}
           <a
-            href="mailto:hello@clinovyr.com"
+            href={`mailto:${contactEmail}`}
             className="text-accent-light underline-offset-4 hover:underline"
           >
-            hello@clinovyr.com
+            {contactEmail}
           </a>{" "}
           — we respond within one business day.
         </p>
