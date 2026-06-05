@@ -1,18 +1,22 @@
 #!/usr/bin/env node
 /**
- * Cloudflare Workers Git Builds deploy orchestrator.
+ * Cloudflare Workers Git Builds deploy orchestrator (Option C).
  *
  * Deploys clinovyr-deliverables first so the DELIVERABLES service binding
  * exists, then deploys clinovyr-site (OpenNext main Worker).
  *
- * Set as dashboard Deploy command on clinovyr-site:
+ * Dashboard deploy command on clinovyr-site:
  *   node scripts/cloudflare-deploy.js
  *
- * Pair with postinstall CI build (scripts/ci-opennext-build.js) when
- * Build command is empty. Pass --dry-run to verify bundle sizes locally.
+ * Why not deploy deliverables during wrangler [build].command?
+ * Any `npx wrangler deploy` from this OpenNext repo is redirected to
+ * opennextjs-cloudflare deploy (clinovyr-site) unless OPEN_NEXT_DEPLOY=true.
+ *
+ * Pass --dry-run to verify bundle sizes locally.
  */
 
 const { spawnSync } = require("node:child_process");
+const fs = require("node:fs");
 const path = require("node:path");
 
 const isCi =
@@ -24,10 +28,15 @@ const isCi =
 
 const dryRun = process.argv.includes("--dry-run");
 const deliverablesConfig = path.join("workers", "deliverables", "wrangler.jsonc");
+const DELIVERABLES_WORKER = "clinovyr-deliverables";
 
-function run(label, command, args) {
+function run(label, command, args, extraEnv = {}) {
   console.log(`[cloudflare-deploy] ${label}`);
-  const result = spawnSync(command, args, { stdio: "inherit", shell: true });
+  const result = spawnSync(command, args, {
+    stdio: "inherit",
+    shell: true,
+    env: { ...process.env, ...extraEnv },
+  });
   if (result.error) {
     console.error(`[cloudflare-deploy] Failed to start ${label}:`, result.error.message);
     process.exit(1);
@@ -38,7 +47,9 @@ function run(label, command, args) {
 }
 
 if (isCi) {
-  console.log("[cloudflare-deploy] CI / WORKERS_CI detected");
+  console.log(
+    `[cloudflare-deploy] CI detected (CI=${process.env.CI ?? ""}, WORKERS_CI=${process.env.WORKERS_CI ?? ""})`
+  );
 } else if (dryRun) {
   console.log("[cloudflare-deploy] Local dry-run (CI env not set)");
 } else {
@@ -49,21 +60,38 @@ process.env.DATABASE_URL =
   process.env.DATABASE_URL ||
   "postgresql://build:build@localhost:5432/build";
 
+if (!fs.existsSync(".open-next/worker.js")) {
+  console.log("[cloudflare-deploy] .open-next/ missing — running Prisma + OpenNext build");
+  run("prisma generate", "npx", ["prisma", "generate"]);
+  run("opennextjs-cloudflare build", "npx", ["opennextjs-cloudflare", "build"]);
+}
+
 const deliverablesArgs = ["wrangler", "deploy", "-c", deliverablesConfig];
 if (dryRun) {
   deliverablesArgs.push("--dry-run");
 }
 
+console.log(
+  `[cloudflare-deploy] Deploying ${DELIVERABLES_WORKER} (config: ${deliverablesConfig})`
+);
 run(
-  dryRun ? "Dry-run clinovyr-deliverables" : "Deploying clinovyr-deliverables first",
+  dryRun
+    ? `Dry-run ${DELIVERABLES_WORKER}`
+    : `Deploying ${DELIVERABLES_WORKER} — expect *.workers.dev URL below`,
   "npx",
-  deliverablesArgs
+  deliverablesArgs,
+  { OPEN_NEXT_DEPLOY: "true" }
+);
+console.log(
+  `[cloudflare-deploy] ${DELIVERABLES_WORKER} ${dryRun ? "dry-run" : "deploy"} step finished OK`
 );
 
 if (dryRun) {
-  const mainArgs = ["wrangler", "deploy", "--dry-run"];
-  run("Dry-run clinovyr-site (main)", "npx", mainArgs);
+  run("Dry-run clinovyr-site (main)", "npx", ["wrangler", "deploy", "--dry-run"], {
+    OPEN_NEXT_DEPLOY: "true",
+  });
 } else {
+  console.log("[cloudflare-deploy] Deploying clinovyr-site (main) via opennextjs-cloudflare");
   run("Deploying clinovyr-site (main)", "npx", ["opennextjs-cloudflare", "deploy"]);
 }
 

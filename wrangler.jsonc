@@ -27,9 +27,10 @@
   "observability": {
     "enabled": true
   },
-  // Custom build runs before deploy on Workers Builds (`npx wrangler deploy`).
-  // Also deploys clinovyr-deliverables in CI so the DELIVERABLES binding exists.
-  // See CLOUDFLARE-BUILD-SETTINGS.md Option D.
+  // Custom build compiles OpenNext before `npx wrangler deploy` only.
+  // Deploy clinovyr-deliverables first via dashboard deploy command:
+  //   node scripts/cloudflare-deploy.js
+  // See CLOUDFLARE-BUILD-SETTINGS.md Option C.
   "build": {
     "command": "node scripts/cloudflare-build.js"
   }

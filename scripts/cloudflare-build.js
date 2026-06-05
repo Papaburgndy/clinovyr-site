@@ -1,25 +1,19 @@
 #!/usr/bin/env node
 /**
- * Wrangler [build].command for Cloudflare Workers Git Builds.
+ * Wrangler [build].command — compile OpenNext output before main deploy.
  *
- * Runs during `npx wrangler deploy` custom build phase (before main deploy):
+ * Runs when deploy uses `npx wrangler deploy` (wrangler.jsonc [build].command).
+ * Does NOT deploy clinovyr-deliverables here: nested `wrangler deploy` in an
+ * OpenNext repo is hijacked by opennextjs-cloudflare and deploys clinovyr-site
+ * instead. Use deploy command `node scripts/cloudflare-deploy.js` (Option C).
+ *
+ * Steps:
  *   1. prisma generate
  *   2. opennextjs-cloudflare build
- *   3. deploy clinovyr-deliverables (CI only) so DELIVERABLES binding exists
- *
- * Keeps dashboard Deploy command as `npx wrangler deploy` with no changes.
- * See CLOUDFLARE-BUILD-SETTINGS.md Option D.
  */
 
 const { spawnSync } = require("node:child_process");
-const path = require("node:path");
-
-const isCi =
-  process.env.CI === "true" ||
-  process.env.CI === "1" ||
-  process.env.WORKERS_CI === "true" ||
-  process.env.WORKERS_CI === "1" ||
-  process.env.CF_PAGES === "1";
+const fs = require("node:fs");
 
 function run(label, command, args) {
   console.log(`[cloudflare-build] ${label}`);
@@ -40,17 +34,13 @@ process.env.DATABASE_URL =
 run("prisma generate", "npx", ["prisma", "generate"]);
 run("opennextjs-cloudflare build", "npx", ["opennextjs-cloudflare", "build"]);
 
-if (isCi) {
-  const deliverablesConfig = path.join("workers", "deliverables", "wrangler.jsonc");
-  run(
-    "Deploy clinovyr-deliverables (DELIVERABLES binding target)",
-    "npx",
-    ["wrangler", "deploy", "-c", deliverablesConfig]
-  );
+if (fs.existsSync(".open-next/worker.js")) {
+  console.log("[cloudflare-build] OpenNext output ready (.open-next/worker.js)");
 } else {
-  console.log(
-    "[cloudflare-build] Skipping deliverables deploy outside CI (run deploy:deliverables manually)"
-  );
+  console.error("[cloudflare-build] Missing .open-next/worker.js after build");
+  process.exit(1);
 }
 
-console.log("[cloudflare-build] Done");
+console.log(
+  "[cloudflare-build] Done (deliverables deploy runs in deploy phase via scripts/cloudflare-deploy.js)"
+);

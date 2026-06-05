@@ -90,11 +90,13 @@ Paste exactly:
 
 ---
 
-## Option C — postinstall build + deploy deliverables first (fixes DELIVERABLES binding)
+## Option C — postinstall build + deploy deliverables first (fixes DELIVERABLES binding) **← use this**
 
 Use when **`clinovyr-site`** Git Builds fails with *Service binding `DELIVERABLES` references Worker `clinovyr-deliverables` which was not found* because only the main Worker deploys.
 
-`npm ci` runs **`postinstall`** → `scripts/ci-opennext-build.js` (OpenNext build when `CI=true` or `WORKERS_CI=true`). Deploy then pushes **deliverables first**, then main.
+**Root cause:** In an OpenNext repo, `npx wrangler deploy` is redirected to `opennextjs-cloudflare deploy` (clinovyr-site). A nested `wrangler deploy -c workers/deliverables/wrangler.jsonc` during the custom build phase still deploys **clinovyr-site**, not deliverables — so the binding target is never created.
+
+`npm ci` runs **`postinstall`** → `scripts/ci-opennext-build.js` (OpenNext build when `CI=true` or `WORKERS_CI=1`). **`scripts/cloudflare-deploy.js`** deploys **deliverables first** (`OPEN_NEXT_DEPLOY=true` bypasses OpenNext hijack), then main.
 
 Paste exactly on **`clinovyr-site`** only (you can disconnect Git Builds on **`clinovyr-deliverables`** if this option is active):
 
@@ -107,32 +109,26 @@ Paste exactly on **`clinovyr-site`** only (you can disconnect Git Builds on **`c
 
 Alternative deploy command: `npm run deploy:cloudflare-ci`.
 
+Build logs should show `[cloudflare-deploy] Deploying clinovyr-deliverables` then a `*.workers.dev` URL, then `[cloudflare-deploy] Deploying clinovyr-site`.
+
 Local dry-run (after `npm run build:cloudflare`): `node scripts/cloudflare-deploy.js --dry-run`.
 
 ---
 
-## Option D — zero dashboard change (`npx wrangler deploy` unchanged)
+## Option D — `npx wrangler deploy` (do not use for dual-worker deploy)
 
-Use when OpenNext **custom build** already succeeds but deploy fails with the DELIVERABLES binding error. No dashboard edits required if your settings are already:
+**Broken for deliverables:** `wrangler.jsonc` `[build].command` cannot deploy `clinovyr-deliverables` because any `wrangler deploy` from this repo without `OPEN_NEXT_DEPLOY=true` runs `opennextjs-cloudflare deploy` and publishes **clinovyr-site** instead.
+
+If your dashboard still has:
 
 | Setting | Value |
 |--------|--------|
-| **Build command** | *(leave empty — Wrangler runs `wrangler.jsonc` `[build].command`)* |
+| **Build command** | *(leave empty)* |
 | **Deploy command** | `npx wrangler deploy` |
-| **Root directory** | `/` |
-| **Node.js version** | **22** (or later) |
 
-`wrangler.jsonc` `[build].command` → `node scripts/cloudflare-build.js`:
+Change the **Deploy command** to **`node scripts/cloudflare-deploy.js`** (Option C above).
 
-1. `npx prisma generate`
-2. `npx opennextjs-cloudflare build`
-3. **`npx wrangler deploy -c workers/deliverables/wrangler.jsonc`** (CI only — before main deploy)
-
-`npm ci` **postinstall** still runs `scripts/ci-opennext-build.js` as a fallback when the dashboard build step is empty.
-
-You can disconnect Git Builds on **`clinovyr-deliverables`** — one pipeline on **`clinovyr-site`** deploys both Workers.
-
-Local dry-run (after OpenNext build): `npx wrangler deploy --dry-run`.
+`wrangler.jsonc` `[build].command` → `node scripts/cloudflare-build.js` only compiles OpenNext (Prisma + build). Deliverables deploy belongs in the deploy phase.
 
 ---
 
@@ -140,8 +136,8 @@ Local dry-run (after OpenNext build): `npx wrangler deploy --dry-run`.
 
 | Setting | Why |
 |--------|-----|
-| **Build command: None** + **`npx wrangler deploy`** | Works with **Option D** (`scripts/cloudflare-build.js` in `[build].command`). Without that script, deploy may run without OpenNext output. |
-| **`npx wrangler deploy`** without Option D build script | OpenNext hijacks deploy; deliverables Worker is not deployed → DELIVERABLES binding error. |
+| **`npx wrangler deploy`** on dual-worker OpenNext site | OpenNext hijacks deploy; nested deliverables deploy in build phase still publishes clinovyr-site → DELIVERABLES binding error. Use **Option C**. |
+| **Build command: None** + **`npx wrangler deploy`** | Postinstall builds OpenNext, but deliverables Worker is not created. Use deploy command **`node scripts/cloudflare-deploy.js`**. |
 | **`npm run build`** alone | That is `next build` only — does **not** produce `.open-next/` for the Worker. |
 
 ---
@@ -221,14 +217,12 @@ Build command:  (empty)
 Deploy command: node scripts/cloudflare-deploy.js
 ```
 
-**Option D — zero dashboard change (DELIVERABLES binding + `npx wrangler deploy`):**
+**Option C — dual deploy (fixes DELIVERABLES binding) — required for clinovyr-site Git Builds:**
 
 ```
 Build command:  (empty)
-Deploy command: npx wrangler deploy
+Deploy command: node scripts/cloudflare-deploy.js
 ```
-
-Uses `wrangler.jsonc` `[build].command` → `node scripts/cloudflare-build.js` (OpenNext + deliverables deploy in CI).
 
 **Deliverables Worker (deploy first, if using separate Git Builds):**
 

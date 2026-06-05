@@ -134,17 +134,17 @@ Same repo **Papaburgndy/clinovyr-site**, branch **`main`** on each Worker.
 | **Root directory** | `/` |
 | **Node.js version** | **22** or later |
 
-**Do not** use **`npx wrangler deploy`** without **Option D** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md) — deliverables must deploy before main. Postinstall (`scripts/ci-opennext-build.js`) is a fallback when CI env vars run after `npm ci`.
+**Do not** use **`npx wrangler deploy`** alone on **`clinovyr-site`** — OpenNext hijacks it and deliverables never deploy. Use **Option C** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md): deploy command **`node scripts/cloudflare-deploy.js`**. Postinstall (`scripts/ci-opennext-build.js`) builds OpenNext when `CI=true` or `WORKERS_CI=1`.
 
-**DELIVERABLES binding error:** use **Option D** (keep `npx wrangler deploy`; `scripts/cloudflare-build.js` deploys deliverables in the build phase) or **Option C** (`node scripts/cloudflare-deploy.js` as deploy command).
+**DELIVERABLES binding error:** set deploy command to **`node scripts/cloudflare-deploy.js`** (deploys `clinovyr-deliverables` first with `OPEN_NEXT_DEPLOY=true`, then main).
 
 **Alternative:** empty build + **`npm run deploy`** (build and deploy in one step).
 
 **Runtime secrets** (e.g. `DATABASE_URL`, `AUTH_SECRET`) go in **Variables and Secrets** on the Worker — not GitHub Actions secrets — for Cloudflare-native Git builds.
 
-### `wrangler.jsonc` `[build].command` (Option D)
+### Dual-worker deploy (Option C)
 
-Workers Builds with **`npx wrangler deploy`** runs the custom build phase (`scripts/cloudflare-build.js`): Prisma generate, OpenNext build, then **deploy `clinovyr-deliverables`** when `CI=true` or `WORKERS_CI=true`. Main deploy follows in the deploy phase. See **Option D** in **CLOUDFLARE-BUILD-SETTINGS.md**.
+Workers Builds deploy command **`node scripts/cloudflare-deploy.js`**: deploy **`clinovyr-deliverables`** first, then **`opennextjs-cloudflare deploy`** for main. `wrangler.jsonc` `[build].command` (`scripts/cloudflare-build.js`) only compiles OpenNext when using raw `npx wrangler deploy`. See **Option C** in **CLOUDFLARE-BUILD-SETTINGS.md**.
 
 
 ## Client portal (clinovyr.com — main Worker)
