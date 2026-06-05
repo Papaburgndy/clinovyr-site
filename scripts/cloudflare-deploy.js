@@ -8,7 +8,7 @@
  * Dashboard deploy command on clinovyr-site:
  *   node scripts/cloudflare-deploy.js
  *
- * Why not deploy deliverables during wrangler [build].command?
+ * Alternative to wrangler [build].command deliverables deploy (see cloudflare-build.js).
  * Any `npx wrangler deploy` from this OpenNext repo is redirected to
  * opennextjs-cloudflare deploy (clinovyr-site) unless OPEN_NEXT_DEPLOY=true.
  *

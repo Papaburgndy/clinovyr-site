@@ -1,23 +1,34 @@
 #!/usr/bin/env node
 /**
- * Wrangler [build].command — compile OpenNext output before main deploy.
+ * Wrangler [build].command — compile OpenNext output, deploy deliverables, then main deploy.
  *
  * Runs when deploy uses `npx wrangler deploy` (wrangler.jsonc [build].command).
- * Does NOT deploy clinovyr-deliverables here: nested `wrangler deploy` in an
- * OpenNext repo is hijacked by opennextjs-cloudflare and deploys clinovyr-site
- * instead. Use deploy command `node scripts/cloudflare-deploy.js` (Option C).
+ * Deploys clinovyr-deliverables here so the DELIVERABLES service binding exists
+ * before the hijacked OpenNext deploy publishes clinovyr-site.
+ *
+ * Nested `npx wrangler deploy` in an OpenNext repo is hijacked to clinovyr-site
+ * unless OPEN_NEXT_DEPLOY=true — set that env when deploying deliverables.
  *
  * Steps:
  *   1. prisma generate
  *   2. opennextjs-cloudflare build
+ *   3. wrangler deploy -c workers/deliverables/wrangler.jsonc (OPEN_NEXT_DEPLOY=true)
  */
 
 const { spawnSync } = require("node:child_process");
 const fs = require("node:fs");
+const path = require("node:path");
 
-function run(label, command, args) {
+const deliverablesConfig = path.join("workers", "deliverables", "wrangler.jsonc");
+const DELIVERABLES_WORKER = "clinovyr-deliverables";
+
+function run(label, command, args, extraEnv = {}) {
   console.log(`[cloudflare-build] ${label}`);
-  const result = spawnSync(command, args, { stdio: "inherit", shell: true });
+  const result = spawnSync(command, args, {
+    stdio: "inherit",
+    shell: true,
+    env: { ...process.env, ...extraEnv },
+  });
   if (result.error) {
     console.error(`[cloudflare-build] Failed to start ${label}:`, result.error.message);
     process.exit(1);
@@ -25,6 +36,57 @@ function run(label, command, args) {
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
+}
+
+function runDeliverablesDeploy() {
+  console.log(
+    `[cloudflare-build] Deploying ${DELIVERABLES_WORKER} with OPEN_NEXT_DEPLOY=true`
+  );
+  console.log(`[cloudflare-build] Config: ${deliverablesConfig}`);
+
+  const result = spawnSync(
+    "npx",
+    ["wrangler", "deploy", "-c", deliverablesConfig],
+    {
+      stdio: "pipe",
+      shell: true,
+      encoding: "utf-8",
+      env: { ...process.env, OPEN_NEXT_DEPLOY: "true" },
+    }
+  );
+
+  const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
+  if (output) {
+    process.stdout.write(output);
+  }
+
+  if (result.error) {
+    console.error(
+      `[cloudflare-build] Failed to start ${DELIVERABLES_WORKER} deploy:`,
+      result.error.message
+    );
+    process.exit(1);
+  }
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1);
+  }
+
+  if (output.includes(DELIVERABLES_WORKER)) {
+    console.log(
+      `[cloudflare-build] Verified deploy output references ${DELIVERABLES_WORKER}`
+    );
+  } else if (output.includes("clinovyr-site")) {
+    console.error(
+      `[cloudflare-build] ERROR: deploy targeted clinovyr-site instead of ${DELIVERABLES_WORKER} — OpenNext hijack not bypassed`
+    );
+    process.exit(1);
+  } else {
+    console.warn(
+      `[cloudflare-build] WARNING: deploy output did not mention ${DELIVERABLES_WORKER} — check logs for *.workers.dev URL`
+    );
+  }
+
+  console.log(`[cloudflare-build] ${DELIVERABLES_WORKER} deploy finished OK`);
 }
 
 process.env.DATABASE_URL =
@@ -41,6 +103,8 @@ if (fs.existsSync(".open-next/worker.js")) {
   process.exit(1);
 }
 
+runDeliverablesDeploy();
+
 console.log(
-  "[cloudflare-build] Done (deliverables deploy runs in deploy phase via scripts/cloudflare-deploy.js)"
+  "[cloudflare-build] Done (clinovyr-site deploy continues in wrangler deploy phase)"
 );

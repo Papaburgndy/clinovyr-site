@@ -27,10 +27,10 @@
   "observability": {
     "enabled": true
   },
-  // Custom build compiles OpenNext before `npx wrangler deploy` only.
-  // Deploy clinovyr-deliverables first via dashboard deploy command:
-  //   node scripts/cloudflare-deploy.js
-  // See CLOUDFLARE-BUILD-SETTINGS.md Option C.
+  // Custom build: OpenNext compile + deploy clinovyr-deliverables (OPEN_NEXT_DEPLOY=true).
+  // Works with dashboard deploy command `npx wrangler deploy` — deliverables deploy here,
+  // then wrangler/OpenNext deploys clinovyr-site with DELIVERABLES binding satisfied.
+  // Alternative: `node scripts/cloudflare-deploy.js` (Option C in CLOUDFLARE-BUILD-SETTINGS.md).
   "build": {
     "command": "node scripts/cloudflare-build.js"
   }

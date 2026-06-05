@@ -134,17 +134,19 @@ Same repo **Papaburgndy/clinovyr-site**, branch **`main`** on each Worker.
 | **Root directory** | `/` |
 | **Node.js version** | **22** or later |
 
-**Do not** use **`npx wrangler deploy`** alone on **`clinovyr-site`** — OpenNext hijacks it and deliverables never deploy. Use **Option C** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md): deploy command **`node scripts/cloudflare-deploy.js`**. Postinstall (`scripts/ci-opennext-build.js`) builds OpenNext when `CI=true` or `WORKERS_CI=1`.
+**`npx wrangler deploy`** on **`clinovyr-site`** works when `wrangler.jsonc` `[build].command` runs **`scripts/cloudflare-build.js`** — it deploys **`clinovyr-deliverables`** first (`OPEN_NEXT_DEPLOY=true`), then OpenNext publishes the main Worker. See **Option D** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md).
 
-**DELIVERABLES binding error:** set deploy command to **`node scripts/cloudflare-deploy.js`** (deploys `clinovyr-deliverables` first with `OPEN_NEXT_DEPLOY=true`, then main).
+**DELIVERABLES binding error:** build logs must show `[cloudflare-build] Deploying clinovyr-deliverables with OPEN_NEXT_DEPLOY=true` and a `clinovyr-deliverables.*.workers.dev` URL before clinovyr-site deploy. Alternative: deploy command **`node scripts/cloudflare-deploy.js`** (Option C).
 
 **Alternative:** empty build + **`npm run deploy`** (build and deploy in one step).
 
 **Runtime secrets** (e.g. `DATABASE_URL`, `AUTH_SECRET`) go in **Variables and Secrets** on the Worker — not GitHub Actions secrets — for Cloudflare-native Git builds.
 
-### Dual-worker deploy (Option C)
+### Dual-worker deploy
 
-Workers Builds deploy command **`node scripts/cloudflare-deploy.js`**: deploy **`clinovyr-deliverables`** first, then **`opennextjs-cloudflare deploy`** for main. `wrangler.jsonc` `[build].command` (`scripts/cloudflare-build.js`) only compiles OpenNext when using raw `npx wrangler deploy`. See **Option C** in **CLOUDFLARE-BUILD-SETTINGS.md**.
+**Option D (default):** deploy command **`npx wrangler deploy`** — `scripts/cloudflare-build.js` deploys deliverables in the build phase, then main deploys.
+
+**Option C (alternative):** deploy command **`node scripts/cloudflare-deploy.js`** — deploy deliverables first in deploy phase, then main. See **CLOUDFLARE-BUILD-SETTINGS.md**.
 
 
 ## Client portal (clinovyr.com — main Worker)

@@ -90,13 +90,11 @@ Paste exactly:
 
 ---
 
-## Option C — postinstall build + deploy deliverables first (fixes DELIVERABLES binding) **← use this**
+## Option C — deploy orchestrator script (alternative)
 
-Use when **`clinovyr-site`** Git Builds fails with *Service binding `DELIVERABLES` references Worker `clinovyr-deliverables` which was not found* because only the main Worker deploys.
+Use when you prefer an explicit deploy-phase script instead of relying on `wrangler.jsonc` `[build].command`.
 
-**Root cause:** In an OpenNext repo, `npx wrangler deploy` is redirected to `opennextjs-cloudflare deploy` (clinovyr-site). A nested `wrangler deploy -c workers/deliverables/wrangler.jsonc` during the custom build phase still deploys **clinovyr-site**, not deliverables — so the binding target is never created.
-
-`npm ci` runs **`postinstall`** → `scripts/ci-opennext-build.js` (OpenNext build when `CI=true` or `WORKERS_CI=1`). **`scripts/cloudflare-deploy.js`** deploys **deliverables first** (`OPEN_NEXT_DEPLOY=true` bypasses OpenNext hijack), then main.
+**`scripts/cloudflare-deploy.js`** deploys **deliverables first** (`OPEN_NEXT_DEPLOY=true` bypasses OpenNext hijack), then main via `opennextjs-cloudflare deploy`.
 
 Paste exactly on **`clinovyr-site`** only (you can disconnect Git Builds on **`clinovyr-deliverables`** if this option is active):
 
@@ -115,20 +113,29 @@ Local dry-run (after `npm run build:cloudflare`): `node scripts/cloudflare-deplo
 
 ---
 
-## Option D — `npx wrangler deploy` (do not use for dual-worker deploy)
+## Option D — `npx wrangler deploy` (works with dual-worker deploy) **← default if dashboard unchanged**
 
-**Broken for deliverables:** `wrangler.jsonc` `[build].command` cannot deploy `clinovyr-deliverables` because any `wrangler deploy` from this repo without `OPEN_NEXT_DEPLOY=true` runs `opennextjs-cloudflare deploy` and publishes **clinovyr-site** instead.
+Use when the dashboard deploy command is already **`npx wrangler deploy`** and you cannot change it.
 
-If your dashboard still has:
+`wrangler.jsonc` `[build].command` → **`scripts/cloudflare-build.js`** compiles OpenNext, then deploys **`clinovyr-deliverables`** with `OPEN_NEXT_DEPLOY=true` (bypasses OpenNext hijack). The subsequent wrangler/OpenNext deploy publishes **clinovyr-site** with the DELIVERABLES binding satisfied.
+
+Paste exactly:
 
 | Setting | Value |
 |--------|--------|
-| **Build command** | *(leave empty)* |
+| **Build command** | *(leave empty — wrangler runs `[build].command` automatically)* |
 | **Deploy command** | `npx wrangler deploy` |
+| **Root directory** | `/` |
+| **Node.js version** | **22** (or later) |
 
-Change the **Deploy command** to **`node scripts/cloudflare-deploy.js`** (Option C above).
+Build logs should show:
 
-`wrangler.jsonc` `[build].command` → `node scripts/cloudflare-build.js` only compiles OpenNext (Prisma + build). Deliverables deploy belongs in the deploy phase.
+1. `[cloudflare-build] Deploying clinovyr-deliverables with OPEN_NEXT_DEPLOY=true`
+2. A `clinovyr-deliverables.*.workers.dev` URL (not `clinovyr-site`)
+3. `[cloudflare-build] Done (clinovyr-site deploy continues in wrangler deploy phase)`
+4. Then wrangler asset upload + clinovyr-site deploy
+
+If deliverables deploy is missing from logs, the binding error will return — use **Option C** instead.
 
 ---
 
@@ -136,8 +143,7 @@ Change the **Deploy command** to **`node scripts/cloudflare-deploy.js`** (Option
 
 | Setting | Why |
 |--------|-----|
-| **`npx wrangler deploy`** on dual-worker OpenNext site | OpenNext hijacks deploy; nested deliverables deploy in build phase still publishes clinovyr-site → DELIVERABLES binding error. Use **Option C**. |
-| **Build command: None** + **`npx wrangler deploy`** | Postinstall builds OpenNext, but deliverables Worker is not created. Use deploy command **`node scripts/cloudflare-deploy.js`**. |
+| **Build command: None** + **`npx wrangler deploy`** without `[build].command` deliverables step | Postinstall builds OpenNext, but deliverables Worker is not created unless `cloudflare-build.js` runs. Repo `wrangler.jsonc` includes `[build].command` — keep deploy as `npx wrangler deploy`. |
 | **`npm run build`** alone | That is `next build` only — does **not** produce `.open-next/` for the Worker. |
 
 ---
