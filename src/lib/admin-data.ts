@@ -1,4 +1,4 @@
-import { Prisma, type Company, Order, Survey, User } from "@prisma/client";
+import { Prisma, type Company, Order, Survey, User } from "@prisma/client/edge";
 import { isOrderPaid, isSurveyComplete } from "@/lib/dashboard-state";
 import { prisma } from "@/lib/prisma";
 

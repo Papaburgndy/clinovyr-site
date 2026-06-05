@@ -6,12 +6,14 @@ Worker name: **`clinovyr-site`** (see `wrangler.jsonc`).
 
 ## Worker bundle size (free vs paid)
 
+> **Workers Free cannot host this app.** The full Clinovyr portal (auth, Prisma, PDF deliverables, Stripe) exceeds Cloudflare’s **3 MiB compressed** script limit even after removing `@vercel/og` and using Prisma edge imports. Upgrade to **Workers Paid** before deploying production: [Cloudflare Workers Paid plan](https://developers.cloudflare.com/workers/platform/pricing/#workers) ($5/mo, **10 MiB** compressed limit).
+
 Cloudflare enforces a **compressed** script size limit on deploy:
 
 | Plan | Script limit | This app |
 |------|--------------|----------|
-| Workers **Free** | **3 MiB** | Unlikely to fit the full portal (Prisma, PDF deliverables, Stripe, auth) even after OG removal |
-| Workers **Paid** ($5/mo) | **10 MiB** | Target plan for production portal deploys |
+| Workers **Free** | **3 MiB** | **Will not deploy** — full portal exceeds limit |
+| Workers **Paid** ([upgrade](https://dash.cloudflare.com/?to=/:account/workers/plans)) | **10 MiB** | **Required** for production portal deploys |
 
 The main server bundle lives at `.open-next/server-functions/default/handler.mjs`.
 
@@ -23,9 +25,12 @@ The main server bundle lives at `.open-next/server-functions/default/handler.mjs
 
 **What we did to shrink the bundle:**
 
-1. **Removed** `src/app/opengraph-image.tsx` — OpenNext aliases `@vercel/og` to a no-op shim when OG routes are absent (drops `resvg.wasm`, `yoga.wasm`, and OG fonts from the Worker).
-2. **Prisma edge imports** — `runtime = "cloudflare"` in `prisma/schema.prisma`, `PrismaClient` from `@prisma/client/edge` in `src/lib/prisma.ts`, and `Prisma` namespace from `@prisma/client/edge` in API routes (avoids bundling `query_compiler_fast_bg.wasm-base64.js`, ~4.7 MiB).
-3. **Static OG** — `public/og.svg` + `metadata.openGraph.images` in `layout.tsx` (no runtime image generation).
+1. **Removed** `src/app/opengraph-image.tsx` — dynamic OG pulled ~2 MiB of `@vercel/og` WASM into the Worker.
+2. **Webpack stub** — `next.config.ts` aliases `@vercel/og` and `next/dist/compiled/@vercel/og/*` to `src/lib/stubs/vercel-og-stub.ts` so Next never traces OG into `.nft.json` files.
+3. **Prisma edge imports** — `runtime = "cloudflare"` in `prisma/schema.prisma`, `PrismaClient` and `Prisma` namespace from `@prisma/client/edge` everywhere (avoids `query_compiler_fast_bg.wasm-base64.js`, ~4.7 MiB).
+4. **Static OG** — `public/og.svg` + `metadata.openGraph.images` in `layout.tsx` (no runtime image generation).
+
+**If Cloudflare logs still show `handler.mjs` ~19 MiB with `resvg.wasm` / `yoga.wasm` in top deps**, the build is stale (pre-`e23e97fc`). Confirm the deploy commit includes `opengraph-image.tsx` deleted and redeploy from latest `main`.
 
 **Do not** use value imports from `@prisma/client` (non-edge) in server code — even `import { Prisma } from "@prisma/client"` for `Prisma.DbNull` drags the Node query compiler into the Worker.
 
