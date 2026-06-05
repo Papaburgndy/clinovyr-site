@@ -23,10 +23,10 @@
   "observability": {
     "enabled": true
   },
-  // Runs before direct `wrangler deploy` only — NOT when Workers Builds uses
-  // `npx wrangler deploy` (OpenNext hijacks to `opennextjs-cloudflare deploy`).
-  // Cloudflare CI: set deploy command to `npm run deploy` (see DEPLOY.md).
+  // Used by local `wrangler deploy` only. Workers Builds Git CI ignores this when
+  // deploy is `npx wrangler deploy` (OpenNext hijacks). Set dashboard Build/Deploy
+  // per CLOUDFLARE-BUILD-SETTINGS.md — do not leave Build command empty.
   "build": {
-    "command": "npx opennextjs-cloudflare build"
+    "command": "npx prisma generate && npx opennextjs-cloudflare build"
   }
 }

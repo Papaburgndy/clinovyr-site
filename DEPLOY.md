@@ -36,64 +36,28 @@ GitHub → **Actions** → **Deploy to Cloudflare** → latest run on your commi
 
 ## Cloudflare dashboard (Git-connected build)
 
-Use **Workers** → your Worker → **Settings** → **Builds** with a connected repository.
+**Copy-paste Build/Deploy commands and Worker secrets:** see **[CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md)**.
 
-### Automatic CI build (postinstall fallback)
+Use **Workers** → **`clinovyr-site`** → **Settings** → **Builds** with repo **Papaburgndy/clinovyr-site**, branch **`main`**.
 
-If the dashboard deploy command is still `npx wrangler deploy`, deploy can succeed **without changing the dashboard**. After `npm ci`, the `postinstall` script runs `opennextjs-cloudflare build` when Cloudflare injects `CI=true` or `WORKERS_CI=1` (Workers Builds default env vars).
-
-Flow with default dashboard settings:
-
-1. `npm ci` → postinstall builds `.open-next/`
-2. `npx wrangler deploy` → OpenNext deploy finds compiled config
-
-**Recommended:** still set deploy command to `npm run deploy` so the build runs explicitly at deploy time (redundant but clearer). The postinstall hook is a safety net for dashboards that were never updated.
-
-### Required dashboard settings
+### Required dashboard settings (summary)
 
 | Setting | Value |
 |--------|--------|
-| **Build command** | *(leave empty)* — build runs via postinstall (CI) or `npm run deploy` |
-| **Deploy command** | `npm run deploy` *(recommended)* or `npx wrangler deploy` *(works via postinstall)* |
-| **Root directory** | `/` (repository root) |
-| **Node.js version** | **22** or later (Wrangler 4 requires Node ≥ 22) |
-
-**Avoid `npx wrangler deploy` without postinstall** on older commits. When Wrangler detects an OpenNext project it redirects to `opennextjs-cloudflare deploy`, which **does not** run the `[build].command` in `wrangler.jsonc`. Without a prior build that produces:
-
-```
-ERROR Could not find compiled Open Next config, did you run the build command?
-```
-
-The `deploy` script in `package.json` always builds before deploy:
-
-```json
-"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
-```
-
-### Alternative: separate build and deploy steps
-
-If you prefer Cloudflare to run build and deploy as distinct phases:
-
-| Setting | Value |
-|--------|--------|
-| **Build command** | `npm run build:cloudflare` |
+| **Build command** | `npx prisma generate && npx opennextjs-cloudflare build` |
 | **Deploy command** | `npx opennextjs-cloudflare deploy` |
+| **Root directory** | `/` |
+| **Node.js version** | **22** or later |
 
-Still **do not** use `npx wrangler deploy` — use the OpenNext CLI for deploy so Wrangler does not hijack the command.
+**Do not** leave **Build command** empty with **`npx wrangler deploy`** — that was the failing configuration (no `.open-next/` before deploy). Postinstall (`scripts/cloudflare-build.js`) is only a fallback when CI env vars run after `npm ci`.
 
-Cloudflare runs `npm ci` automatically before the build/deploy steps.
+**Alternative:** empty build + **`npm run deploy`** (build and deploy in one step).
+
+**Runtime secrets** (e.g. `DATABASE_URL`, `AUTH_SECRET`) go in **Variables and Secrets** on the Worker — not GitHub Actions secrets — for Cloudflare-native Git builds.
 
 ### Why `wrangler.jsonc` `[build].command` is not enough
 
-`wrangler.jsonc` includes a build hook for direct local `wrangler deploy`:
-
-```jsonc
-"build": {
-  "command": "npx opennextjs-cloudflare build"
-}
-```
-
-That hook runs only when Wrangler itself executes deploy. Workers Builds with deploy command `npx wrangler deploy` triggers OpenNext's wrapper instead, which skips this hook. The repo `postinstall` script (`scripts/cloudflare-build.js`) builds in CI as a fallback; prefer `npm run deploy` in the dashboard when you can change it.
+`wrangler.jsonc` includes a build hook for local `wrangler deploy` only. Workers Builds with **`npx wrangler deploy`** uses OpenNext's wrapper and **skips** this hook. Set explicit dashboard commands per **CLOUDFLARE-BUILD-SETTINGS.md**.
 
 
 ## Client portal (clinovyr.com — main Worker)
@@ -224,10 +188,11 @@ Response header `x-opennext: 1` means traffic **is** on the OpenNext Worker—no
 
 2. **Trigger deployment** from the latest GitHub **`main`** commit (e.g. `052614dc`): **Deployments** → **Retry deployment** or **Create deployment** from `main`. If Builds are disconnected, reconnect the repo and branch `main`.
 
-3. **Verify build settings** (Settings → Builds):
-   - **Deploy command:** `npm run deploy` (recommended), or `npx wrangler deploy` only if postinstall runs OpenNext build in CI (`CI=true` / `WORKERS_CI=1`).
+3. **Verify build settings** (Settings → Builds) — see **CLOUDFLARE-BUILD-SETTINGS.md**:
+   - **Build command:** `npx prisma generate && npx opennextjs-cloudflare build`
+   - **Deploy command:** `npx opennextjs-cloudflare deploy` (or `npm run deploy` with empty build)
    - **Node.js:** 22+
-   - Do **not** deploy with a bare `wrangler deploy` on a machine that never ran `opennextjs-cloudflare build` (missing `.open-next/`).
+   - Do **not** use **Build command: None** + **`npx wrangler deploy`**.
 
 4. **Set secrets** on this Worker (see tables above): at minimum `DATABASE_URL`, `AUTH_SECRET` / `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `SITE_URL`, Stripe, Resend, `CONTACT_EMAIL=clinovyr@gmail.com`, `ADMIN_EMAIL`, etc. Run `npx prisma migrate deploy` against production Postgres outside the Worker.
 
