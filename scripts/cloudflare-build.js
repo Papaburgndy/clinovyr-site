@@ -3,8 +3,8 @@
  * Wrangler [build].command — compile OpenNext output, deploy deliverables, then main deploy.
  *
  * Runs when deploy uses `npx wrangler deploy` (wrangler.jsonc [build].command).
- * Deploys clinovyr-deliverables here so the DELIVERABLES service binding exists
- * before the hijacked OpenNext deploy publishes clinovyr-site.
+ * Deploys clinovyr-deliverables here so its HTTP endpoint exists before main site goes live.
+ * Main site calls deliverables via DELIVERABLES_WORKER_URL (no service binding).
  *
  * Nested `npx wrangler deploy` in an OpenNext repo is hijacked to clinovyr-site
  * unless OPEN_NEXT_DEPLOY=true — set that env when deploying deliverables.
@@ -71,18 +71,28 @@ function runDeliverablesDeploy() {
     process.exit(result.status ?? 1);
   }
 
-  if (output.includes(DELIVERABLES_WORKER)) {
-    console.log(
-      `[cloudflare-build] Verified deploy output references ${DELIVERABLES_WORKER}`
-    );
-  } else if (output.includes("clinovyr-site")) {
+  const workersDevMatch = output.match(
+    /https:\/\/clinovyr-deliverables\.[a-z0-9-]+\.workers\.dev/i
+  );
+
+  if (output.includes("clinovyr-site") && !workersDevMatch) {
     console.error(
       `[cloudflare-build] ERROR: deploy targeted clinovyr-site instead of ${DELIVERABLES_WORKER} — OpenNext hijack not bypassed`
     );
     process.exit(1);
+  }
+
+  if (workersDevMatch) {
+    console.log(
+      `[cloudflare-build] Verified deliverables URL: ${workersDevMatch[0]}`
+    );
+  } else if (output.includes("Total Upload:") || output.includes("dry-run")) {
+    console.log(
+      `[cloudflare-build] Deliverables deploy completed (no *.workers.dev URL in output — set DELIVERABLES_WORKER_URL on clinovyr-site)`
+    );
   } else {
     console.warn(
-      `[cloudflare-build] WARNING: deploy output did not mention ${DELIVERABLES_WORKER} — check logs for *.workers.dev URL`
+      `[cloudflare-build] WARNING: could not verify deliverables deploy — check logs for *.workers.dev URL`
     );
   }
 

@@ -1,11 +1,12 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { TriggerDeliverableGenerationParams } from "@/lib/deliverables/types";
 
-const DELIVERABLES_GENERATE_URL = "https://deliverables/generate";
+const DELIVERABLES_WORKER_NAME = "clinovyr-deliverables";
+const GENERATE_PATH = "/generate";
 
 /**
  * Fire-and-forget from the Stripe webhook — do not await in the request handler.
- * Dispatches PDF/ZIP generation to the clinovyr-deliverables Worker via service binding.
+ * Dispatches PDF/ZIP generation to the clinovyr-deliverables Worker via HTTP.
  */
 export function triggerDeliverableGeneration(
   params: TriggerDeliverableGenerationParams,
@@ -15,15 +16,36 @@ export function triggerDeliverableGeneration(
   });
 }
 
+function resolveDeliverablesWorkerUrl(): string | null {
+  const { env } = getCloudflareContext();
+  const explicit =
+    process.env.DELIVERABLES_WORKER_URL?.trim() ??
+    (env as { DELIVERABLES_WORKER_URL?: string }).DELIVERABLES_WORKER_URL?.trim();
+
+  if (explicit) {
+    return explicit.replace(/\/$/, "");
+  }
+
+  const subdomain =
+    process.env.CLOUDFLARE_ACCOUNT_SUBDOMAIN?.trim() ??
+    (env as { CLOUDFLARE_ACCOUNT_SUBDOMAIN?: string })
+      .CLOUDFLARE_ACCOUNT_SUBDOMAIN?.trim();
+
+  if (subdomain) {
+    return `https://${DELIVERABLES_WORKER_NAME}.${subdomain}.workers.dev`;
+  }
+
+  return null;
+}
+
 async function dispatchToDeliverablesWorker(
   params: TriggerDeliverableGenerationParams,
 ): Promise<void> {
-  const { env } = getCloudflareContext();
-  const binding = env.DELIVERABLES;
+  const baseUrl = resolveDeliverablesWorkerUrl();
 
-  if (!binding) {
+  if (!baseUrl) {
     console.error(
-      "[deliverables/trigger] DELIVERABLES service binding is not configured",
+      "[deliverables/trigger] DELIVERABLES_WORKER_URL is not configured (or set CLOUDFLARE_ACCOUNT_SUBDOMAIN)",
     );
     return;
   }
@@ -37,7 +59,7 @@ async function dispatchToDeliverablesWorker(
     headers["X-Clinovyr-Internal-Secret"] = secret;
   }
 
-  const response = await binding.fetch(DELIVERABLES_GENERATE_URL, {
+  const response = await fetch(`${baseUrl}${GENERATE_PATH}`, {
     method: "POST",
     headers,
     body: JSON.stringify(params),

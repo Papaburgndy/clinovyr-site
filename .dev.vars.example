@@ -1,7 +1,11 @@
 # Copy to .dev.vars for local `npm run preview` (not committed).
 NEXTJS_ENV=development
 
-# Shared secret for main Worker → clinovyr-deliverables service binding (set on both Workers).
+# Main Worker → clinovyr-deliverables HTTP (set on clinovyr-site; copy URL from deliverables deploy logs).
+# DELIVERABLES_WORKER_URL=https://clinovyr-deliverables.<account-subdomain>.workers.dev
+# Or set CLOUDFLARE_ACCOUNT_SUBDOMAIN=<account-subdomain> to derive the URL automatically.
+
+# Shared secret for main Worker → deliverables HTTP auth (set on both Workers).
 # INTERNAL_DELIVERABLES_SECRET=openssl-rand-base64-32
 
 # Contact API (required in production — set as Worker secrets in Cloudflare)

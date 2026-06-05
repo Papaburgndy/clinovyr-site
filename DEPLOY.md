@@ -15,20 +15,16 @@ Cloudflare enforces a **compressed** script size limit **per Worker**:
 
 ### Two-Worker architecture
 
-PDF/ZIP deliverable generation (`@react-pdf`, `archiver`, `xlsx-js-style`, industry generators) runs in a **separate** Worker. The main site Worker calls it via a **service binding** — same URLs, same UI, no user-facing change.
+PDF/ZIP deliverable generation (`@react-pdf`, `archiver`, `xlsx-js-style`, industry generators) runs in a **separate** Worker. The main site Worker calls it via **HTTP** (`DELIVERABLES_WORKER_URL`) — same URLs, same UI, no user-facing change.
 
 | Worker | Name | Role | Dry-run gzip (verify locally) |
 |--------|------|------|-------------------------------|
 | **Main** | `clinovyr-site` | Marketing, auth, portal, Stripe webhooks, Prisma, admin | **~2.8 MiB** (`wrangler deploy --dry-run`) |
 | **Deliverables** | `clinovyr-deliverables` | `runDeliverableGeneration` + all generators | **~2.7 MiB** (`wrangler deploy --dry-run -c workers/deliverables/wrangler.jsonc`) |
 
-Flow: Stripe webhook → `triggerDeliverableGeneration()` in main Worker → `env.DELIVERABLES.fetch("/generate")` → deliverables Worker generates PDFs, uploads to Blob, updates DB, sends email.
+Flow: Stripe webhook → `triggerDeliverableGeneration()` in main Worker → `fetch(DELIVERABLES_WORKER_URL/generate)` → deliverables Worker generates PDFs, uploads to Blob, updates DB, sends email.
 
-**Binding** (in root `wrangler.jsonc`):
-
-```json
-{ "binding": "DELIVERABLES", "service": "clinovyr-deliverables" }
-```
+**HTTP endpoint:** set `DELIVERABLES_WORKER_URL` on **`clinovyr-site`** (e.g. `https://clinovyr-deliverables.<account-subdomain>.workers.dev` from deliverables deploy logs). Alternatively set `CLOUDFLARE_ACCOUNT_SUBDOMAIN` and the URL is derived automatically.
 
 **Internal auth:** set the same `INTERNAL_DELIVERABLES_SECRET` on **both** Workers (optional but recommended). Main sends `X-Clinovyr-Internal-Secret`; deliverables Worker rejects mismatches.
 
@@ -61,7 +57,7 @@ npx wrangler deploy --dry-run -c workers/deliverables/wrangler.jsonc 2>&1 | grep
 ```bash
 npx prisma generate
 npm run deploy:deliverables   # clinovyr-deliverables first
-npm run deploy                # clinovyr-site (needs binding target to exist)
+npm run deploy                # clinovyr-site (set DELIVERABLES_WORKER_URL on main Worker)
 # or: npm run deploy:all
 ```
 
@@ -134,9 +130,9 @@ Same repo **Papaburgndy/clinovyr-site**, branch **`main`** on each Worker.
 | **Root directory** | `/` |
 | **Node.js version** | **22** or later |
 
-**`npx wrangler deploy`** on **`clinovyr-site`** works when `wrangler.jsonc` `[build].command` runs **`scripts/cloudflare-build.js`** — it deploys **`clinovyr-deliverables`** first (`OPEN_NEXT_DEPLOY=true`), then OpenNext publishes the main Worker. See **Option D** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md).
+**`npx wrangler deploy`** on **`clinovyr-site`** works when `wrangler.jsonc` `[build].command` runs **`scripts/cloudflare-build.js`** — it deploys **`clinovyr-deliverables`** first (`OPEN_NEXT_DEPLOY=true`), then OpenNext publishes the main Worker (no service binding required). See **Option D** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md).
 
-**DELIVERABLES binding error:** build logs must show `[cloudflare-build] Deploying clinovyr-deliverables with OPEN_NEXT_DEPLOY=true` and a `clinovyr-deliverables.*.workers.dev` URL before clinovyr-site deploy. Alternative: deploy command **`node scripts/cloudflare-deploy.js`** (Option C).
+After first deliverables deploy, set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from the `*.workers.dev` URL in build logs. Alternative deploy command: **`node scripts/cloudflare-deploy.js`** (Option C).
 
 **Alternative:** empty build + **`npm run deploy`** (build and deploy in one step).
 
@@ -184,7 +180,8 @@ Set in **Cloudflare Worker secrets** (or encrypted env). See `.env.local.example
 | `RESEND_SANDBOX` | No | `true` for QA only |
 | `CONTACT_EMAIL` | Yes | Internal notifications inbox |
 | `ADMIN_EMAIL` | Yes | Allowlist for `/admin` |
-| `INTERNAL_DELIVERABLES_SECRET` | Recommended | On **both** Workers — main → deliverables binding auth |
+| `DELIVERABLES_WORKER_URL` | Yes | On **`clinovyr-site`** — `https://clinovyr-deliverables.<subdomain>.workers.dev` |
+| `INTERNAL_DELIVERABLES_SECRET` | Recommended | On **both** Workers — main → deliverables HTTP auth |
 | `CALENDLY_URL` | No | Booking links |
 
 **Deliverables-only secrets** (`ANTHROPIC_API_KEY`, `BLOB_READ_WRITE_TOKEN`, `RESEND_*` for delivery email) go on **`clinovyr-deliverables`** — see [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md). Blob code uses `@vercel/blob` today (token works from Workers); R2 migration is a future option.

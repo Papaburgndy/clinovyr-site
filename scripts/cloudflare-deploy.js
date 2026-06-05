@@ -2,8 +2,8 @@
 /**
  * Cloudflare Workers Git Builds deploy orchestrator (Option C).
  *
- * Deploys clinovyr-deliverables first so the DELIVERABLES service binding
- * exists, then deploys clinovyr-site (OpenNext main Worker).
+ * Deploys clinovyr-deliverables first (HTTP endpoint), then clinovyr-site.
+ * Main site calls deliverables via DELIVERABLES_WORKER_URL — no service binding.
  *
  * Dashboard deploy command on clinovyr-site:
  *   node scripts/cloudflare-deploy.js

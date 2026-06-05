@@ -1,6 +1,6 @@
 # Cloudflare Workers Builds — copy-paste settings
 
-Clinovyr uses **two** Workers. If you deploy via **Cloudflare Git Builds** (not GitHub Actions), configure **both** in the dashboard. Deploy **`clinovyr-deliverables` before `clinovyr-site`** so the service binding target exists.
+Clinovyr uses **two** Workers. If you deploy via **Cloudflare Git Builds** (not GitHub Actions), configure **both** in the dashboard. Deploy **`clinovyr-deliverables` before `clinovyr-site`** so the HTTP endpoint exists; set **`DELIVERABLES_WORKER_URL`** on the main Worker.
 
 Pick **one** deploy path — see [DEPLOY.md](./DEPLOY.md#choose-one-deploy-path-required). Do not leave GitHub Actions and dashboard Git Builds both active on `main`.
 
@@ -117,7 +117,7 @@ Local dry-run (after `npm run build:cloudflare`): `node scripts/cloudflare-deplo
 
 Use when the dashboard deploy command is already **`npx wrangler deploy`** and you cannot change it.
 
-`wrangler.jsonc` `[build].command` → **`scripts/cloudflare-build.js`** compiles OpenNext, then deploys **`clinovyr-deliverables`** with `OPEN_NEXT_DEPLOY=true` (bypasses OpenNext hijack). The subsequent wrangler/OpenNext deploy publishes **clinovyr-site** with the DELIVERABLES binding satisfied.
+`wrangler.jsonc` `[build].command` → **`scripts/cloudflare-build.js`** compiles OpenNext, then deploys **`clinovyr-deliverables`** with `OPEN_NEXT_DEPLOY=true` (bypasses OpenNext hijack). The subsequent wrangler/OpenNext deploy publishes **clinovyr-site** (no service binding — main calls deliverables via HTTP).
 
 Paste exactly:
 
@@ -135,7 +135,7 @@ Build logs should show:
 3. `[cloudflare-build] Done (clinovyr-site deploy continues in wrangler deploy phase)`
 4. Then wrangler asset upload + clinovyr-site deploy
 
-If deliverables deploy is missing from logs, the binding error will return — use **Option C** instead.
+Set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from the `*.workers.dev` URL in step 2. If deliverables deploy is missing from logs, use **Option C** instead.
 
 ---
 
@@ -169,6 +169,7 @@ Do **not** depend on **GitHub Actions** repository secrets for this path. GitHub
 | `RESEND_API_KEY` | Transactional email |
 | `CONTACT_EMAIL` | e.g. `clinovyr@gmail.com` |
 | `ADMIN_EMAIL` | Admin allowlist |
+| `DELIVERABLES_WORKER_URL` | Yes — `https://clinovyr-deliverables.<subdomain>.workers.dev` (or use `CLOUDFLARE_ACCOUNT_SUBDOMAIN`) |
 | `INTERNAL_DELIVERABLES_SECRET` | Recommended — same value on **`clinovyr-deliverables`**; main Worker sends `X-Clinovyr-Internal-Secret` |
 
 ### Optional / recommended
@@ -216,14 +217,14 @@ Build command:  (empty)
 Deploy command: npm run deploy
 ```
 
-**Option C — postinstall + dual deploy (fixes DELIVERABLES binding):**
+**Option C — dual deploy orchestrator:**
 
 ```
 Build command:  (empty)
 Deploy command: node scripts/cloudflare-deploy.js
 ```
 
-**Option C — dual deploy (fixes DELIVERABLES binding) — required for clinovyr-site Git Builds:**
+**Option C — dual deploy — alternative for clinovyr-site Git Builds:**
 
 ```
 Build command:  (empty)
