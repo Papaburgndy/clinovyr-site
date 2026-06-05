@@ -23,6 +23,9 @@
   "observability": {
     "enabled": true
   },
+  "vars": {
+    "DELIVERABLES_WORKER_URL": "https://clinovyr-deliverables.9dhr7chdr6.workers.dev"
+  },
   // Custom build: OpenNext compile + deploy clinovyr-deliverables (OPEN_NEXT_DEPLOY=true).
   // Main site calls deliverables via HTTP (DELIVERABLES_WORKER_URL) — no service binding.
   // Alternative: `node scripts/cloudflare-deploy.js` (Option C in CLOUDFLARE-BUILD-SETTINGS.md).
