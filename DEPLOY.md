@@ -6,53 +6,70 @@ Worker name: **`clinovyr-site`** (see `wrangler.jsonc`).
 
 ## Worker bundle size (free vs paid)
 
-> **Workers Free cannot host this app.** The full Clinovyr portal (auth, Prisma, PDF deliverables, Stripe) exceeds Cloudflare’s **3 MiB compressed** script limit even after removing `@vercel/og` and using Prisma edge imports. Upgrade to **Workers Paid** before deploying production: [Cloudflare Workers Paid plan](https://developers.cloudflare.com/workers/platform/pricing/#workers) ($5/mo, **10 MiB** compressed limit).
+Cloudflare enforces a **compressed** script size limit **per Worker**:
 
-Cloudflare enforces a **compressed** script size limit on deploy:
+| Plan | Script limit | Clinovyr (split architecture) |
+|------|--------------|-------------------------------|
+| Workers **Free** | **3 MiB** | **Fits** — main + deliverables Workers each deploy separately |
+| Workers **Paid** | **10 MiB** | Optional headroom for future features |
 
-| Plan | Script limit | This app |
-|------|--------------|----------|
-| Workers **Free** | **3 MiB** | **Will not deploy** — full portal exceeds limit |
-| Workers **Paid** ([upgrade](https://dash.cloudflare.com/?to=/:account/workers/plans)) | **10 MiB** | **Required** for production portal deploys |
+### Two-Worker architecture
 
-The main server bundle lives at `.open-next/server-functions/default/handler.mjs`.
+PDF/ZIP deliverable generation (`@react-pdf`, `archiver`, `xlsx-js-style`, industry generators) runs in a **separate** Worker. The main site Worker calls it via a **service binding** — same URLs, same UI, no user-facing change.
 
-| Build | `handler.mjs` (raw) | Notes |
-|-------|---------------------|--------|
-| Deploy failure (reported) | ~19 MiB | Wrangler total compressed Worker exceeded 3 MiB free limit; `@vercel/og` WASM/fonts were major contributors |
-| Fresh pre-fix build | ~14.3 MiB | Dynamic OG route + `import { Prisma } from "@prisma/client"` pulled in `query_compiler_fast_bg.wasm-base64.js` (~4.7 MiB) |
-| **After optimizations** | **~9.7 MiB** | `gzip` of `handler.mjs` alone ≈ **2.4 MiB** — full Worker (middleware, WASM sidecars) may still exceed **3 MiB free** |
+| Worker | Name | Role | Dry-run gzip (verify locally) |
+|--------|------|------|-------------------------------|
+| **Main** | `clinovyr-site` | Marketing, auth, portal, Stripe webhooks, Prisma, admin | **~2.8 MiB** (`wrangler deploy --dry-run`) |
+| **Deliverables** | `clinovyr-deliverables` | `runDeliverableGeneration` + all generators | **~2.7 MiB** (`wrangler deploy --dry-run -c workers/deliverables/wrangler.jsonc`) |
 
-**What we did to shrink the bundle:**
+Flow: Stripe webhook → `triggerDeliverableGeneration()` in main Worker → `env.DELIVERABLES.fetch("/generate")` → deliverables Worker generates PDFs, uploads to Blob, updates DB, sends email.
 
-1. **Removed** `src/app/opengraph-image.tsx` — dynamic OG pulled ~2 MiB of `@vercel/og` WASM into the Worker.
-2. **Webpack stub** — `next.config.ts` aliases `@vercel/og` and `next/dist/compiled/@vercel/og/*` to `src/lib/stubs/vercel-og-stub.ts` so Next never traces OG into `.nft.json` files.
-3. **Prisma edge imports** — `runtime = "cloudflare"` in `prisma/schema.prisma`, `PrismaClient` and `Prisma` namespace from `@prisma/client/edge` everywhere (avoids `query_compiler_fast_bg.wasm-base64.js`, ~4.7 MiB).
-4. **Static OG** — `public/og.svg` + `metadata.openGraph.images` in `layout.tsx` (no runtime image generation).
+**Binding** (in root `wrangler.jsonc`):
 
-**If Cloudflare logs still show `handler.mjs` ~19 MiB with `resvg.wasm` / `yoga.wasm` in top deps**, the build is stale (pre-`e23e97fc`). Confirm the deploy commit includes `opengraph-image.tsx` deleted and redeploy from latest `main`.
+```json
+{ "binding": "DELIVERABLES", "service": "clinovyr-deliverables" }
+```
 
-**Do not** use value imports from `@prisma/client` (non-edge) in server code — even `import { Prisma } from "@prisma/client"` for `Prisma.DbNull` drags the Node query compiler into the Worker.
+**Internal auth:** set the same `INTERNAL_DELIVERABLES_SECRET` on **both** Workers (optional but recommended). Main sends `X-Clinovyr-Internal-Secret`; deliverables Worker rejects mismatches.
 
-**Largest remaining deps** (esbuild metafile): `@react-pdf/renderer` + fontkit (~1.5 MiB), Next server chunks, brotli dictionary. PDF deliverables are only triggered from API routes but are still traced into the server bundle.
+### Earlier optimizations (still required)
 
-**Check size after a local build:**
+1. **Removed** dynamic `opengraph-image.tsx` — `@vercel/og` WASM (~2 MiB).
+2. **Webpack stub** for `@vercel/og` in `next.config.ts`.
+3. **Prisma edge** — `@prisma/client/edge` only (no Node `query_compiler_fast_bg.wasm-base64.js`).
+4. **Static OG** — `public/og.svg`.
+5. **`outputFileTracingExcludes`** — generators excluded from main Next trace.
+6. **Dynamic `import()`** for Stripe in webhook handler.
+
+**Do not** re-add `opengraph-image.tsx` or static-import deliverable generators into main API routes.
+
+### Verify bundle size (Node.js 22+)
 
 ```bash
 npx prisma generate
 npm run build:cloudflare
 wc -c .open-next/server-functions/default/handler.mjs
-# Optional (Node 22+): wrangler's compressed bundle estimate
-npm run build:cloudflare && npx wrangler deploy --dry-run 2>&1 | tail -20
+gzip -c .open-next/server-functions/default/handler.mjs | wc -c
+
+# Full Worker upload estimate (requires Node 22+)
+npm run build:cloudflare && npx wrangler deploy --dry-run 2>&1 | grep -i "gzip"
+npx wrangler deploy --dry-run -c workers/deliverables/wrangler.jsonc 2>&1 | grep -i "gzip"
 ```
 
-**Recommendation:**
+### Deploy both Workers
 
-- **Marketing-only** (no portal/DB): may fit Workers Free after OG removal — verify with `wrangler deploy --dry-run`.
-- **Full portal** (auth, Prisma, PDF deliverables, Stripe): use **Workers Paid** ($5/mo, 10 MiB). The app is intentionally a full-stack Next.js portal, not a static marketing site.
-- **Alternative architectures** (larger refactors): split marketing (static/Pages) from portal API on a separate Worker or host the portal on a Node platform (Railway, Fly, Vercel) and keep Cloudflare for the marketing site only.
+```bash
+npx prisma generate
+npm run deploy:deliverables   # clinovyr-deliverables first
+npm run deploy                # clinovyr-site (needs binding target to exist)
+# or: npm run deploy:all
+```
 
-Do **not** re-add `opengraph-image.tsx` or `ImageResponse` from `next/og` unless you upgrade to Paid and accept the WASM cost.
+GitHub Actions (`.github/workflows/deploy-cloudflare.yml`) deploys **deliverables first**, then **main**.
+
+### Last resort (not implemented)
+
+If the main Worker grows past 3 MiB again: split portal static shell to `app.clinovyr.com` on Pages + API Worker. Document only — not needed at current sizes.
 
 ## GitHub Actions (recommended — push to `main` deploys)
 
@@ -61,7 +78,7 @@ Pushing to **`main`** runs [`.github/workflows/deploy-cloudflare.yml`](.github/w
 1. Node.js **22**
 2. `npm ci` (postinstall may run `scripts/cloudflare-build.js` in CI)
 3. `npx prisma generate`
-4. `npm run deploy` → `opennextjs-cloudflare build && opennextjs-cloudflare deploy`
+4. `npm run deploy:deliverables` then `npm run deploy` (or `npm run deploy:all`)
 
 **One-time setup** (repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**):
 
@@ -145,8 +162,9 @@ Set in **Cloudflare Worker secrets** (or encrypted env). See `.env.local.example
 | `RESEND_SANDBOX` | No | `true` for QA only |
 | `CONTACT_EMAIL` | Yes | Internal notifications inbox |
 | `ADMIN_EMAIL` | Yes | Allowlist for `/admin` |
-| `ANTHROPIC_API_KEY` | Yes** | Deliverable generation (**required for paid deliverables) |
-| `BLOB_READ_WRITE_TOKEN` | Yes*** | Deliverable file storage |
+| `ANTHROPIC_API_KEY` | Yes** | Deliverable generation on **clinovyr-deliverables** Worker |
+| `BLOB_READ_WRITE_TOKEN` | Yes*** | Deliverable file storage (deliverables Worker) |
+| `INTERNAL_DELIVERABLES_SECRET` | Recommended | Shared secret for main → deliverables service binding |
 | `CALENDLY_URL` | No | Booking links |
 
 ***Blob storage:** Code uses `@vercel/blob` today. On Cloudflare, either keep Vercel Blob (token only — works from Workers) or migrate to **R2** + S3-compatible API (documented future change).

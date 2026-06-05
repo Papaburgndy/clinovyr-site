@@ -1,6 +1,9 @@
 # Copy to .dev.vars for local `npm run preview` (not committed).
 NEXTJS_ENV=development
 
+# Shared secret for main Worker → clinovyr-deliverables service binding (set on both Workers).
+# INTERNAL_DELIVERABLES_SECRET=openssl-rand-base64-32
+
 # Contact API (required in production — set as Worker secrets in Cloudflare)
 # RESEND_API_KEY=re_xxxxxxxx
 # CONTACT_EMAIL=clinovyr@gmail.com

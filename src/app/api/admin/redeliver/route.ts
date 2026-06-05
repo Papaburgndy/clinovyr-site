@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/admin-auth";
-import { triggerDeliverableGeneration } from "@/lib/deliverables/generator";
+import { triggerDeliverableGeneration } from "@/lib/deliverables/trigger";
 import {
   CLINOVYR_PRODUCTS,
   getProduct,

@@ -9,6 +9,8 @@
     "build:cloudflare": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy:deliverables": "wrangler deploy -c workers/deliverables/wrangler.jsonc",
+    "deploy:all": "npm run deploy:deliverables && npm run deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "start": "next start",
     "lint": "next lint",

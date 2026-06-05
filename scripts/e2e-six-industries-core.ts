@@ -329,13 +329,15 @@ function verifyPdfBuffer(
 async function main() {
   const [
     { parseSurveyFormData },
-    { resolveDeliverableGenerator, runDeliverableGeneration },
+    { resolveDeliverableGenerator },
+    { runDeliverableGeneration },
     { getProduct },
     { prisma },
     bcryptModule,
   ] = await Promise.all([
     import("@/lib/deliverables/artifacts"),
-    import("@/lib/deliverables/generator"),
+    import("@/lib/deliverables/industry-map"),
+    import("@/lib/deliverables/run-generation"),
     import("@/lib/products"),
     import("@/lib/prisma"),
     import("bcryptjs"),

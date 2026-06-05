@@ -37,6 +37,7 @@
   "exclude": [
     "node_modules",
     "clinovyr-products",
-    "scripts"
+    "scripts",
+    "workers"
   ]
 }

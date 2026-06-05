@@ -47,7 +47,12 @@ jobs:
       - name: Generate Prisma client
         run: npx prisma generate
 
-      - name: Build and deploy Worker
+      - name: Deploy deliverables Worker
+        run: npm run deploy:deliverables
+        env:
+          DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+
+      - name: Build and deploy main Worker
         run: npm run deploy
         env:
           # Build-time placeholder only; runtime uses Worker secrets for DATABASE_URL

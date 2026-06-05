@@ -78,5 +78,5 @@ export {
 export {
   normalizeIndustry,
   resolveDeliverableGenerator,
-} from "@/lib/deliverables/generator";
+} from "@/lib/deliverables/industry-map";
 export { OTHER_DELIVERABLE_GENERATORS } from "@/lib/deliverables/generators/industries/generic";

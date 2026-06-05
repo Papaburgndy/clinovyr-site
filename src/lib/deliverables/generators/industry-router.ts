@@ -1,4 +1,4 @@
 export {
   normalizeIndustry,
   resolveDeliverableGenerator,
-} from "@/lib/deliverables/generator";
+} from "@/lib/deliverables/industry-map";

@@ -8,8 +8,19 @@ const vercelOgStub = path.join(
 );
 
 const nextConfig: NextConfig = {
-  // PDF deliverables run only in API routes; keep out of the default server trace when possible.
-  serverExternalPackages: ["@react-pdf/renderer"],
+  // PDF deliverables run in clinovyr-deliverables Worker — exclude from main trace.
+  serverExternalPackages: [
+    "@react-pdf/renderer",
+    "archiver",
+    "xlsx-js-style",
+  ],
+  outputFileTracingExcludes: {
+    "*": [
+      "./src/lib/deliverables/generators/**/*",
+      "./src/lib/deliverables/run-generation.ts",
+      "./src/lib/deliverables/industry-map.ts",
+    ],
+  },
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion"],
   },

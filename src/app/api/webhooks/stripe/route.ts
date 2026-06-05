@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import type Stripe from "stripe";
 import { sendPaymentConfirmationEmail } from "@/lib/deliverables/emails";
-import { triggerDeliverableGeneration } from "@/lib/deliverables/generator";
+import { triggerDeliverableGeneration } from "@/lib/deliverables/trigger";
 import {
   CLINOVYR_PRODUCTS,
   getProduct,
   type ClinovyrProductKey,
 } from "@/lib/products";
 import { prisma } from "@/lib/prisma";
-import { getStripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
 
@@ -175,6 +174,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
+    const { getStripe } = await import("@/lib/stripe");
     event = getStripe().webhooks.constructEvent(body, sig, webhookSecret);
   } catch (error) {
     console.error("[webhooks/stripe] signature verification failed:", error);
