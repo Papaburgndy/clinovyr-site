@@ -8,13 +8,22 @@ Main site + client portal: **Cloudflare Workers** (OpenNext). See [DEPLOY.md](./
 - [ ] `npx prisma migrate deploy` run against production `DATABASE_URL` (one-off or CI)
 - [ ] `npm run build` succeeds (main site only; `clinovyr-products` excluded in tsconfig)
 - [ ] No `.env.local`, `data/`, or assessment deliverables committed
-- [ ] `git push origin main` triggers Cloudflare Workers Builds (`npm run deploy` recommended)
+- [ ] Deploy path chosen: **GitHub Actions** *or* **Cloudflare Git Builds** — not both ([DEPLOY.md](./DEPLOY.md#choose-one-deploy-path-required))
+- [ ] `git push origin main` triggers **one** deploy path only
 
 ## Cloudflare dashboard
 
-- [ ] Worker `clinovyr-site` — root `/`, Node 22+
-- [ ] Deploy command: `npm run deploy` (or `npx wrangler deploy` with postinstall build)
-- [ ] All secrets from `.env.local.example` set (see DEPLOY.md portal table)
+### Worker `clinovyr-deliverables` (deploy first)
+
+- [ ] Builds: build `npx prisma generate`, deploy `npx wrangler deploy -c workers/deliverables/wrangler.jsonc` (or `npm run deploy:deliverables`)
+- [ ] Secrets: `DATABASE_URL`, `ANTHROPIC_API_KEY`, `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `NEXTAUTH_URL` or `SITE_URL`
+- [ ] `INTERNAL_DELIVERABLES_SECRET` set (recommended; generate with `openssl rand -base64 32`)
+
+### Worker `clinovyr-site` (deploy second)
+
+- [ ] Builds: root `/`, Node 22+, build `npx prisma generate && npx opennextjs-cloudflare build`, deploy `npx opennextjs-cloudflare deploy` (see [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md))
+- [ ] Main-site secrets from `.env.local.example` / DEPLOY.md portal table
+- [ ] `INTERNAL_DELIVERABLES_SECRET` — **same value** as on `clinovyr-deliverables`
 - [ ] `NEXTAUTH_URL` and `SITE_URL` = `https://clinovyr.com`
 
 ## Stripe
@@ -32,7 +41,12 @@ Main site + client portal: **Cloudflare Workers** (OpenNext). See [DEPLOY.md](./
 
 ## Blob / files
 
-- [ ] `BLOB_READ_WRITE_TOKEN` set (Vercel Blob) **or** R2 migration completed
+- [ ] `BLOB_READ_WRITE_TOKEN` set on **`clinovyr-deliverables`** (Vercel Blob) **or** R2 migration completed
+
+## GitHub Actions (if that path)
+
+- [ ] Repository secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+- [ ] Cloudflare Git Builds **disabled** on both Workers (avoid double deploy)
 
 ## Post-deploy smoke tests
 

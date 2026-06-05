@@ -71,6 +71,19 @@ GitHub Actions (`.github/workflows/deploy-cloudflare.yml`) deploys **deliverable
 
 If the main Worker grows past 3 MiB again: split portal static shell to `app.clinovyr.com` on Pages + API Worker. Document only — not needed at current sizes.
 
+## Choose one deploy path (required)
+
+Running **both** paths on every `git push` to `main` causes duplicate deploys, race conditions, and stale bundles. Pick **one**:
+
+| Path | What deploys | One-time setup | Disable the other path |
+|------|----------------|----------------|------------------------|
+| **GitHub Actions** (recommended) | **Both** Workers — deliverables first, then main ([workflow](.github/workflows/deploy-cloudflare.yml)) | GitHub repo → **Settings** → **Secrets and variables** → **Actions**: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | **Workers & Pages** → each Worker → **Settings** → **Builds** → disconnect Git or pause builds |
+| **Cloudflare Git Builds** | **Each Worker separately** — you must configure **`clinovyr-deliverables` and `clinovyr-site`** in the dashboard ([settings](./CLOUDFLARE-BUILD-SETTINGS.md)) | Dashboard build/deploy commands + **Variables and Secrets** on **both** Workers; deploy deliverables **before** main | GitHub → **Settings** → **Actions** → **General** → disable workflow, **or** delete [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml) |
+
+**GitHub Actions secrets** (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) are **not** created by Cloudflare dashboard sync — add them manually in GitHub if you use Actions.
+
+**Cloudflare Worker secrets** (`DATABASE_URL`, `INTERNAL_DELIVERABLES_SECRET`, etc.) are **not** used by GitHub Actions for runtime — set them on each Worker in the dashboard regardless of deploy path.
+
 ## GitHub Actions (recommended — push to `main` deploys)
 
 Pushing to **`main`** runs [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml):
@@ -91,7 +104,7 @@ Cloudflare **Workers & Pages → Git** and **Worker secrets** in the dashboard a
 
 Do **not** commit token values. After both secrets exist, **`git push origin main` deploys production** — you do not need a separate manual `wrangler deploy` for routine releases.
 
-Token must be allowed to deploy Worker **`clinovyr-site`** in the account that owns **clinovyr.com**.
+Token must be allowed to deploy **`clinovyr-deliverables`** and **`clinovyr-site`** in the account that owns **clinovyr.com**.
 
 ### Verify the workflow ran
 
@@ -103,9 +116,14 @@ GitHub → **Actions** → **Deploy to Cloudflare** → latest run on your commi
 
 ## Cloudflare dashboard (Git-connected build)
 
-**Copy-paste Build/Deploy commands and Worker secrets:** see **[CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md)**.
+Use this path only if you chose **Cloudflare Git Builds** in [Choose one deploy path](#choose-one-deploy-path-required) — not alongside active GitHub Actions.
 
-Use **Workers** → **`clinovyr-site`** → **Settings** → **Builds** with repo **Papaburgndy/clinovyr-site**, branch **`main`**.
+**Copy-paste Build/Deploy commands and secrets for both Workers:** **[CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md)**.
+
+1. **`clinovyr-deliverables`** — Builds + secrets (deploy **first**)
+2. **`clinovyr-site`** — Builds + secrets (deploy **second**)
+
+Same repo **Papaburgndy/clinovyr-site**, branch **`main`** on each Worker.
 
 ### Required dashboard settings (summary)
 
@@ -162,12 +180,10 @@ Set in **Cloudflare Worker secrets** (or encrypted env). See `.env.local.example
 | `RESEND_SANDBOX` | No | `true` for QA only |
 | `CONTACT_EMAIL` | Yes | Internal notifications inbox |
 | `ADMIN_EMAIL` | Yes | Allowlist for `/admin` |
-| `ANTHROPIC_API_KEY` | Yes** | Deliverable generation on **clinovyr-deliverables** Worker |
-| `BLOB_READ_WRITE_TOKEN` | Yes*** | Deliverable file storage (deliverables Worker) |
-| `INTERNAL_DELIVERABLES_SECRET` | Recommended | Shared secret for main → deliverables service binding |
+| `INTERNAL_DELIVERABLES_SECRET` | Recommended | On **both** Workers — main → deliverables binding auth |
 | `CALENDLY_URL` | No | Booking links |
 
-***Blob storage:** Code uses `@vercel/blob` today. On Cloudflare, either keep Vercel Blob (token only — works from Workers) or migrate to **R2** + S3-compatible API (documented future change).
+**Deliverables-only secrets** (`ANTHROPIC_API_KEY`, `BLOB_READ_WRITE_TOKEN`, `RESEND_*` for delivery email) go on **`clinovyr-deliverables`** — see [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md). Blob code uses `@vercel/blob` today (token works from Workers); R2 migration is a future option.
 
 ### Stripe webhook (production)
 
@@ -227,9 +243,7 @@ npm run preview
 git push origin main
 ```
 
-With **GitHub Actions** secrets configured (see above), this workflow deploys **`clinovyr-site`** automatically.
-
-If you still use **Cloudflare Workers Builds** (dashboard Git integration), that path also rebuilds on push — prefer **one** deploy path to avoid duplicate or conflicting deploys. Recommended: **GitHub Actions only**; disable or disconnect dashboard Git deploy if Actions is active.
+With **GitHub Actions** secrets configured (see [Choose one deploy path](#choose-one-deploy-path-required)), this deploys **both** Workers automatically. If you use **Cloudflare Git Builds** instead, configure both Workers in the dashboard and disable Actions so pushes do not double-deploy.
 
 ## Production stale fix
 
@@ -274,7 +288,7 @@ Response header `x-opennext: 1` means traffic **is** on the OpenNext Worker—no
 Requires **Node.js 22+**, `wrangler login` or `CLOUDFLARE_API_TOKEN` + account ID, then from repo root:
 
 ```bash
-npm run deploy
+npm run deploy:all   # deliverables first, then main
 ```
 
 This agent environment could not redeploy: no Cloudflare credentials, Wrangler requires Node 22 (local default was Node 20).

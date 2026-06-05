@@ -1,5 +1,48 @@
 # Cloudflare Workers Builds — copy-paste settings
 
+Clinovyr uses **two** Workers. If you deploy via **Cloudflare Git Builds** (not GitHub Actions), configure **both** in the dashboard. Deploy **`clinovyr-deliverables` before `clinovyr-site`** so the service binding target exists.
+
+Pick **one** deploy path — see [DEPLOY.md](./DEPLOY.md#choose-one-deploy-path-required). Do not leave GitHub Actions and dashboard Git Builds both active on `main`.
+
+---
+
+## Worker `clinovyr-deliverables` (deploy first)
+
+**Workers & Pages** → Worker **`clinovyr-deliverables`** → **Settings** → **Builds** (same repo **Papaburgndy/clinovyr-site**, branch **`main`**).
+
+No OpenNext build — plain Wrangler TypeScript Worker (`workers/deliverables/`).
+
+| Setting | Value |
+|--------|--------|
+| **Build command** | `npx prisma generate` |
+| **Deploy command** | `npx wrangler deploy -c workers/deliverables/wrangler.jsonc` |
+| **Root directory** | `/` |
+| **Node.js version** | **22** (or later) |
+
+Alternative deploy command: `npm run deploy:deliverables`.
+
+### Variables and secrets (`clinovyr-deliverables`)
+
+**Workers & Pages** → **`clinovyr-deliverables`** → **Settings** → **Variables and Secrets**
+
+| Secret / variable | Required | Notes |
+|-------------------|----------|--------|
+| `DATABASE_URL` | Yes | Same production Postgres as main Worker |
+| `ANTHROPIC_API_KEY` | Yes | Claude calls in generators |
+| `BLOB_READ_WRITE_TOKEN` | Yes | PDF/ZIP upload |
+| `INTERNAL_DELIVERABLES_SECRET` | Recommended | **Same value** as on `clinovyr-site` (`openssl rand -base64 32`) |
+| `RESEND_API_KEY` | Yes | Delivery email after generation |
+| `RESEND_FROM_EMAIL` | Prod | Verified sender |
+| `NEXTAUTH_URL` or `SITE_URL` | Yes | Portal links in delivery email (`https://clinovyr.com`) |
+| `RESEND_SANDBOX` | No | `true` for QA only |
+| `CALENDLY_URL` | No | Booking link in email |
+
+Health check after deploy: `curl` the Worker's `*.workers.dev` URL + `/health` → `{"ok":true,"service":"clinovyr-deliverables"}`.
+
+---
+
+## Worker `clinovyr-site` (deploy second)
+
 Use **Workers & Pages** → Worker **`clinovyr-site`** → **Settings** → **Builds** (Git repo **Papaburgndy/clinovyr-site**, branch **`main`**).
 
 Cloudflare runs **`npm ci`** automatically before your build and deploy commands. You do **not** need `npm ci` in the Build command.
@@ -57,9 +100,9 @@ Paste exactly:
 
 ---
 
-## Variables and secrets (runtime — Worker, not GitHub)
+## Variables and secrets — `clinovyr-site` (runtime, not GitHub)
 
-For **Cloudflare-native Git builds**, configure secrets in the dashboard:
+For **Cloudflare-native Git builds**, configure main-site secrets in the dashboard:
 
 **Workers & Pages** → **`clinovyr-site`** → **Settings** → **Variables and Secrets**
 
@@ -78,8 +121,7 @@ Do **not** depend on **GitHub Actions** repository secrets for this path. GitHub
 | `RESEND_API_KEY` | Transactional email |
 | `CONTACT_EMAIL` | e.g. `clinovyr@gmail.com` |
 | `ADMIN_EMAIL` | Admin allowlist |
-| `ANTHROPIC_API_KEY` | Deliverable generation |
-| `BLOB_READ_WRITE_TOKEN` | Deliverable storage |
+| `INTERNAL_DELIVERABLES_SECRET` | Recommended — same value on **`clinovyr-deliverables`**; main Worker sends `X-Clinovyr-Internal-Secret` |
 
 ### Optional / recommended
 
@@ -124,6 +166,13 @@ Deploy command: npx opennextjs-cloudflare deploy
 ```
 Build command:  (empty)
 Deploy command: npm run deploy
+```
+
+**Deliverables Worker (deploy first):**
+
+```
+Build command:  npx prisma generate
+Deploy command: npx wrangler deploy -c workers/deliverables/wrangler.jsonc
 ```
 
 See also [DEPLOY.md](./DEPLOY.md) for GitHub Actions deploy and local verification.
