@@ -54,12 +54,31 @@ npx wrangler deploy --dry-run -c workers/deliverables/wrangler.jsonc 2>&1 | grep
 
 ### Deploy both Workers
 
+**Local or GitHub Actions** (both Workers from one machine):
+
 ```bash
 npx prisma generate
 npm run deploy:deliverables   # clinovyr-deliverables first
 npm run deploy                # clinovyr-site (set DELIVERABLES_WORKER_URL on main Worker)
 # or: npm run deploy:all
 ```
+
+**Cloudflare Workers Builds** — configure **two** separate builds in the dashboard (same repo, branch `main`):
+
+| Worker | Build command | Deploy command |
+|--------|---------------|----------------|
+| **`clinovyr-deliverables`** (deploy first) | `npx prisma generate` | `OPEN_NEXT_DEPLOY=true npx wrangler deploy -c workers/deliverables/wrangler.jsonc` |
+| **`clinovyr-site`** (deploy second) | *(empty)* or `npx prisma generate && npx opennextjs-cloudflare build` | `npx wrangler deploy` or `npx opennextjs-cloudflare deploy` |
+
+**Why two Workers Builds?** Cloudflare sets **`WRANGLER_CI_OVERRIDE_NAME`** to the connected Worker name. A build connected to **`clinovyr-site`** cannot deploy **`clinovyr-deliverables`** — any `wrangler deploy` is overridden to **`clinovyr-site`**. See [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md).
+
+**One-time local deliverables deploy** (if deliverables Worker is not yet live):
+
+```bash
+OPEN_NEXT_DEPLOY=true npx wrangler deploy -c workers/deliverables/wrangler.jsonc
+```
+
+Then set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from the `*.workers.dev` URL in deploy output.
 
 GitHub Actions (`.github/workflows/deploy-cloudflare.yml`) deploys **deliverables first**, then **main**.
 
@@ -130,19 +149,21 @@ Same repo **Papaburgndy/clinovyr-site**, branch **`main`** on each Worker.
 | **Root directory** | `/` |
 | **Node.js version** | **22** or later |
 
-**`npx wrangler deploy`** on **`clinovyr-site`** works when `wrangler.jsonc` `[build].command` runs **`scripts/cloudflare-build.js`** — it deploys **`clinovyr-deliverables`** first (`OPEN_NEXT_DEPLOY=true`), then OpenNext publishes the main Worker (no service binding required). See **Option D** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md).
+**`npx wrangler deploy`** on **`clinovyr-site`** runs `wrangler.jsonc` `[build].command` → **`scripts/cloudflare-build.js`** (Prisma + OpenNext compile only). It **does not** deploy deliverables — use **separate Workers Builds on `clinovyr-deliverables`**. See **Option D** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md).
 
-After first deliverables deploy, set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from the `*.workers.dev` URL in build logs. Alternative deploy command: **`node scripts/cloudflare-deploy.js`** (Option C).
+After deliverables deploy (separate build or one-time local), set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from the `*.workers.dev` URL.
 
 **Alternative:** empty build + **`npm run deploy`** (build and deploy in one step).
 
 **Runtime secrets** (e.g. `DATABASE_URL`, `AUTH_SECRET`) go in **Variables and Secrets** on the Worker — not GitHub Actions secrets — for Cloudflare-native Git builds.
 
-### Dual-worker deploy
+### Dual-worker deploy (Cloudflare Git Builds)
 
-**Option D (default):** deploy command **`npx wrangler deploy`** — `scripts/cloudflare-build.js` deploys deliverables in the build phase, then main deploys.
+1. **Create Workers Builds on `clinovyr-deliverables`** — deploy command: `OPEN_NEXT_DEPLOY=true npx wrangler deploy -c workers/deliverables/wrangler.jsonc`. Dashboard Worker name must be **`clinovyr-deliverables`**.
+2. **Deploy `clinovyr-site`** — Option A (`npx opennextjs-cloudflare deploy`) or Option D (`npx wrangler deploy`). See **CLOUDFLARE-BUILD-SETTINGS.md**.
+3. Set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from deliverables deploy logs.
 
-**Option C (alternative):** deploy command **`node scripts/cloudflare-deploy.js`** — deploy deliverables first in deploy phase, then main. See **CLOUDFLARE-BUILD-SETTINGS.md**.
+**Local / GitHub Actions:** `node scripts/cloudflare-deploy.js` or `npm run deploy:all` deploys both Workers in order. **Not** for `clinovyr-site` Workers Builds (script skips deliverables when `WRANGLER_CI_OVERRIDE_NAME=clinovyr-site`).
 
 
 ## Client portal (clinovyr.com — main Worker)

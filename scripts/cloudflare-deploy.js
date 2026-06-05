@@ -1,34 +1,28 @@
 #!/usr/bin/env node
 /**
- * Cloudflare Workers Git Builds deploy orchestrator (Option C).
+ * Local / GitHub Actions deploy orchestrator.
  *
  * Deploys clinovyr-deliverables first (HTTP endpoint), then clinovyr-site.
  * Main site calls deliverables via DELIVERABLES_WORKER_URL — no service binding.
  *
- * Dashboard deploy command on clinovyr-site:
- *   node scripts/cloudflare-deploy.js
+ * NOT for clinovyr-site Workers Builds: Cloudflare sets WRANGLER_CI_OVERRIDE_NAME
+ * to clinovyr-site and overrides any wrangler deploy to that Worker. Use separate
+ * Workers Builds on clinovyr-deliverables instead (see DEPLOY.md).
  *
- * Alternative to wrangler [build].command deliverables deploy (see cloudflare-build.js).
- * Any `npx wrangler deploy` from this OpenNext repo is redirected to
- * opennextjs-cloudflare deploy (clinovyr-site) unless OPEN_NEXT_DEPLOY=true.
- *
- * Pass --dry-run to verify bundle sizes locally.
+ * Local dry-run (after `npm run build:cloudflare`):
+ *   node scripts/cloudflare-deploy.js --dry-run
  */
 
 const { spawnSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const isCi =
-  process.env.CI === "true" ||
-  process.env.CI === "1" ||
-  process.env.WORKERS_CI === "true" ||
-  process.env.WORKERS_CI === "1" ||
-  process.env.CF_PAGES === "1";
-
 const dryRun = process.argv.includes("--dry-run");
 const deliverablesConfig = path.join("workers", "deliverables", "wrangler.jsonc");
 const DELIVERABLES_WORKER = "clinovyr-deliverables";
+const MAIN_WORKER = "clinovyr-site";
+
+const ciOverrideName = process.env.WRANGLER_CI_OVERRIDE_NAME?.trim();
 
 function run(label, command, args, extraEnv = {}) {
   console.log(`[cloudflare-deploy] ${label}`);
@@ -46,14 +40,11 @@ function run(label, command, args, extraEnv = {}) {
   }
 }
 
-if (isCi) {
-  console.log(
-    `[cloudflare-deploy] CI detected (CI=${process.env.CI ?? ""}, WORKERS_CI=${process.env.WORKERS_CI ?? ""})`
-  );
-} else if (dryRun) {
-  console.log("[cloudflare-deploy] Local dry-run (CI env not set)");
-} else {
-  console.log("[cloudflare-deploy] Running outside Workers CI — use for manual deploys");
+function shouldSkipDeliverablesDeploy() {
+  if (!ciOverrideName) {
+    return false;
+  }
+  return ciOverrideName !== DELIVERABLES_WORKER;
 }
 
 process.env.DATABASE_URL =
@@ -66,33 +57,48 @@ if (!fs.existsSync(".open-next/worker.js")) {
   run("opennextjs-cloudflare build", "npx", ["opennextjs-cloudflare", "build"]);
 }
 
-const deliverablesArgs = ["wrangler", "deploy", "-c", deliverablesConfig];
-if (dryRun) {
-  deliverablesArgs.push("--dry-run");
+const skipDeliverables = shouldSkipDeliverablesDeploy();
+
+if (skipDeliverables) {
+  console.warn(
+    `[cloudflare-deploy] Skipping ${DELIVERABLES_WORKER} deploy — Workers Builds is connected to "${ciOverrideName}" (WRANGLER_CI_OVERRIDE_NAME). Any wrangler deploy from this pipeline targets ${ciOverrideName}, not ${DELIVERABLES_WORKER}. Deploy deliverables from a separate Workers Builds on ${DELIVERABLES_WORKER}. See DEPLOY.md and CLOUDFLARE-BUILD-SETTINGS.md.`
+  );
+} else {
+  const deliverablesArgs = ["wrangler", "deploy", "-c", deliverablesConfig];
+  if (dryRun) {
+    deliverablesArgs.push("--dry-run");
+  }
+
+  console.log(
+    `[cloudflare-deploy] Deploying ${DELIVERABLES_WORKER} (config: ${deliverablesConfig})`
+  );
+  run(
+    dryRun
+      ? `Dry-run ${DELIVERABLES_WORKER}`
+      : `Deploying ${DELIVERABLES_WORKER} — expect *.workers.dev URL below`,
+    "npx",
+    deliverablesArgs,
+    { OPEN_NEXT_DEPLOY: "true" }
+  );
+  console.log(
+    `[cloudflare-deploy] ${DELIVERABLES_WORKER} ${dryRun ? "dry-run" : "deploy"} step finished OK`
+  );
 }
 
-console.log(
-  `[cloudflare-deploy] Deploying ${DELIVERABLES_WORKER} (config: ${deliverablesConfig})`
-);
-run(
-  dryRun
-    ? `Dry-run ${DELIVERABLES_WORKER}`
-    : `Deploying ${DELIVERABLES_WORKER} — expect *.workers.dev URL below`,
-  "npx",
-  deliverablesArgs,
-  { OPEN_NEXT_DEPLOY: "true" }
-);
-console.log(
-  `[cloudflare-deploy] ${DELIVERABLES_WORKER} ${dryRun ? "dry-run" : "deploy"} step finished OK`
-);
+if (ciOverrideName === DELIVERABLES_WORKER) {
+  console.log(
+    `[cloudflare-deploy] Done (${DELIVERABLES_WORKER} only — Workers Builds connected to deliverables worker)`
+  );
+  process.exit(0);
+}
 
 if (dryRun) {
   run("Dry-run clinovyr-site (main)", "npx", ["wrangler", "deploy", "--dry-run"], {
     OPEN_NEXT_DEPLOY: "true",
   });
 } else {
-  console.log("[cloudflare-deploy] Deploying clinovyr-site (main) via opennextjs-cloudflare");
-  run("Deploying clinovyr-site (main)", "npx", ["opennextjs-cloudflare", "deploy"]);
+  console.log(`[cloudflare-deploy] Deploying ${MAIN_WORKER} (main) via opennextjs-cloudflare`);
+  run(`Deploying ${MAIN_WORKER} (main)`, "npx", ["opennextjs-cloudflare", "deploy"]);
 }
 
 console.log("[cloudflare-deploy] Done");

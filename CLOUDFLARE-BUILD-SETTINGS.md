@@ -15,7 +15,7 @@ No OpenNext build — plain Wrangler TypeScript Worker (`workers/deliverables/`)
 | Setting | Value |
 |--------|--------|
 | **Build command** | `npx prisma generate` |
-| **Deploy command** | `npx wrangler deploy -c workers/deliverables/wrangler.jsonc` |
+| **Deploy command** | `OPEN_NEXT_DEPLOY=true npx wrangler deploy -c workers/deliverables/wrangler.jsonc` |
 | **Root directory** | `/` |
 | **Node.js version** | **22** (or later) |
 
@@ -90,36 +90,23 @@ Paste exactly:
 
 ---
 
-## Option C — deploy orchestrator script (alternative)
+## Option C — deploy orchestrator script (local / GitHub Actions only)
 
-Use when you prefer an explicit deploy-phase script instead of relying on `wrangler.jsonc` `[build].command`.
+**`scripts/cloudflare-deploy.js`** deploys **deliverables first**, then main. Use for **local** deploys or **GitHub Actions** — **not** for **`clinovyr-site` Workers Builds**.
 
-**`scripts/cloudflare-deploy.js`** deploys **deliverables first** (`OPEN_NEXT_DEPLOY=true` bypasses OpenNext hijack), then main via `opennextjs-cloudflare deploy`.
-
-Paste exactly on **`clinovyr-site`** only (you can disconnect Git Builds on **`clinovyr-deliverables`** if this option is active):
-
-| Setting | Value |
-|--------|--------|
-| **Build command** | *(leave empty)* |
-| **Deploy command** | `node scripts/cloudflare-deploy.js` |
-| **Root directory** | `/` |
-| **Node.js version** | **22** (or later) |
-
-Alternative deploy command: `npm run deploy:cloudflare-ci`.
-
-Build logs should show `[cloudflare-deploy] Deploying clinovyr-deliverables` then a `*.workers.dev` URL, then `[cloudflare-deploy] Deploying clinovyr-site`.
+Workers Builds on **`clinovyr-site`** sets **`WRANGLER_CI_OVERRIDE_NAME=clinovyr-site`**, which forces every `wrangler deploy` (including `-c workers/deliverables/wrangler.jsonc`) to target **`clinovyr-site`**. The script detects this and **skips deliverables** with a warning; use **separate Workers Builds on `clinovyr-deliverables`** (section above) instead.
 
 Local dry-run (after `npm run build:cloudflare`): `node scripts/cloudflare-deploy.js --dry-run`.
 
 ---
 
-## Option D — `npx wrangler deploy` (works with dual-worker deploy) **← default if dashboard unchanged**
+## Option D — `npx wrangler deploy` (main site only) **← default if dashboard unchanged**
 
 Use when the dashboard deploy command is already **`npx wrangler deploy`** and you cannot change it.
 
-`wrangler.jsonc` `[build].command` → **`scripts/cloudflare-build.js`** compiles OpenNext, then deploys **`clinovyr-deliverables`** with `OPEN_NEXT_DEPLOY=true` (bypasses OpenNext hijack). The subsequent wrangler/OpenNext deploy publishes **clinovyr-site** (no service binding — main calls deliverables via HTTP).
+`wrangler.jsonc` `[build].command` → **`scripts/cloudflare-build.js`** compiles OpenNext only. It **does not** deploy **`clinovyr-deliverables`** — Workers Builds on **`clinovyr-site`** sets **`WRANGLER_CI_OVERRIDE_NAME`** and overrides any nested `wrangler deploy` to **`clinovyr-site`**. Deploy deliverables from **separate Workers Builds on `clinovyr-deliverables`** (section above).
 
-Paste exactly:
+Paste exactly on **`clinovyr-site`**:
 
 | Setting | Value |
 |--------|--------|
@@ -130,12 +117,11 @@ Paste exactly:
 
 Build logs should show:
 
-1. `[cloudflare-build] Deploying clinovyr-deliverables with OPEN_NEXT_DEPLOY=true`
-2. A `clinovyr-deliverables.*.workers.dev` URL (not `clinovyr-site`)
-3. `[cloudflare-build] Done (clinovyr-site deploy continues in wrangler deploy phase)`
-4. Then wrangler asset upload + clinovyr-site deploy
+1. `[cloudflare-build] prisma generate` and `opennextjs-cloudflare build`
+2. `[cloudflare-build] Done (deliverables worker must be deployed separately — see DEPLOY.md)`
+3. Wrangler asset upload + **clinovyr-site** deploy
 
-Set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from the `*.workers.dev` URL in step 2. If deliverables deploy is missing from logs, use **Option C** instead.
+Set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from the **`clinovyr-deliverables`** Workers Builds deploy logs (or run a one-time local deploy — see [DEPLOY.md](./DEPLOY.md)).
 
 ---
 
@@ -143,7 +129,8 @@ Set **`DELIVERABLES_WORKER_URL`** on **`clinovyr-site`** from the `*.workers.dev
 
 | Setting | Why |
 |--------|-----|
-| **Build command: None** + **`npx wrangler deploy`** without `[build].command` deliverables step | Postinstall builds OpenNext, but deliverables Worker is not created unless `cloudflare-build.js` runs. Repo `wrangler.jsonc` includes `[build].command` — keep deploy as `npx wrangler deploy`. |
+| **Deploy deliverables from `clinovyr-site` Git Builds** | **`WRANGLER_CI_OVERRIDE_NAME`** forces all `wrangler deploy` to **`clinovyr-site`**. Use **separate Workers Builds on `clinovyr-deliverables`**. |
+| **Build command: None** + **`npx wrangler deploy`** without `[build].command` | Postinstall may build OpenNext, but `[build].command` is the reliable path. Repo `wrangler.jsonc` includes it — keep deploy as `npx wrangler deploy`. |
 | **`npm run build`** alone | That is `next build` only — does **not** produce `.open-next/` for the Worker. |
 
 ---
@@ -217,25 +204,18 @@ Build command:  (empty)
 Deploy command: npm run deploy
 ```
 
-**Option C — dual deploy orchestrator:**
-
-```
-Build command:  (empty)
-Deploy command: node scripts/cloudflare-deploy.js
-```
-
-**Option C — dual deploy — alternative for clinovyr-site Git Builds:**
-
-```
-Build command:  (empty)
-Deploy command: node scripts/cloudflare-deploy.js
-```
-
-**Deliverables Worker (deploy first, if using separate Git Builds):**
+**Deliverables Worker (required — deploy first, separate Git Builds):**
 
 ```
 Build command:  npx prisma generate
-Deploy command: npx wrangler deploy -c workers/deliverables/wrangler.jsonc
+Deploy command: OPEN_NEXT_DEPLOY=true npx wrangler deploy -c workers/deliverables/wrangler.jsonc
+```
+
+**Main site — Option D (if deploy command is already npx wrangler deploy):**
+
+```
+Build command:  (empty — wrangler runs wrangler.jsonc [build].command)
+Deploy command: npx wrangler deploy
 ```
 
 See also [DEPLOY.md](./DEPLOY.md) for GitHub Actions deploy and local verification.
