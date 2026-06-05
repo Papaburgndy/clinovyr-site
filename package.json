@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "node scripts/cloudflare-build.js",
+    "postinstall": "node scripts/ci-opennext-build.js",
     "dev": "next dev",
     "build": "next build",
     "build:cloudflare": "opennextjs-cloudflare build",
@@ -11,6 +11,7 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "deploy:deliverables": "wrangler deploy -c workers/deliverables/wrangler.jsonc",
     "deploy:all": "npm run deploy:deliverables && npm run deploy",
+    "deploy:cloudflare-ci": "node scripts/cloudflare-deploy.js",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "start": "next start",
     "lint": "next lint",

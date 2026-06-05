@@ -51,7 +51,7 @@ Cloudflare runs **`npm ci`** automatically before your build and deploy commands
 
 | Dashboard value | What happened |
 |-----------------|---------------|
-| **Build command: None** | Only `npm ci` ran; OpenNext output (`.open-next/`) was expected from **`postinstall`** (`scripts/cloudflare-build.js`). |
+| **Build command: None** | Only `npm ci` ran; OpenNext output (`.open-next/`) was expected from **`postinstall`** (`scripts/ci-opennext-build.js`). |
 | **Deploy command: `npx wrangler deploy`** | Wrangler delegates to **`opennextjs-cloudflare deploy`**, which **does not** run `wrangler.jsonc` `[build].command` and **does not** build if `.open-next/` is missing → *"Could not find compiled Open Next config"*. |
 
 **Fix:** Set an explicit **Build command** below (or use **Option B** so deploy runs the build).
@@ -90,12 +90,58 @@ Paste exactly:
 
 ---
 
+## Option C — postinstall build + deploy deliverables first (fixes DELIVERABLES binding)
+
+Use when **`clinovyr-site`** Git Builds fails with *Service binding `DELIVERABLES` references Worker `clinovyr-deliverables` which was not found* because only the main Worker deploys.
+
+`npm ci` runs **`postinstall`** → `scripts/ci-opennext-build.js` (OpenNext build when `CI=true` or `WORKERS_CI=true`). Deploy then pushes **deliverables first**, then main.
+
+Paste exactly on **`clinovyr-site`** only (you can disconnect Git Builds on **`clinovyr-deliverables`** if this option is active):
+
+| Setting | Value |
+|--------|--------|
+| **Build command** | *(leave empty)* |
+| **Deploy command** | `node scripts/cloudflare-deploy.js` |
+| **Root directory** | `/` |
+| **Node.js version** | **22** (or later) |
+
+Alternative deploy command: `npm run deploy:cloudflare-ci`.
+
+Local dry-run (after `npm run build:cloudflare`): `node scripts/cloudflare-deploy.js --dry-run`.
+
+---
+
+## Option D — zero dashboard change (`npx wrangler deploy` unchanged)
+
+Use when OpenNext **custom build** already succeeds but deploy fails with the DELIVERABLES binding error. No dashboard edits required if your settings are already:
+
+| Setting | Value |
+|--------|--------|
+| **Build command** | *(leave empty — Wrangler runs `wrangler.jsonc` `[build].command`)* |
+| **Deploy command** | `npx wrangler deploy` |
+| **Root directory** | `/` |
+| **Node.js version** | **22** (or later) |
+
+`wrangler.jsonc` `[build].command` → `node scripts/cloudflare-build.js`:
+
+1. `npx prisma generate`
+2. `npx opennextjs-cloudflare build`
+3. **`npx wrangler deploy -c workers/deliverables/wrangler.jsonc`** (CI only — before main deploy)
+
+`npm ci` **postinstall** still runs `scripts/ci-opennext-build.js` as a fallback when the dashboard build step is empty.
+
+You can disconnect Git Builds on **`clinovyr-deliverables`** — one pipeline on **`clinovyr-site`** deploys both Workers.
+
+Local dry-run (after OpenNext build): `npx wrangler deploy --dry-run`.
+
+---
+
 ## Do not use
 
 | Setting | Why |
 |--------|-----|
-| **Build command: None** + **`npx wrangler deploy`** | Deploy runs without a guaranteed OpenNext build (your failed setup). |
-| **`npx wrangler deploy`** as deploy command | OpenNext hijacks the command and skips `wrangler.jsonc` `[build].command`. |
+| **Build command: None** + **`npx wrangler deploy`** | Works with **Option D** (`scripts/cloudflare-build.js` in `[build].command`). Without that script, deploy may run without OpenNext output. |
+| **`npx wrangler deploy`** without Option D build script | OpenNext hijacks deploy; deliverables Worker is not deployed → DELIVERABLES binding error. |
 | **`npm run build`** alone | That is `next build` only — does **not** produce `.open-next/` for the Worker. |
 
 ---
@@ -136,7 +182,7 @@ Do **not** depend on **GitHub Actions** repository secrets for this path. GitHub
 
 ### Build-time `DATABASE_URL`
 
-You do **not** need a real database URL in **Variables and Secrets** for the build step if you use **Option A**: the app uses a build placeholder when `CI=true` during `next build` (see `src/lib/prisma.ts`). `scripts/cloudflare-build.js` also sets a placeholder during postinstall CI builds.
+You do **not** need a real database URL in **Variables and Secrets** for the build step if you use **Option A**: the app uses a build placeholder when `CI=true` during `next build` (see `src/lib/prisma.ts`). `scripts/ci-opennext-build.js` also sets a placeholder during postinstall CI builds.
 
 If OpenNext/Prisma still fail without secrets, add a **non-secret** build variable (not production DB):
 
@@ -168,7 +214,23 @@ Build command:  (empty)
 Deploy command: npm run deploy
 ```
 
-**Deliverables Worker (deploy first):**
+**Option C — postinstall + dual deploy (fixes DELIVERABLES binding):**
+
+```
+Build command:  (empty)
+Deploy command: node scripts/cloudflare-deploy.js
+```
+
+**Option D — zero dashboard change (DELIVERABLES binding + `npx wrangler deploy`):**
+
+```
+Build command:  (empty)
+Deploy command: npx wrangler deploy
+```
+
+Uses `wrangler.jsonc` `[build].command` → `node scripts/cloudflare-build.js` (OpenNext + deliverables deploy in CI).
+
+**Deliverables Worker (deploy first, if using separate Git Builds):**
 
 ```
 Build command:  npx prisma generate

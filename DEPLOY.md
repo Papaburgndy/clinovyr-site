@@ -89,7 +89,7 @@ Running **both** paths on every `git push` to `main` causes duplicate deploys, r
 Pushing to **`main`** runs [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml):
 
 1. Node.js **22**
-2. `npm ci` (postinstall may run `scripts/cloudflare-build.js` in CI)
+2. `npm ci` (postinstall may run `scripts/ci-opennext-build.js` in CI)
 3. `npx prisma generate`
 4. `npm run deploy:deliverables` then `npm run deploy` (or `npm run deploy:all`)
 
@@ -134,15 +134,17 @@ Same repo **Papaburgndy/clinovyr-site**, branch **`main`** on each Worker.
 | **Root directory** | `/` |
 | **Node.js version** | **22** or later |
 
-**Do not** leave **Build command** empty with **`npx wrangler deploy`** — that was the failing configuration (no `.open-next/` before deploy). Postinstall (`scripts/cloudflare-build.js`) is only a fallback when CI env vars run after `npm ci`.
+**Do not** use **`npx wrangler deploy`** without **Option D** in [CLOUDFLARE-BUILD-SETTINGS.md](./CLOUDFLARE-BUILD-SETTINGS.md) — deliverables must deploy before main. Postinstall (`scripts/ci-opennext-build.js`) is a fallback when CI env vars run after `npm ci`.
+
+**DELIVERABLES binding error:** use **Option D** (keep `npx wrangler deploy`; `scripts/cloudflare-build.js` deploys deliverables in the build phase) or **Option C** (`node scripts/cloudflare-deploy.js` as deploy command).
 
 **Alternative:** empty build + **`npm run deploy`** (build and deploy in one step).
 
 **Runtime secrets** (e.g. `DATABASE_URL`, `AUTH_SECRET`) go in **Variables and Secrets** on the Worker — not GitHub Actions secrets — for Cloudflare-native Git builds.
 
-### Why `wrangler.jsonc` `[build].command` is not enough
+### `wrangler.jsonc` `[build].command` (Option D)
 
-`wrangler.jsonc` includes a build hook for local `wrangler deploy` only. Workers Builds with **`npx wrangler deploy`** uses OpenNext's wrapper and **skips** this hook. Set explicit dashboard commands per **CLOUDFLARE-BUILD-SETTINGS.md**.
+Workers Builds with **`npx wrangler deploy`** runs the custom build phase (`scripts/cloudflare-build.js`): Prisma generate, OpenNext build, then **deploy `clinovyr-deliverables`** when `CI=true` or `WORKERS_CI=true`. Main deploy follows in the deploy phase. See **Option D** in **CLOUDFLARE-BUILD-SETTINGS.md**.
 
 
 ## Client portal (clinovyr.com — main Worker)
@@ -155,7 +157,7 @@ Prisma requires a reachable Postgres URL at **runtime** and for **migrations** (
 
 | Step | Command | Where |
 |------|---------|--------|
-| Generate client | `npx prisma generate` | CI postinstall (`scripts/cloudflare-build.js`) or local |
+| Generate client | `npx prisma generate` | CI postinstall (`scripts/ci-opennext-build.js`) or local |
 | Apply migrations | `npx prisma migrate deploy` | CI job, local shell, or one-off GitHub Action — **not** inside the Worker bundle |
 
 Set `DATABASE_URL` as a Worker secret (Neon, Supabase, Railway Postgres, etc.). Workers do not run `migrate deploy` on each request.
