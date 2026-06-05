@@ -50,6 +50,15 @@ export const metadata: Metadata = {
     siteName: "Clinovyr",
     locale: "en_US",
     type: "website",
+    // Static asset — dynamic `opengraph-image.tsx` pulled ~2 MiB of @vercel/og WASM into the Worker.
+    images: [
+      {
+        url: "/og.svg",
+        width: 1200,
+        height: 630,
+        alt: "Clinovyr — Intelligence, Applied.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",

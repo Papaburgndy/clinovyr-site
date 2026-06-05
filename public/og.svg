@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Clinovyr  Intelligence, Applied.">
+  <rect width="1200" height="630" fill="#0d0f12"/>
+  <rect x="0" y="0" width="6" height="630" fill="#1a6b5a"/>
+  <circle cx="1080" cy="630" r="320" fill="#1a6b5a" opacity="0.08"/>
+  <text x="80" y="280" fill="#f5f2ed" font-family="Georgia, 'Times New Roman', serif" font-size="96" font-weight="600" letter-spacing="-0.02em">Clinovyr</text>
+  <text x="80" y="360" fill="#2d9e88" font-family="Georgia, 'Times New Roman', serif" font-size="40" font-style="italic">Intelligence, Applied.</text>
+  <text x="80" y="440" fill="#7a7468" font-family="ui-monospace, 'Courier New', monospace" font-size="22" letter-spacing="0.08em">AI CONSULTING | GRANITE BAY, CA</text>
+</svg>

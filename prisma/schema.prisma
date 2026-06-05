@@ -1,5 +1,7 @@
 generator client {
   provider = "prisma-client-js"
+  // Smaller Worker bundle: precompiled cloudflare runtime instead of default query_compiler WASM (~4.7 MiB base64).
+  runtime = "cloudflare"
 }
 
 datasource db {

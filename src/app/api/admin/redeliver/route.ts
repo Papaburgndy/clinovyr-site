@@ -6,7 +6,7 @@ import {
   getProduct,
   type ClinovyrProductKey,
 } from "@/lib/products";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client/edge";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";

@@ -1,5 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/client";
+// Edge entry avoids bundling query_compiler_fast_bg.wasm-base64.js (~4.7 MiB) into the Worker.
+import { PrismaClient } from "@prisma/client/edge";
 import { Pool } from "pg";
 
 const BUILD_PLACEHOLDER_DATABASE_URL =

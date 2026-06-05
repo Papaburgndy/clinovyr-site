@@ -4,6 +4,51 @@ This site uses [@opennextjs/cloudflare](https://opennext.js.org/cloudflare/get-s
 
 Worker name: **`clinovyr-site`** (see `wrangler.jsonc`).
 
+## Worker bundle size (free vs paid)
+
+Cloudflare enforces a **compressed** script size limit on deploy:
+
+| Plan | Script limit | This app |
+|------|--------------|----------|
+| Workers **Free** | **3 MiB** | Unlikely to fit the full portal (Prisma, PDF deliverables, Stripe, auth) even after OG removal |
+| Workers **Paid** ($5/mo) | **10 MiB** | Target plan for production portal deploys |
+
+The main server bundle lives at `.open-next/server-functions/default/handler.mjs`.
+
+| Build | `handler.mjs` (raw) | Notes |
+|-------|---------------------|--------|
+| Deploy failure (reported) | ~19 MiB | Wrangler total compressed Worker exceeded 3 MiB free limit; `@vercel/og` WASM/fonts were major contributors |
+| Fresh pre-fix build | ~14.3 MiB | Dynamic OG route + `import { Prisma } from "@prisma/client"` pulled in `query_compiler_fast_bg.wasm-base64.js` (~4.7 MiB) |
+| **After optimizations** | **~9.7 MiB** | `gzip` of `handler.mjs` alone ≈ **2.4 MiB** — full Worker (middleware, WASM sidecars) may still exceed **3 MiB free** |
+
+**What we did to shrink the bundle:**
+
+1. **Removed** `src/app/opengraph-image.tsx` — OpenNext aliases `@vercel/og` to a no-op shim when OG routes are absent (drops `resvg.wasm`, `yoga.wasm`, and OG fonts from the Worker).
+2. **Prisma edge imports** — `runtime = "cloudflare"` in `prisma/schema.prisma`, `PrismaClient` from `@prisma/client/edge` in `src/lib/prisma.ts`, and `Prisma` namespace from `@prisma/client/edge` in API routes (avoids bundling `query_compiler_fast_bg.wasm-base64.js`, ~4.7 MiB).
+3. **Static OG** — `public/og.svg` + `metadata.openGraph.images` in `layout.tsx` (no runtime image generation).
+
+**Do not** use value imports from `@prisma/client` (non-edge) in server code — even `import { Prisma } from "@prisma/client"` for `Prisma.DbNull` drags the Node query compiler into the Worker.
+
+**Largest remaining deps** (esbuild metafile): `@react-pdf/renderer` + fontkit (~1.5 MiB), Next server chunks, brotli dictionary. PDF deliverables are only triggered from API routes but are still traced into the server bundle.
+
+**Check size after a local build:**
+
+```bash
+npx prisma generate
+npm run build:cloudflare
+wc -c .open-next/server-functions/default/handler.mjs
+# Optional (Node 22+): wrangler's compressed bundle estimate
+npm run build:cloudflare && npx wrangler deploy --dry-run 2>&1 | tail -20
+```
+
+**Recommendation:**
+
+- **Marketing-only** (no portal/DB): may fit Workers Free after OG removal — verify with `wrangler deploy --dry-run`.
+- **Full portal** (auth, Prisma, PDF deliverables, Stripe): use **Workers Paid** ($5/mo, 10 MiB). The app is intentionally a full-stack Next.js portal, not a static marketing site.
+- **Alternative architectures** (larger refactors): split marketing (static/Pages) from portal API on a separate Worker or host the portal on a Node platform (Railway, Fly, Vercel) and keep Cloudflare for the marketing site only.
+
+Do **not** re-add `opengraph-image.tsx` or `ImageResponse` from `next/og` unless you upgrade to Paid and accept the WASM cost.
+
 ## GitHub Actions (recommended — push to `main` deploys)
 
 Pushing to **`main`** runs [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml):
