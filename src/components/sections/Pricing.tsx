@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SURVEY_INTAKE_URL } from "@/lib/portal-routes";
 import { cn } from "@/lib/utils";
 
 const VIEWPORT = { once: true, margin: "-100px" } as const;
@@ -162,7 +163,7 @@ export function Pricing() {
               </ul>
 
               <Button
-                href="#contact"
+                href={SURVEY_INTAKE_URL}
                 className="mt-8 w-full"
                 aria-label={`Get started with ${tier.name}`}
               >
@@ -183,7 +184,8 @@ export function Pricing() {
           <span className="text-ink/85">
             AI Opportunity Audit — $1,500
           </span>
-          . All engagements begin with a free 30-minute discovery call.
+          . Start with our free AI discovery survey, then book a call if you
+          prefer.
         </motion.p>
       </div>
     </section>

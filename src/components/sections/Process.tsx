@@ -3,7 +3,8 @@
 import { Fragment } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { CalendlyButton } from "@/components/ui/calendly-button";
+import { Button } from "@/components/ui/button";
+import { SURVEY_INTAKE_URL } from "@/lib/portal-routes";
 import { cn } from "@/lib/utils";
 
 const VIEWPORT = { once: true, margin: "-100px" } as const;
@@ -134,13 +135,16 @@ export function Process() {
             variants={itemVariants}
             className="font-sans text-base leading-relaxed text-paper/75 md:text-lg"
           >
-            <CalendlyButton
-              label="Ready to start? → Book your free 30-minute discovery call"
+            <Button
+              href={SURVEY_INTAKE_URL}
               className={cn(
                 "h-auto max-w-full flex-wrap px-0 py-0 text-center font-medium text-accent",
-                "underline-offset-4 transition-colors duration-300 hover:text-accent-light hover:underline",
+                "bg-transparent underline-offset-4 transition-colors duration-300 hover:bg-transparent hover:text-accent-light hover:underline",
               )}
-            />
+              aria-label="Start your free AI discovery survey"
+            >
+              Ready to start? → Take your free AI discovery survey
+            </Button>
           </motion.p>
         </motion.div>
       </div>

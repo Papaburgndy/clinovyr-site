@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
+import { SURVEY_INTAKE_URL } from "@/lib/portal-routes";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -225,7 +226,7 @@ export function Header() {
 
           <div className="hidden items-center gap-4 md:flex">
             <a
-              href="#contact"
+              href={SURVEY_INTAKE_URL}
               className={cn(
                 "inline-flex items-center justify-center rounded-sm px-5 py-2.5 font-sans text-sm font-medium transition-all duration-300",
                 "bg-accent text-paper hover:-translate-y-0.5 hover:bg-accent-light hover:shadow-md",
@@ -323,7 +324,7 @@ export function Header() {
 
         <div className="border-t border-white/10 px-6 py-6">
           <a
-            href="#contact"
+            href={SURVEY_INTAKE_URL}
             onClick={closeMobile}
             className="inline-flex w-full items-center justify-center rounded-sm bg-accent px-5 py-3 font-sans text-sm font-medium text-paper transition-all duration-300 hover:bg-accent-light"
           >

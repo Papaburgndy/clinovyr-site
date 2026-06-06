@@ -1,3 +1,4 @@
+import { SURVEY_INTAKE_URL } from "@/lib/portal-routes";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -78,8 +79,8 @@ export function Footer() {
               Get in Touch
             </p>
             <p className="mt-4 font-sans text-sm leading-relaxed text-paper/70">
-              Ready to explore what AI can do for your business? Start with a
-              conversation.
+              Ready to explore what AI can do for your business? Start with our
+              free AI discovery survey.
             </p>
             <a
               href="mailto:clinovyr@gmail.com"
@@ -89,7 +90,7 @@ export function Footer() {
             </a>
             <div className="mt-6">
               <a
-                href="#contact"
+                href={SURVEY_INTAKE_URL}
                 className={cn(
                   "inline-flex items-center justify-center rounded-sm px-5 py-2.5 font-sans text-sm font-medium transition-all duration-300",
                   "bg-accent text-paper hover:-translate-y-0.5 hover:bg-accent-light hover:shadow-md",

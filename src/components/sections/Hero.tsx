@@ -2,7 +2,9 @@
 
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { CalendlyButton } from "@/components/ui/calendly-button";
+import { SURVEY_INTAKE_URL } from "@/lib/portal-routes";
 import { cn } from "@/lib/utils";
 
 const STAGGER_DELAY = 0.15;
@@ -96,11 +98,18 @@ export function Hero() {
           variants={itemVariants}
           className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
         >
+          <Button
+            href={SURVEY_INTAKE_URL}
+            className="gap-2"
+            aria-label="Start your free AI discovery survey"
+          >
+            Start Your Free Discovery Survey
+          </Button>
           <CalendlyButton
             label="Book a Free Consultation"
             className={cn(
-              "gap-2 bg-accent text-paper",
-              "hover:-translate-y-0.5 hover:bg-accent-light hover:shadow-md",
+              "gap-2 border border-paper/30 bg-transparent text-paper",
+              "hover:border-paper/50 hover:bg-white/5",
             )}
           />
           <a

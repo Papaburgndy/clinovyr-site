@@ -10,6 +10,7 @@ import {
   Stethoscope,
   type LucideIcon,
 } from "lucide-react";
+import { SURVEY_INTAKE_URL } from "@/lib/portal-routes";
 import { cn } from "@/lib/utils";
 
 const VIEWPORT = { once: true, margin: "-100px" } as const;
@@ -151,13 +152,13 @@ export function Verticals() {
                 </p>
 
                 <a
-                  href="#contact"
+                  href={SURVEY_INTAKE_URL}
                   className={cn(
                     "mt-6 inline-flex items-center font-sans text-sm font-medium text-accent",
                     "transition-colors duration-300 hover:text-accent-light",
                   )}
                 >
-                  Learn more →
+                  Start survey →
                 </a>
               </motion.article>
             );
@@ -178,13 +179,13 @@ export function Verticals() {
             Don&apos;t see your industry? We work across all Placer County business
             sectors.{" "}
             <a
-              href="#contact"
+              href={SURVEY_INTAKE_URL}
               className={cn(
                 "font-medium text-accent underline-offset-4",
                 "transition-colors duration-300 hover:text-accent-light hover:underline",
               )}
             >
-              Talk to us
+              Start the discovery survey
             </a>
           </motion.p>
         </motion.div>
