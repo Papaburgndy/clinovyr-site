@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  FileArchive,
   FileJson,
   FileSpreadsheet,
   FileText,
@@ -23,11 +24,13 @@ type DeliverablesGridProps = {
   deliverables: DeliverableRecord[];
 };
 
-type FileIconKind = "pdf" | "xlsx" | "md" | "json";
+type FileIconKind = "pdf" | "xlsx" | "zip" | "md" | "json";
 
 function resolveFileIconKind(record: DeliverableRecord): FileIconKind {
   const name = record.name.toLowerCase();
-  if (name.endsWith(".xlsx") || record.key === "roi-calculator") return "xlsx";
+  if (record.type === "xlsx" || name.endsWith(".xlsx") || record.key === "roi-calculator")
+    return "xlsx";
+  if (record.type === "zip" || name.endsWith(".zip")) return "zip";
   if (record.type === "json" || name.endsWith(".json")) return "json";
   if (record.type === "markdown" || name.endsWith(".md")) return "md";
   return "pdf";
@@ -40,6 +43,8 @@ function FileTypeIcon({ kind }: { kind: FileIconKind }) {
       return <FileJson className={className} aria-hidden />;
     case "xlsx":
       return <FileSpreadsheet className={className} aria-hidden />;
+    case "zip":
+      return <FileArchive className={className} aria-hidden />;
     case "md":
       return <FileText className={className} aria-hidden />;
     default:

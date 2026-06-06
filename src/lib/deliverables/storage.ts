@@ -97,8 +97,22 @@ export async function uploadDeliverable(
   }
 
   console.info(
-    "[deliverables/storage] BLOB_READ_WRITE_TOKEN missing — using local filesystem",
+    "[deliverables/storage] BLOB_READ_WRITE_TOKEN missing",
   );
+
+  // In production (Cloudflare Workers) there is no persistent, cross-Worker
+  // filesystem: the deliverables Worker writes the file, but the main site
+  // Worker serves /api/deliverables and would never see it — the customer
+  // gets a 404 while the Order is marked "delivered". Fail closed so
+  // generation aborts instead of producing dead download links.
+  if (process.env.NODE_ENV === "production") {
+    const message =
+      "BLOB_READ_WRITE_TOKEN is not set — cannot persist deliverable in production";
+    console.error(`[deliverables/storage] ${message}`);
+    return { ok: false, error: message };
+  }
+
+  console.info("[deliverables/storage] using local filesystem (dev only)");
 
   const writeResult = await writeDeliverableFile(
     companyId,

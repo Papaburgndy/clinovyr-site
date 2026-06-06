@@ -50,6 +50,11 @@ function mimeTypeForDeliverable(
   if (filename?.endsWith(".md")) return "text/markdown; charset=utf-8";
   if (filename?.endsWith(".json")) return "application/json; charset=utf-8";
 
+  if (filename?.endsWith(".xlsx")) {
+    return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  }
+  if (filename?.endsWith(".zip")) return "application/zip";
+
   switch (type) {
     case "html":
       return "text/html; charset=utf-8";
@@ -59,6 +64,10 @@ function mimeTypeForDeliverable(
       return "application/json; charset=utf-8";
     case "pdf":
       return "application/pdf";
+    case "xlsx":
+      return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    case "zip":
+      return "application/zip";
     default:
       return "application/octet-stream";
   }
@@ -95,7 +104,7 @@ export function spreadsheetOutput(
     mimeType:
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     displayName: overrides?.displayName ?? meta?.displayName ?? key,
-    type: overrides?.type ?? "html",
+    type: overrides?.type ?? "xlsx",
   };
 }
 
@@ -112,7 +121,7 @@ export function zipOutput(
     filename: overrides?.filename ?? meta?.filename ?? `${key}.zip`,
     mimeType: "application/zip",
     displayName: overrides?.displayName ?? meta?.displayName ?? key,
-    type: overrides?.type ?? "json",
+    type: overrides?.type ?? "zip",
   };
 }
 

@@ -1,4 +1,10 @@
-export type DeliverableFileType = "pdf" | "json" | "markdown" | "html";
+export type DeliverableFileType =
+  | "pdf"
+  | "json"
+  | "markdown"
+  | "html"
+  | "xlsx"
+  | "zip";
 
 export type DeliverableRecord = {
   key: string;
