@@ -90,25 +90,29 @@ If the main Worker grows past 3 MiB again: split portal static shell to `app.cli
 
 Running **both** paths on every `git push` to `main` causes duplicate deploys, race conditions, and stale bundles. Pick **one**:
 
-| Path | What deploys | One-time setup | Disable the other path |
-|------|----------------|----------------|------------------------|
-| **GitHub Actions** (recommended) | **Both** Workers — deliverables first, then main ([workflow](.github/workflows/deploy-cloudflare.yml)) | GitHub repo → **Settings** → **Secrets and variables** → **Actions**: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | **Workers & Pages** → each Worker → **Settings** → **Builds** → disconnect Git or pause builds |
-| **Cloudflare Git Builds** | **Each Worker separately** — you must configure **`clinovyr-deliverables` and `clinovyr-site`** in the dashboard ([settings](./CLOUDFLARE-BUILD-SETTINGS.md)) | Dashboard build/deploy commands + **Variables and Secrets** on **both** Workers; deploy deliverables **before** main | GitHub → **Settings** → **Actions** → **General** → disable workflow, **or** delete [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml) |
+| Path | What deploys | One-time setup | Other path |
+|------|----------------|----------------|------------|
+| **GitHub Actions** | **Both** Workers — deliverables first, then main ([workflow](.github/workflows/deploy-cloudflare.yml)) | GitHub repo → **Settings** → **Secrets and variables** → **Actions**: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | **Workers & Pages** → each Worker → **Settings** → **Builds** → disconnect Git or pause builds |
+| **Cloudflare Git Builds** (current default) | **Each Worker separately** — configure **`clinovyr-deliverables` and `clinovyr-site`** in the dashboard ([settings](./CLOUDFLARE-BUILD-SETTINGS.md)) | Dashboard build/deploy commands + **Variables and Secrets** on **both** Workers; deploy deliverables **before** main | GitHub Actions **skips** deploy when secrets are missing (green check, no red X). You do **not** need to delete the workflow. |
 
-**GitHub Actions secrets** (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) are **not** created by Cloudflare dashboard sync — add them manually in GitHub if you use Actions.
+**GitHub Actions secrets** (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) are **not** created by Cloudflare dashboard sync — add them manually in GitHub only if you want Actions to deploy. Cloudflare Worker secrets and Workers Git Builds do **not** populate GitHub Actions secrets.
 
 **Cloudflare Worker secrets** (`DATABASE_URL`, `INTERNAL_DELIVERABLES_SECRET`, etc.) are **not** used by GitHub Actions for runtime — set them on each Worker in the dashboard regardless of deploy path.
 
-## GitHub Actions (recommended — push to `main` deploys)
+## GitHub Actions (optional — deploy when secrets are set)
 
-Pushing to **`main`** runs [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml):
+Pushing to **`main`** (or **Actions → Deploy to Cloudflare → Run workflow**) runs [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml).
+
+**If you use Cloudflare Workers Git Builds only:** no GitHub secrets are required. The workflow prints a skip message and exits successfully — you can ignore Actions for deploy.
+
+**If you want GitHub Actions to deploy:** add the secrets below. Then each push to **`main`** deploys:
 
 1. Node.js **22**
 2. `npm ci` (postinstall may run `scripts/ci-opennext-build.js` in CI)
 3. `npx prisma generate`
 4. `npm run deploy:deliverables` then `npm run deploy` (or `npm run deploy:all`)
 
-**One-time setup** (repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**):
+**One-time setup for Actions deploy** (repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**):
 
 | Secret | How to obtain |
 |--------|----------------|
@@ -265,7 +269,7 @@ npm run preview
 git push origin main
 ```
 
-With **GitHub Actions** secrets configured (see [Choose one deploy path](#choose-one-deploy-path-required)), this deploys **both** Workers automatically. If you use **Cloudflare Git Builds** instead, configure both Workers in the dashboard and disable Actions so pushes do not double-deploy.
+With **GitHub Actions** secrets configured (see [Choose one deploy path](#choose-one-deploy-path-required)), this deploys **both** Workers automatically. If you use **Cloudflare Git Builds** instead, configure both Workers in the dashboard — GitHub Actions will skip deploy (no failure) until you add secrets, so avoid configuring **both** paths with active deploys.
 
 ## Production stale fix
 
