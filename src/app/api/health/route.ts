@@ -1,5 +1,9 @@
+import { getPortalHealth } from "@/lib/health";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 export async function GET() {
-  return NextResponse.json({ status: "ok", app: "clinovyr-portal" });
+  const { body, statusCode } = await getPortalHealth();
+  return NextResponse.json(body, { status: statusCode });
 }
