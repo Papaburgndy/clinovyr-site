@@ -20,6 +20,8 @@ const COLORS = {
   highlight: { fgColor: { rgb: "C8E6C9" }, font: { bold: true } },
 };
 
+const CURRENCY = '"$"#,##0';
+
 function cellStyle(
   fill: { fgColor: { rgb: string }; font?: { bold: boolean } },
   bold = false,
@@ -36,13 +38,32 @@ function cellStyle(
   };
 }
 
-function styledCell(value: string | number, style: ReturnType<typeof cellStyle>) {
+type Cell = {
+  v?: string | number;
+  t?: string;
+  f?: string;
+  z?: string;
+  s?: ReturnType<typeof cellStyle>;
+};
+
+function styledCell(value: string | number, style: ReturnType<typeof cellStyle>): Cell {
   return { v: value, t: typeof value === "number" ? "n" : "s", s: style };
 }
 
-function buildSheetFromRows(
-  rows: Array<Array<{ v: string | number; t?: string; s?: ReturnType<typeof cellStyle> }>>,
-): XLSX.WorkSheet {
+function numCell(value: number, style: ReturnType<typeof cellStyle>, z?: string): Cell {
+  return { v: value, t: "n", z, s: style };
+}
+
+function fCell(
+  formula: string,
+  cached: number,
+  style: ReturnType<typeof cellStyle>,
+  z?: string,
+): Cell {
+  return { f: formula, v: cached, t: "n", z, s: style };
+}
+
+function buildSheetFromRows(rows: Cell[][]): XLSX.WorkSheet {
   const ws: XLSX.WorkSheet = {};
   rows.forEach((row, r) => {
     row.forEach((cell, c) => {
@@ -56,6 +77,10 @@ function buildSheetFromRows(
   return ws;
 }
 
+// Sheet "Inputs" refs.
+const ADMIN = "Inputs!B3";
+const RATE = "Inputs!B6";
+
 export function buildConstructionRoiWorkbook(
   company: Company,
   survey: Survey,
@@ -66,6 +91,7 @@ export function buildConstructionRoiWorkbook(
   const adminHrsWeek = estimateOwnerAdminHours(formData);
   const activeJobs = defaultActiveJobs(employees);
   const avgProjectValue = defaultAvgProjectValue(employees);
+  const bidsPerMonth = employees === "1–5" ? 6 : employees === "6–20" ? 12 : 20;
 
   const commAutomationHrsSaved = Math.round(adminHrsWeek * 0.35 * 10) / 10;
   const bidTimeReductionHrs = Math.round(adminHrsWeek * 0.25 * 10) / 10;
@@ -96,32 +122,33 @@ export function buildConstructionRoiWorkbook(
     ],
     [
       styledCell("Owner admin hours/week", cellStyle(COLORS.input)),
-      styledCell(adminHrsWeek, cellStyle(COLORS.input)),
+      numCell(adminHrsWeek, cellStyle(COLORS.input)), // B3
       styledCell("Bids, client updates, sub coordination, admin", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Active jobs (concurrent)", cellStyle(COLORS.input)),
-      styledCell(activeJobs, cellStyle(COLORS.input)),
+      numCell(activeJobs, cellStyle(COLORS.input)), // B4
       styledCell("Typical pipeline for your team size", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Average project value ($)", cellStyle(COLORS.input)),
-      styledCell(avgProjectValue, cellStyle(COLORS.input)),
+      numCell(avgProjectValue, cellStyle(COLORS.input), CURRENCY), // B5
       styledCell("Placer County remodel/GC typical", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Owner effective hourly rate ($)", cellStyle(COLORS.input)),
-      styledCell(ownerRate, cellStyle(COLORS.input)),
+      numCell(ownerRate, cellStyle(COLORS.input), CURRENCY), // B6
       styledCell("Opportunity cost — your time on site & sales", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Bids submitted per month (est.)", cellStyle(COLORS.input)),
-      styledCell(employees === "1–5" ? 6 : employees === "6–20" ? 12 : 20, cellStyle(COLORS.input)),
+      numCell(bidsPerMonth, cellStyle(COLORS.input)), // B7
       styledCell("Adjust to your actual pipeline", cellStyle(COLORS.input)),
     ],
   ]);
   sheet1["!cols"] = [{ wch: 36 }, { wch: 18 }, { wch: 38 }];
 
+  // Sheet 2 — Savings. Col A category, B hrs/week, C annual $.
   const sheet2 = buildSheetFromRows([
     [
       styledCell("AI Savings Breakdown", cellStyle(COLORS.header, true)),
@@ -135,34 +162,28 @@ export function buildConstructionRoiWorkbook(
     ],
     [
       styledCell("Client communication automation", cellStyle(COLORS.calculated)),
-      styledCell(commAutomationHrsSaved, cellStyle(COLORS.calculated)),
-      styledCell(`$${commSavingsYear.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${ADMIN}*0.35`, commAutomationHrsSaved, cellStyle(COLORS.calculated)), // B3
+      fCell(`B3*${RATE}*52`, commSavingsYear, cellStyle(COLORS.calculated), CURRENCY), // C3
     ],
     [
       styledCell("50% bid prep time reduction", cellStyle(COLORS.calculated)),
-      styledCell(bidTimeReductionHrs, cellStyle(COLORS.calculated)),
-      styledCell(`$${bidSavingsYear.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${ADMIN}*0.25`, bidTimeReductionHrs, cellStyle(COLORS.calculated)), // B4
+      fCell(`B4*${RATE}*52`, bidSavingsYear, cellStyle(COLORS.calculated), CURRENCY), // C4
     ],
     [
       styledCell("Sub & lead follow-up automation", cellStyle(COLORS.calculated)),
-      styledCell(followUpHrsSaved, cellStyle(COLORS.calculated)),
-      styledCell(`$${followUpSavingsYear.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${ADMIN}*0.2`, followUpHrsSaved, cellStyle(COLORS.calculated)), // B5
+      fCell(`B5*${RATE}*52`, followUpSavingsYear, cellStyle(COLORS.calculated), CURRENCY), // C5
     ],
     [
       styledCell("Total owner time recovered", cellStyle(COLORS.summary, true)),
-      styledCell(`${totalHrsSavedWeek} hrs/week`, cellStyle(COLORS.summary, true)),
-      styledCell(`$${totalSavingsYear.toLocaleString()}/year`, cellStyle(COLORS.summary, true)),
+      fCell("SUM(B3:B5)", totalHrsSavedWeek, cellStyle(COLORS.summary, true)), // B6
+      fCell("SUM(C3:C5)", totalSavingsYear, cellStyle(COLORS.summary, true), CURRENCY), // C6
     ],
     [
       styledCell("KEY INSIGHT", cellStyle(COLORS.highlight, true)),
-      styledCell(
-        `$${ownerRate}/hr × ${highlightHrs} hrs/week`,
-        cellStyle(COLORS.highlight, true),
-      ),
-      styledCell(
-        `$${highlightAnnual.toLocaleString()}/year`,
-        cellStyle(COLORS.highlight, true),
-      ),
+      styledCell(`$${ownerRate}/hr × ${highlightHrs} hrs/week`, cellStyle(COLORS.highlight, true)),
+      fCell(`${RATE}*${highlightHrs}*52`, highlightAnnual, cellStyle(COLORS.highlight, true), CURRENCY), // C7
     ],
     [
       styledCell("Insight explanation", cellStyle(COLORS.insight)),
@@ -173,6 +194,7 @@ export function buildConstructionRoiWorkbook(
   sheet2["!cols"] = [{ wch: 34 }, { wch: 20 }, { wch: 22 }];
 
   const roiEstimate = survey.estimatedROI ?? "See assessment report for company-specific estimate";
+  const TOTAL_YEAR = "'Savings'!C6";
 
   const sheet3 = buildSheetFromRows([
     [
@@ -181,11 +203,11 @@ export function buildConstructionRoiWorkbook(
     ],
     [
       styledCell("Clinovyr Workflow Automation Sprint", cellStyle(COLORS.input)),
-      styledCell(`$${aiInvestment.toLocaleString()}`, cellStyle(COLORS.input)),
+      numCell(aiInvestment, cellStyle(COLORS.input), CURRENCY), // B2 (input)
     ],
     [
       styledCell("Estimated annual owner time value (Sheet 2)", cellStyle(COLORS.calculated)),
-      styledCell(`$${totalSavingsYear.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(TOTAL_YEAR, totalSavingsYear, cellStyle(COLORS.calculated), CURRENCY), // B3
     ],
     [
       styledCell("Clinovyr assessment ROI estimate", cellStyle(COLORS.summary)),

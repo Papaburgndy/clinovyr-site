@@ -12,6 +12,8 @@ export type DeliverableRecord = {
   url: string;
   type: DeliverableFileType;
   size: number;
+  /** True when this deliverable was produced from fallback (non-Claude) content. */
+  usedFallback?: boolean;
 };
 
 export type TriggerDeliverableGenerationParams = {

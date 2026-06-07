@@ -181,7 +181,17 @@ export default async function AdminClientDetailPage({ params }: PageProps) {
                 key={d.key}
                 className="flex items-center justify-between gap-4 rounded-lg border border-white/10 px-4 py-2.5"
               >
-                <span className="text-sm text-paper">{d.name}</span>
+                <span className="flex items-center gap-2 text-sm text-paper">
+                  {d.name}
+                  {d.usedFallback ? (
+                    <span
+                      title="Generated from fallback content — Claude was unavailable. Consider re-delivering."
+                      className="rounded-full border border-yellow-500/40 bg-yellow-500/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-yellow-500"
+                    >
+                      Fallback
+                    </span>
+                  ) : null}
+                </span>
                 <a
                   href={d.url}
                   target="_blank"

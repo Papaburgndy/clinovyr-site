@@ -12,6 +12,9 @@ const COLORS = {
   header: { fgColor: { rgb: "EDE9E2" }, font: { bold: true } },
 };
 
+const CURRENCY = '"$"#,##0';
+const PERCENT = "0%";
+
 function cellStyle(fill: { fgColor: { rgb: string } }, bold = false) {
   return {
     fill,
@@ -25,8 +28,31 @@ function cellStyle(fill: { fgColor: { rgb: string } }, bold = false) {
   };
 }
 
-function styledCell(value: string | number, style: ReturnType<typeof cellStyle>) {
+type Cell = {
+  v?: string | number;
+  t?: string;
+  f?: string;
+  z?: string;
+  s?: ReturnType<typeof cellStyle>;
+};
+
+function styledCell(value: string | number, style: ReturnType<typeof cellStyle>): Cell {
   return { v: value, t: typeof value === "number" ? "n" : "s", s: style };
+}
+
+/** Numeric input cell (editable) with optional number format. */
+function numCell(value: number, style: ReturnType<typeof cellStyle>, z?: string): Cell {
+  return { v: value, t: "n", z, s: style };
+}
+
+/** Live formula cell. Caches a computed value so previews render before recalc. */
+function formulaCell(
+  formula: string,
+  cached: number,
+  style: ReturnType<typeof cellStyle>,
+  z?: string,
+): Cell {
+  return { f: formula, v: cached, t: "n", z, s: style };
 }
 
 function estimateHoursPerWeek(formData: { timeDrainsRanked?: string[]; employees?: string } | null): number {
@@ -55,7 +81,6 @@ export const generateRoiCalculator: DeliverableGenerator = ({ company, survey, f
   const score = resolveScore(formData, survey);
   const hoursPerWeek = estimateHoursPerWeek(formData);
   const autoRate = automationRate(survey.score);
-  const autoPct = Math.round(autoRate * 100);
   const hoursSavedWeek = Math.round(hoursPerWeek * autoRate * 10) / 10;
   const monthlySavings = Math.round(hoursSavedWeek * HOURLY_RATE * 4.33);
   const annualSavings = Math.round(hoursSavedWeek * HOURLY_RATE * 52);
@@ -65,10 +90,11 @@ export const generateRoiCalculator: DeliverableGenerator = ({ company, survey, f
 
   const topDrain = formData?.timeDrainsRanked?.[0] ?? "Priority workflows";
   const ws: XLSX.WorkSheet = {};
-  const rows: Array<Array<{ v: string | number; t?: string; s?: ReturnType<typeof cellStyle> }>> = [
+  // NOTE: B-column formulas below reference 1-based Excel rows; keep row order in sync.
+  const rows: Cell[][] = [
     [styledCell(`${company.name} — ROI Calculator`, cellStyle(COLORS.header, true))],
     [styledCell(`Industry: ${company.industry} · Tier: ${survey.tier ?? "TBD"}`, cellStyle(COLORS.header))],
-    [styledCell("", cellStyle(COLORS.header))],
+    [styledCell("Yellow = editable inputs · Green = auto-calculated", cellStyle(COLORS.header))],
     [
       styledCell("Input", cellStyle(COLORS.header, true)),
       styledCell("Value", cellStyle(COLORS.header, true)),
@@ -81,17 +107,17 @@ export const generateRoiCalculator: DeliverableGenerator = ({ company, survey, f
     ],
     [
       styledCell("Hours/week on priority drains", cellStyle(COLORS.input)),
-      styledCell(hoursPerWeek, cellStyle(COLORS.input)),
+      numCell(hoursPerWeek, cellStyle(COLORS.input)), // B6
       styledCell("Adjust based on team input", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Blended hourly cost ($/hr)", cellStyle(COLORS.input)),
-      styledCell(HOURLY_RATE, cellStyle(COLORS.input)),
+      numCell(HOURLY_RATE, cellStyle(COLORS.input), CURRENCY), // B7
       styledCell("Default $45/hr — edit for your team", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Automation capture rate", cellStyle(COLORS.input)),
-      styledCell(`${autoPct}%`, cellStyle(COLORS.input)),
+      numCell(autoRate, cellStyle(COLORS.input), PERCENT), // B8
       styledCell(`Based on readiness score ${survey.score ?? "—"}`, cellStyle(COLORS.input)),
     ],
     [styledCell("", cellStyle(COLORS.header))],
@@ -102,18 +128,18 @@ export const generateRoiCalculator: DeliverableGenerator = ({ company, survey, f
     ],
     [
       styledCell("Hours saved/week", cellStyle(COLORS.calculated)),
-      styledCell(hoursSavedWeek, cellStyle(COLORS.calculated)),
-      styledCell(`${hoursPerWeek} × ${autoPct}%`, cellStyle(COLORS.calculated)),
+      formulaCell("B6*B8", hoursSavedWeek, cellStyle(COLORS.calculated)), // B11
+      styledCell("Hours/week × capture rate", cellStyle(COLORS.calculated)),
     ],
     [
       styledCell("Monthly labor savings", cellStyle(COLORS.calculated)),
-      styledCell(monthlySavings, cellStyle(COLORS.calculated)),
-      styledCell(`${hoursSavedWeek} hrs × $${HOURLY_RATE} × 4.33`, cellStyle(COLORS.calculated)),
+      formulaCell("B11*B7*4.33", monthlySavings, cellStyle(COLORS.calculated), CURRENCY), // B12
+      styledCell("Hours saved × rate × 4.33 wks", cellStyle(COLORS.calculated)),
     ],
     [
       styledCell("Annual labor savings", cellStyle(COLORS.calculated)),
-      styledCell(annualSavings, cellStyle(COLORS.calculated)),
-      styledCell(`${hoursSavedWeek} hrs × $${HOURLY_RATE} × 52`, cellStyle(COLORS.calculated)),
+      formulaCell("B11*B7*52", annualSavings, cellStyle(COLORS.calculated), CURRENCY), // B13
+      styledCell("Hours saved × rate × 52 wks", cellStyle(COLORS.calculated)),
     ],
     [styledCell("", cellStyle(COLORS.header))],
     [
@@ -128,12 +154,12 @@ export const generateRoiCalculator: DeliverableGenerator = ({ company, survey, f
     ],
     [
       styledCell("Est. implementation investment", cellStyle(COLORS.summary)),
-      styledCell(`$${implementationCost.toLocaleString()}`, cellStyle(COLORS.summary)),
-      styledCell("AI Readiness Assessment baseline", cellStyle(COLORS.summary)),
+      numCell(implementationCost, cellStyle(COLORS.summary), CURRENCY), // B17
+      styledCell("Edit to match your engagement", cellStyle(COLORS.summary)),
     ],
     [
       styledCell("Break-even (months)", cellStyle(COLORS.summary)),
-      styledCell(breakEvenMonths || "N/A", cellStyle(COLORS.summary)),
+      formulaCell('IF(B12>0,CEILING(B17/B12,1),"N/A")', breakEvenMonths, cellStyle(COLORS.summary)), // B18
       styledCell("Investment ÷ monthly savings", cellStyle(COLORS.summary)),
     ],
   ];

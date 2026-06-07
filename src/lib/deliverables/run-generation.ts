@@ -7,6 +7,10 @@ import { prisma } from "@/lib/prisma";
 import { parseSurveyFormData } from "@/lib/deliverables/artifacts";
 import { sendDeliveryEmail } from "@/lib/emails/delivery-email";
 import { GENERATORS } from "@/lib/deliverables/generators/index";
+import {
+  claudeTelemetry,
+  resetClaudeTelemetry,
+} from "@/lib/deliverables/generators/claude-helper";
 import { getIndustryGeneratorMap } from "@/lib/deliverables/industry-map";
 import type { GeneratorContext } from "@/lib/deliverables/generators/types";
 import { uploadDeliverable } from "@/lib/deliverables/storage";
@@ -81,6 +85,8 @@ export async function runDeliverableGeneration(
 
   const records: DeliverableRecord[] = [];
 
+  resetClaudeTelemetry();
+
   for (const key of deliverableKeys) {
     const generator = industryGenerators?.[key] ?? GENERATORS[key];
 
@@ -90,6 +96,7 @@ export async function runDeliverableGeneration(
     }
 
     try {
+      const fallbacksBefore = claudeTelemetry.fallbacks;
       const output = await generator(ctx);
 
       if (!output) {
@@ -114,16 +121,21 @@ export async function runDeliverableGeneration(
         continue;
       }
 
+      // If any Claude call fell back to canned content while producing this
+      // deliverable, flag it so the admin panel can surface thin output.
+      const usedFallback = claudeTelemetry.fallbacks > fallbacksBefore;
+
       records.push({
         key,
         name: output.displayName,
         url: upload.url,
         type: output.type,
         size: upload.size,
+        usedFallback,
       });
 
       console.info(
-        `[deliverables/run-generation] uploaded ${key} via ${upload.storage} (${upload.size} bytes)`,
+        `[deliverables/run-generation] uploaded ${key} via ${upload.storage} (${upload.size} bytes)${usedFallback ? " [FALLBACK]" : ""}`,
       );
     } catch (error) {
       console.error(

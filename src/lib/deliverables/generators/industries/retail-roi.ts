@@ -22,6 +22,9 @@ const COLORS = {
   insight: { fgColor: { rgb: "FFF3E0" } },
 };
 
+const CURRENCY = '"$"#,##0';
+const PERCENT = "0%";
+
 function cellStyle(fill: { fgColor: { rgb: string }; font?: { bold: boolean } }, bold = false) {
   return {
     fill,
@@ -35,13 +38,32 @@ function cellStyle(fill: { fgColor: { rgb: string }; font?: { bold: boolean } },
   };
 }
 
-function styledCell(value: string | number, style: ReturnType<typeof cellStyle>) {
+type Cell = {
+  v?: string | number;
+  t?: string;
+  f?: string;
+  z?: string;
+  s?: ReturnType<typeof cellStyle>;
+};
+
+function styledCell(value: string | number, style: ReturnType<typeof cellStyle>): Cell {
   return { v: value, t: typeof value === "number" ? "n" : "s", s: style };
 }
 
-function buildSheetFromRows(
-  rows: Array<Array<{ v: string | number; t?: string; s?: ReturnType<typeof cellStyle> }>>,
-): XLSX.WorkSheet {
+function numCell(value: number, style: ReturnType<typeof cellStyle>, z?: string): Cell {
+  return { v: value, t: "n", z, s: style };
+}
+
+function fCell(
+  formula: string,
+  cached: number,
+  style: ReturnType<typeof cellStyle>,
+  z?: string,
+): Cell {
+  return { f: formula, v: cached, t: "n", z, s: style };
+}
+
+function buildSheetFromRows(rows: Cell[][]): XLSX.WorkSheet {
   const ws: XLSX.WorkSheet = {};
   rows.forEach((row, r) => {
     row.forEach((cell, c) => {
@@ -54,6 +76,12 @@ function buildSheetFromRows(
   });
   return ws;
 }
+
+// Sheet "Inputs" refs.
+const MREV = "Inputs!B3";
+const CUST = "Inputs!B4";
+const AOV = "Inputs!B5";
+const RATING = "Inputs!B8";
 
 export function buildRetailRoiWorkbook(
   company: Company,
@@ -97,37 +125,38 @@ export function buildRetailRoiWorkbook(
     ],
     [
       styledCell("Monthly revenue ($)", cellStyle(COLORS.input)),
-      styledCell(monthlyRevenue, cellStyle(COLORS.input)),
+      numCell(monthlyRevenue, cellStyle(COLORS.input), CURRENCY), // B3
       styledCell("Gross sales", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Customer count (annual unique)", cellStyle(COLORS.input)),
-      styledCell(customerCount, cellStyle(COLORS.input)),
+      numCell(customerCount, cellStyle(COLORS.input)), // B4
       styledCell("POS / CRM estimate", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Average transaction ($)", cellStyle(COLORS.input)),
-      styledCell(avgTransaction, cellStyle(COLORS.input)),
+      numCell(avgTransaction, cellStyle(COLORS.input), CURRENCY), // B5
       styledCell(`Default for ${subType}`, cellStyle(COLORS.input)),
     ],
     [
       styledCell("Email list size", cellStyle(COLORS.input)),
-      styledCell(emailList, cellStyle(COLORS.input)),
+      numCell(emailList, cellStyle(COLORS.input)), // B6
       styledCell("Subscribed contacts", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Email open rate (decimal)", cellStyle(COLORS.input)),
-      styledCell(openRate, cellStyle(COLORS.input)),
+      numCell(openRate, cellStyle(COLORS.input), PERCENT), // B7
       styledCell("e.g. 0.22 = 22%", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Current Google rating", cellStyle(COLORS.input)),
-      styledCell(currentRating, cellStyle(COLORS.input)),
+      numCell(currentRating, cellStyle(COLORS.input)), // B8
       styledCell("Target: 4.4 in review module", cellStyle(COLORS.input)),
     ],
   ]);
   sheet1["!cols"] = [{ wch: 36 }, { wch: 18 }, { wch: 36 }];
 
+  // Sheet 2 — ROI Modules. Value column = B.
   const sheet2 = buildSheetFromRows([
     [
       styledCell("Win-Back Module", cellStyle(COLORS.header, true)),
@@ -136,17 +165,17 @@ export function buildRetailRoiWorkbook(
     ],
     [
       styledCell("Lapsed customers (est.)", cellStyle(COLORS.calculated)),
-      styledCell(lapsedCustomers, cellStyle(COLORS.calculated)),
+      fCell(`ROUND(${CUST}*${lapsedPct},0)`, lapsedCustomers, cellStyle(COLORS.calculated)), // B2
       styledCell(`${(lapsedPct * 100).toFixed(0)}% of base`, cellStyle(COLORS.calculated)),
     ],
     [
       styledCell("Win-back reactivation rate", cellStyle(COLORS.input)),
-      styledCell(winBackRate, cellStyle(COLORS.input)),
+      numCell(winBackRate, cellStyle(COLORS.input), PERCENT), // B3 (input)
       styledCell("Conservative 5%", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Recovered annual revenue", cellStyle(COLORS.summary, true)),
-      styledCell(`$${winBackRevenue.toLocaleString()}`, cellStyle(COLORS.summary, true)),
+      fCell(`B2*B3*${AOV}`, winBackRevenue, cellStyle(COLORS.summary, true), CURRENCY), // B4
       styledCell("Lapsed × rate × AOV", cellStyle(COLORS.summary, true)),
     ],
     [
@@ -156,17 +185,17 @@ export function buildRetailRoiWorkbook(
     ],
     [
       styledCell("Current rating", cellStyle(COLORS.calculated)),
-      styledCell(currentRating, cellStyle(COLORS.calculated)),
+      fCell(RATING, currentRating, cellStyle(COLORS.calculated)), // B6
       styledCell("", cellStyle(COLORS.calculated)),
     ],
     [
       styledCell("Target rating", cellStyle(COLORS.input)),
-      styledCell(targetRating, cellStyle(COLORS.input)),
+      numCell(targetRating, cellStyle(COLORS.input)), // B7 (input)
       styledCell("Maps conversion lift ~15–25%", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Est. annual revenue from review lift", cellStyle(COLORS.summary, true)),
-      styledCell(`$${reviewRevenue.toLocaleString()}`, cellStyle(COLORS.summary, true)),
+      fCell(`${MREV}*12*${reviewLiftPct}*0.15`, reviewRevenue, cellStyle(COLORS.summary, true), CURRENCY), // B8
       styledCell("15% of annual rev × lift factor", cellStyle(COLORS.summary, true)),
     ],
     [
@@ -176,27 +205,29 @@ export function buildRetailRoiWorkbook(
     ],
     [
       styledCell("Personalization lift %", cellStyle(COLORS.input)),
-      styledCell(emailLiftPct, cellStyle(COLORS.input)),
+      numCell(emailLiftPct, cellStyle(COLORS.input), PERCENT), // B10 (input)
       styledCell("Midpoint 4%", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Annual email revenue lift", cellStyle(COLORS.summary, true)),
-      styledCell(`$${emailRevenue.toLocaleString()}`, cellStyle(COLORS.summary, true)),
+      fCell(`${MREV}*12*B10`, emailRevenue, cellStyle(COLORS.summary, true), CURRENCY), // B11
       styledCell("On annual revenue base", cellStyle(COLORS.summary, true)),
     ],
     [
       styledCell("Staffing optimization (hrs/wk saved)", cellStyle(COLORS.input)),
-      styledCell(staffingHoursSaved, cellStyle(COLORS.input)),
+      numCell(staffingHoursSaved, cellStyle(COLORS.input)), // B12 (input)
       styledCell("AI daily briefs", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Staffing value (annual)", cellStyle(COLORS.calculated)),
-      styledCell(`$${staffingAnnual.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`B12*52*${hourlyValue}`, staffingAnnual, cellStyle(COLORS.calculated), CURRENCY), // B13
       styledCell(`$${hourlyValue}/hr loaded`, cellStyle(COLORS.calculated)),
     ],
   ]);
   sheet2["!cols"] = [{ wch: 38 }, { wch: 20 }, { wch: 32 }];
 
+  // Sheet 3 — Summary. Value column = B; pulls from "ROI Modules".
+  const M = "'ROI Modules'";
   const sheet3 = buildSheetFromRows([
     [
       styledCell("Summary — Total Annual Impact", cellStyle(COLORS.summary, true)),
@@ -204,27 +235,27 @@ export function buildRetailRoiWorkbook(
     ],
     [
       styledCell("Win-back recovered revenue", cellStyle(COLORS.calculated)),
-      styledCell(`$${winBackRevenue.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${M}!B4`, winBackRevenue, cellStyle(COLORS.calculated), CURRENCY), // B2
     ],
     [
       styledCell("Review rating lift revenue", cellStyle(COLORS.calculated)),
-      styledCell(`$${reviewRevenue.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${M}!B8`, reviewRevenue, cellStyle(COLORS.calculated), CURRENCY), // B3
     ],
     [
       styledCell("Email personalization lift", cellStyle(COLORS.calculated)),
-      styledCell(`$${emailRevenue.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${M}!B11`, emailRevenue, cellStyle(COLORS.calculated), CURRENCY), // B4
     ],
     [
       styledCell("Staffing optimization value", cellStyle(COLORS.calculated)),
-      styledCell(`$${staffingAnnual.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${M}!B13`, staffingAnnual, cellStyle(COLORS.calculated), CURRENCY), // B5
     ],
     [
       styledCell("Total estimated annual benefit", cellStyle(COLORS.summary, true)),
-      styledCell(`$${totalAnnual.toLocaleString()}`, cellStyle(COLORS.summary, true)),
+      fCell("SUM(B2:B5)", totalAnnual, cellStyle(COLORS.summary, true), CURRENCY), // B6
     ],
     [
       styledCell("Clinovyr Sprint investment", cellStyle(COLORS.input)),
-      styledCell(`$${aiInvestment.toLocaleString()}`, cellStyle(COLORS.input)),
+      numCell(aiInvestment, cellStyle(COLORS.input), CURRENCY), // B7 (input)
     ],
     [
       styledCell("Break-even", cellStyle(COLORS.summary, true)),

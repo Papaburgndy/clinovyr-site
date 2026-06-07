@@ -19,6 +19,9 @@ const COLORS = {
   insight: { fgColor: { rgb: "FFF3E0" } },
 };
 
+const CURRENCY = '"$"#,##0';
+const PERCENT = "0%";
+
 function cellStyle(fill: { fgColor: { rgb: string }; font?: { bold: boolean } }, bold = false) {
   return {
     fill,
@@ -32,13 +35,32 @@ function cellStyle(fill: { fgColor: { rgb: string }; font?: { bold: boolean } },
   };
 }
 
-function styledCell(value: string | number, style: ReturnType<typeof cellStyle>) {
+type Cell = {
+  v?: string | number;
+  t?: string;
+  f?: string;
+  z?: string;
+  s?: ReturnType<typeof cellStyle>;
+};
+
+function styledCell(value: string | number, style: ReturnType<typeof cellStyle>): Cell {
   return { v: value, t: typeof value === "number" ? "n" : "s", s: style };
 }
 
-function buildSheetFromRows(
-  rows: Array<Array<{ v: string | number; t?: string; s?: ReturnType<typeof cellStyle> }>>,
-): XLSX.WorkSheet {
+function numCell(value: number, style: ReturnType<typeof cellStyle>, z?: string): Cell {
+  return { v: value, t: "n", z, s: style };
+}
+
+function fCell(
+  formula: string,
+  cached: number,
+  style: ReturnType<typeof cellStyle>,
+  z?: string,
+): Cell {
+  return { f: formula, v: cached, t: "n", z, s: style };
+}
+
+function buildSheetFromRows(rows: Cell[][]): XLSX.WorkSheet {
   const ws: XLSX.WorkSheet = {};
   rows.forEach((row, r) => {
     row.forEach((cell, c) => {
@@ -51,6 +73,14 @@ function buildSheetFromRows(
   });
   return ws;
 }
+
+// Sheet "Inputs" refs.
+const CLIENTS = "Inputs!B3";
+const TREAT = "Inputs!B4";
+const REBOOK = "Inputs!B5";
+const VISITS = "Inputs!B6";
+const RATE = "Inputs!B7";
+const SOCIAL = "Inputs!B8";
 
 export function buildWellnessRoiWorkbook(
   company: Company,
@@ -66,17 +96,13 @@ export function buildWellnessRoiWorkbook(
   const socialHoursSaved = 8;
   const acquisitionCost = 275;
   const retentionCost = 55;
-  const acquisitionMultiplier = 5;
+  const acquisitionMultiplier = Math.round(acquisitionCost / retentionCost);
 
   const annualRevenueBaseline = Math.round(activeClients * avgTreatment * visitsPerYear);
   const rebook10 = rebookingRate + 0.1;
   const rebook20 = rebookingRate + 0.2;
-  const additionalRevenue10 = Math.round(
-    activeClients * avgTreatment * (rebook10 - rebookingRate),
-  );
-  const additionalRevenue20 = Math.round(
-    activeClients * avgTreatment * (rebook20 - rebookingRate),
-  );
+  const additionalRevenue10 = Math.round(activeClients * avgTreatment * 0.1);
+  const additionalRevenue20 = Math.round(activeClients * avgTreatment * 0.2);
   const socialRoiAnnual = socialHoursSaved * 52 * hourlyRate;
   const aiInvestment = 12_000;
   const highlightRevenue = 200 * 250 * 0.1;
@@ -94,37 +120,38 @@ export function buildWellnessRoiWorkbook(
     ],
     [
       styledCell("Active clients", cellStyle(COLORS.input)),
-      styledCell(activeClients, cellStyle(COLORS.input)),
+      numCell(activeClients, cellStyle(COLORS.input)), // B3
       styledCell("Clients with visit in last 12 months", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Average treatment value ($)", cellStyle(COLORS.input)),
-      styledCell(avgTreatment, cellStyle(COLORS.input)),
+      numCell(avgTreatment, cellStyle(COLORS.input), CURRENCY), // B4
       styledCell("Per visit revenue", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Rebooking rate (decimal)", cellStyle(COLORS.input)),
-      styledCell(rebookingRate, cellStyle(COLORS.input)),
+      numCell(rebookingRate, cellStyle(COLORS.input), PERCENT), // B5
       styledCell("e.g. 0.42 = 42% rebook within 90 days", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Visits per year (avg)", cellStyle(COLORS.input)),
-      styledCell(visitsPerYear, cellStyle(COLORS.input)),
+      numCell(visitsPerYear, cellStyle(COLORS.input)), // B6
       styledCell("Across all active clients", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Owner hourly rate ($)", cellStyle(COLORS.input)),
-      styledCell(hourlyRate, cellStyle(COLORS.input)),
+      numCell(hourlyRate, cellStyle(COLORS.input), CURRENCY), // B7
       styledCell("For social content ROI calc", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Social content hours saved/week", cellStyle(COLORS.input)),
-      styledCell(socialHoursSaved, cellStyle(COLORS.input)),
+      numCell(socialHoursSaved, cellStyle(COLORS.input)), // B8
       styledCell("With AI content batching", cellStyle(COLORS.input)),
     ],
   ]);
   sheet1["!cols"] = [{ wch: 36 }, { wch: 18 }, { wch: 36 }];
 
+  // Sheet 2 — Rebooking Impact. Col A scenario, B rate, C additional revenue.
   const sheet2 = buildSheetFromRows([
     [
       styledCell("Rebooking Impact Scenarios", cellStyle(COLORS.header, true)),
@@ -138,23 +165,23 @@ export function buildWellnessRoiWorkbook(
     ],
     [
       styledCell("Current baseline", cellStyle(COLORS.calculated)),
-      styledCell(`${(rebookingRate * 100).toFixed(0)}%`, cellStyle(COLORS.calculated)),
+      fCell(REBOOK, rebookingRate, cellStyle(COLORS.calculated), PERCENT), // B3
       styledCell("—", cellStyle(COLORS.calculated)),
     ],
     [
       styledCell("+10% rebooking improvement", cellStyle(COLORS.summary, true)),
-      styledCell(`${(rebook10 * 100).toFixed(0)}%`, cellStyle(COLORS.summary, true)),
-      styledCell(`$${additionalRevenue10.toLocaleString()}`, cellStyle(COLORS.summary, true)),
+      fCell(`${REBOOK}+0.1`, rebook10, cellStyle(COLORS.summary, true), PERCENT), // B4
+      fCell(`${CLIENTS}*${TREAT}*0.1`, additionalRevenue10, cellStyle(COLORS.summary, true), CURRENCY), // C4
     ],
     [
       styledCell("+20% rebooking improvement", cellStyle(COLORS.summary, true)),
-      styledCell(`${(rebook20 * 100).toFixed(0)}%`, cellStyle(COLORS.summary, true)),
-      styledCell(`$${additionalRevenue20.toLocaleString()}`, cellStyle(COLORS.summary, true)),
+      fCell(`${REBOOK}+0.2`, rebook20, cellStyle(COLORS.summary, true), PERCENT), // B5
+      fCell(`${CLIENTS}*${TREAT}*0.2`, additionalRevenue20, cellStyle(COLORS.summary, true), CURRENCY), // C5
     ],
     [
       styledCell("Baseline annual revenue (est.)", cellStyle(COLORS.calculated)),
       styledCell("—", cellStyle(COLORS.calculated)),
-      styledCell(`$${annualRevenueBaseline.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${CLIENTS}*${TREAT}*${VISITS}`, annualRevenueBaseline, cellStyle(COLORS.calculated), CURRENCY), // C6
     ],
     [
       styledCell("Highlight: 200 × $250 × 10%", cellStyle(COLORS.insight, true)),
@@ -171,26 +198,23 @@ export function buildWellnessRoiWorkbook(
     ],
     [
       styledCell("Cost to acquire new client", cellStyle(COLORS.input)),
-      styledCell(`$${acquisitionCost}`, cellStyle(COLORS.input)),
+      numCell(acquisitionCost, cellStyle(COLORS.input), CURRENCY), // B2 (input)
     ],
     [
       styledCell("Cost to retain/rebook existing client", cellStyle(COLORS.input)),
-      styledCell(`$${retentionCost}`, cellStyle(COLORS.input)),
+      numCell(retentionCost, cellStyle(COLORS.input), CURRENCY), // B3 (input)
     ],
     [
       styledCell("Retention vs acquisition ratio", cellStyle(COLORS.calculated, true)),
-      styledCell(`${acquisitionMultiplier}× cheaper to retain`, cellStyle(COLORS.calculated, true)),
+      fCell("B2/B3", acquisitionMultiplier, cellStyle(COLORS.calculated, true), '0"× cheaper to retain"'), // B4
     ],
     [
       styledCell("Social content ROI (annual)", cellStyle(COLORS.calculated)),
-      styledCell(
-        `$${socialRoiAnnual.toLocaleString()} (${socialHoursSaved}h/wk × $${hourlyRate}/hr × 52)`,
-        cellStyle(COLORS.calculated),
-      ),
+      fCell(`${SOCIAL}*${RATE}*52`, socialRoiAnnual, cellStyle(COLORS.calculated), CURRENCY), // B5
     ],
     [
       styledCell("Clinovyr Sprint investment", cellStyle(COLORS.input)),
-      styledCell(`$${aiInvestment.toLocaleString()}`, cellStyle(COLORS.input)),
+      numCell(aiInvestment, cellStyle(COLORS.input), CURRENCY), // B6 (input)
     ],
     [
       styledCell("Assessment ROI estimate", cellStyle(COLORS.summary)),

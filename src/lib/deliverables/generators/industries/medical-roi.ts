@@ -11,6 +11,8 @@ const COLORS = {
   header: { fgColor: { rgb: "EDE9E2" }, font: { bold: true } },
 };
 
+const CURRENCY = '"$"#,##0';
+
 function cellStyle(fill: { fgColor: { rgb: string } }, bold = false) {
   return {
     fill,
@@ -24,8 +26,31 @@ function cellStyle(fill: { fgColor: { rgb: string } }, bold = false) {
   };
 }
 
-function styledCell(value: string | number, style: ReturnType<typeof cellStyle>) {
+type Cell = {
+  v?: string | number;
+  t?: string;
+  f?: string;
+  z?: string;
+  s?: ReturnType<typeof cellStyle>;
+};
+
+function styledCell(value: string | number, style: ReturnType<typeof cellStyle>): Cell {
   return { v: value, t: typeof value === "number" ? "n" : "s", s: style };
+}
+
+/** Editable numeric input with optional number format. */
+function numCell(value: number, style: ReturnType<typeof cellStyle>, z?: string): Cell {
+  return { v: value, t: "n", z, s: style };
+}
+
+/** Live formula cell; caches a computed value so previews render before recalc. */
+function fCell(
+  formula: string,
+  cached: number,
+  style: ReturnType<typeof cellStyle>,
+  z?: string,
+): Cell {
+  return { f: formula, v: cached, t: "n", z, s: style };
 }
 
 type BenchmarkRow = {
@@ -36,32 +61,12 @@ type BenchmarkRow = {
 };
 
 const MEDICAL_BENCHMARKS: BenchmarkRow[] = [
-  {
-    label: "Avg weekly appointments (per provider)",
-    small: 45,
-    medium: 85,
-    large: 120,
-  },
+  { label: "Avg weekly appointments (per provider)", small: 45, medium: 85, large: 120 },
   { label: "Typical no-show rate", small: "8%", medium: "12%", large: "15%" },
-  {
-    label: "Front-desk hours/week on manual tasks",
-    small: 18,
-    medium: 28,
-    large: 42,
-  },
+  { label: "Front-desk hours/week on manual tasks", small: 18, medium: 28, large: 42 },
   { label: "Blended hourly staff cost", small: "$22", medium: "$28", large: "$35" },
-  {
-    label: "ROI from appointment reminders",
-    small: "$18K/yr",
-    medium: "$42K/yr",
-    large: "$68K/yr",
-  },
-  {
-    label: "ROI from intake automation",
-    small: "$12K/yr",
-    medium: "$28K/yr",
-    large: "$45K/yr",
-  },
+  { label: "ROI from appointment reminders", small: "$18K/yr", medium: "$42K/yr", large: "$68K/yr" },
+  { label: "ROI from intake automation", small: "$12K/yr", medium: "$28K/yr", large: "$45K/yr" },
 ];
 
 function sizeColumn(employees: string | undefined): "small" | "medium" | "large" {
@@ -88,9 +93,7 @@ function defaultManualHours(employees: string | undefined): number {
   return col === "small" ? Number(row.small) : col === "medium" ? Number(row.medium) : Number(row.large);
 }
 
-function buildSheetFromRows(
-  rows: Array<Array<{ v: string | number; t?: string; s?: ReturnType<typeof cellStyle> }>>,
-): XLSX.WorkSheet {
+function buildSheetFromRows(rows: Cell[][]): XLSX.WorkSheet {
   const ws: XLSX.WorkSheet = {};
   rows.forEach((row, r) => {
     row.forEach((cell, c) => {
@@ -104,6 +107,17 @@ function buildSheetFromRows(
   return ws;
 }
 
+// Cross-sheet input references (Sheet "Your Numbers").
+const IN = "'Your Numbers'";
+const APPTS = `${IN}!B6`; // weekly appointments
+const NOSHOW = `${IN}!B7`; // no-show rate (decimal)
+const HOURS = `${IN}!B8`; // staff hours/week on manual tasks
+const WAGE = `${IN}!B9`; // blended hourly wage
+// Model constants (kept as literals so the 4 core inputs drive recalculation).
+const NOSHOW_REDUCTION = 0.35;
+const HOURS_AUTOMATED = 0.3;
+const APPT_VALUE = 185;
+
 export function buildMedicalRoiWorkbook(
   company: Company,
   survey: Survey,
@@ -114,21 +128,17 @@ export function buildMedicalRoiWorkbook(
   const noShowRate = defaultNoShowRate(employees);
   const manualHours = defaultManualHours(employees);
   const hourlyWage = 28;
-  const noShowReduction = 0.35;
-  const hoursAutomatedPct = 0.3;
 
-  const recoveredApptsWeek = Math.round(weeklyAppts * noShowRate * noShowReduction * 10) / 10;
-  const apptValue = 185;
-  const noShowSavingsWeek = Math.round(recoveredApptsWeek * apptValue);
-  const hoursSavedWeek = Math.round(manualHours * hoursAutomatedPct * 10) / 10;
+  // Cached values (mirror the Excel formulas below so previews render).
+  const recoveredApptsWeek = Math.round(weeklyAppts * noShowRate * NOSHOW_REDUCTION * 10) / 10;
+  const noShowSavingsWeek = Math.round(recoveredApptsWeek * APPT_VALUE);
+  const hoursSavedWeek = Math.round(manualHours * HOURS_AUTOMATED * 10) / 10;
   const laborSavingsWeek = Math.round(hoursSavedWeek * hourlyWage);
   const totalWeeklySavings = noShowSavingsWeek + laborSavingsWeek;
   const annualSavings = totalWeeklySavings * 52;
   const packageCost = 12_000;
   const breakEvenMonths =
-    totalWeeklySavings > 0
-      ? Math.ceil(packageCost / ((totalWeeklySavings * 52) / 12))
-      : 0;
+    totalWeeklySavings > 0 ? Math.ceil(packageCost / ((totalWeeklySavings * 52) / 12)) : 0;
 
   const sheet1 = buildSheetFromRows([
     [
@@ -158,27 +168,28 @@ export function buildMedicalRoiWorkbook(
     ],
     [
       styledCell("Weekly appointments", cellStyle(COLORS.input)),
-      styledCell(weeklyAppts, cellStyle(COLORS.input)),
+      numCell(weeklyAppts, cellStyle(COLORS.input)), // B6 (input)
       styledCell("Edit to match practice volume", cellStyle(COLORS.input)),
     ],
     [
       styledCell("No-show rate (decimal)", cellStyle(COLORS.input)),
-      styledCell(noShowRate, cellStyle(COLORS.input)),
+      numCell(noShowRate, cellStyle(COLORS.input)), // B7 (input)
       styledCell("e.g. 0.12 = 12%", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Staff hours/week on manual tasks", cellStyle(COLORS.input)),
-      styledCell(manualHours, cellStyle(COLORS.input)),
+      numCell(manualHours, cellStyle(COLORS.input)), // B8 (input)
       styledCell("Front desk + billing estimate", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Blended hourly wage ($)", cellStyle(COLORS.input)),
-      styledCell(hourlyWage, cellStyle(COLORS.input)),
+      numCell(hourlyWage, cellStyle(COLORS.input), CURRENCY), // B9 (input)
       styledCell("Adjust for your market", cellStyle(COLORS.input)),
     ],
   ]);
   sheet1["!cols"] = [{ wch: 32 }, { wch: 18 }, { wch: 28 }];
 
+  // Sheet 2 — Automation Savings. Col B = hours/week, Col C = annual $.
   const sheet2 = buildSheetFromRows([
     [
       styledCell("Automation Savings", cellStyle(COLORS.header, true)),
@@ -192,32 +203,34 @@ export function buildMedicalRoiWorkbook(
     ],
     [
       styledCell("Appointment reminders (no-show reduction)", cellStyle(COLORS.calculated)),
-      styledCell(recoveredApptsWeek, cellStyle(COLORS.calculated)),
-      styledCell(noShowSavingsWeek * 52, cellStyle(COLORS.calculated)),
+      fCell(`${APPTS}*${NOSHOW}*${NOSHOW_REDUCTION}`, recoveredApptsWeek, cellStyle(COLORS.calculated)), // B3
+      fCell(`B3*${APPT_VALUE}*52`, noShowSavingsWeek * 52, cellStyle(COLORS.calculated), CURRENCY), // C3
     ],
     [
       styledCell("Intake & admin automation", cellStyle(COLORS.calculated)),
-      styledCell(hoursSavedWeek * 0.5, cellStyle(COLORS.calculated)),
-      styledCell(Math.round(hoursSavedWeek * 0.5 * hourlyWage * 52), cellStyle(COLORS.calculated)),
+      fCell(`${HOURS}*${HOURS_AUTOMATED}*0.5`, hoursSavedWeek * 0.5, cellStyle(COLORS.calculated)), // B4
+      fCell(`B4*${WAGE}*52`, Math.round(hoursSavedWeek * 0.5 * hourlyWage * 52), cellStyle(COLORS.calculated), CURRENCY), // C4
     ],
     [
       styledCell("Follow-up & recall sequences", cellStyle(COLORS.calculated)),
-      styledCell(hoursSavedWeek * 0.3, cellStyle(COLORS.calculated)),
-      styledCell(Math.round(hoursSavedWeek * 0.3 * hourlyWage * 52), cellStyle(COLORS.calculated)),
+      fCell(`${HOURS}*${HOURS_AUTOMATED}*0.3`, hoursSavedWeek * 0.3, cellStyle(COLORS.calculated)), // B5
+      fCell(`B5*${WAGE}*52`, Math.round(hoursSavedWeek * 0.3 * hourlyWage * 52), cellStyle(COLORS.calculated), CURRENCY), // C5
     ],
     [
       styledCell("Review generation workflow", cellStyle(COLORS.calculated)),
-      styledCell(hoursSavedWeek * 0.2, cellStyle(COLORS.calculated)),
-      styledCell(Math.round(hoursSavedWeek * 0.2 * hourlyWage * 52), cellStyle(COLORS.calculated)),
+      fCell(`${HOURS}*${HOURS_AUTOMATED}*0.2`, hoursSavedWeek * 0.2, cellStyle(COLORS.calculated)), // B6
+      fCell(`B6*${WAGE}*52`, Math.round(hoursSavedWeek * 0.2 * hourlyWage * 52), cellStyle(COLORS.calculated), CURRENCY), // C6
     ],
     [
       styledCell("Total hours recovered/week", cellStyle(COLORS.summary, true)),
-      styledCell(hoursSavedWeek + recoveredApptsWeek * 0.25, cellStyle(COLORS.summary, true)),
-      styledCell(annualSavings, cellStyle(COLORS.summary, true)),
+      fCell(`${HOURS}*${HOURS_AUTOMATED}+B3*0.25`, hoursSavedWeek + recoveredApptsWeek * 0.25, cellStyle(COLORS.summary, true)), // B7
+      fCell("SUM(C3:C6)", annualSavings, cellStyle(COLORS.summary, true), CURRENCY), // C7
     ],
   ]);
   sheet2["!cols"] = [{ wch: 38 }, { wch: 16 }, { wch: 16 }];
 
+  // Sheet 3 — Investment vs Return. Value column = B.
+  const ANNUAL = "'Automation Savings'!C7";
   const sheet3 = buildSheetFromRows([
     [
       styledCell("Investment vs Return", cellStyle(COLORS.header, true)),
@@ -225,11 +238,11 @@ export function buildMedicalRoiWorkbook(
     ],
     [
       styledCell("Clinovyr Workflow Automation Sprint", cellStyle(COLORS.input)),
-      styledCell(`$${packageCost.toLocaleString()}`, cellStyle(COLORS.input)),
+      numCell(packageCost, cellStyle(COLORS.input), CURRENCY), // B2 (input)
     ],
     [
       styledCell("Estimated annual savings (from Sheet 2)", cellStyle(COLORS.calculated)),
-      styledCell(`$${annualSavings.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(ANNUAL, annualSavings, cellStyle(COLORS.calculated), CURRENCY), // B3
     ],
     [
       styledCell("Clinovyr assessment ROI estimate", cellStyle(COLORS.summary)),
@@ -237,11 +250,11 @@ export function buildMedicalRoiWorkbook(
     ],
     [
       styledCell("Break-even (months)", cellStyle(COLORS.summary, true)),
-      styledCell(breakEvenMonths || "N/A", cellStyle(COLORS.summary, true)),
+      fCell(`IF(${ANNUAL}>0,CEILING(B2/(${ANNUAL}/12),1),"N/A")`, breakEvenMonths || 0, cellStyle(COLORS.summary, true)), // B5
     ],
     [
       styledCell("3-year net benefit (illustrative)", cellStyle(COLORS.calculated)),
-      styledCell(`$${(annualSavings * 3 - packageCost).toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${ANNUAL}*3-B2`, annualSavings * 3 - packageCost, cellStyle(COLORS.calculated), CURRENCY), // B6
     ],
   ]);
   sheet3["!cols"] = [{ wch: 40 }, { wch: 22 }];
@@ -262,18 +275,9 @@ export function buildMedicalRoiWorkbook(
     ]),
     [
       styledCell("Your size band", cellStyle(COLORS.summary, true)),
-      styledCell(
-        col === "small" ? "◀ Your practice" : "—",
-        cellStyle(COLORS.summary, true),
-      ),
-      styledCell(
-        col === "medium" ? "◀ Your practice" : "—",
-        cellStyle(COLORS.summary, true),
-      ),
-      styledCell(
-        col === "large" ? "◀ Your practice" : "—",
-        cellStyle(COLORS.summary, true),
-      ),
+      styledCell(col === "small" ? "◀ Your practice" : "—", cellStyle(COLORS.summary, true)),
+      styledCell(col === "medium" ? "◀ Your practice" : "—", cellStyle(COLORS.summary, true)),
+      styledCell(col === "large" ? "◀ Your practice" : "—", cellStyle(COLORS.summary, true)),
     ],
   ]);
   sheet4["!cols"] = [{ wch: 36 }, { wch: 14 }, { wch: 14 }, { wch: 14 }];

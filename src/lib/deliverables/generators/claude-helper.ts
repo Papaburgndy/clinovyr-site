@@ -1,6 +1,19 @@
 const CLAUDE_MODEL = "claude-sonnet-4-6";
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 
+/**
+ * Per-run telemetry so the deliverable pipeline can flag when a customer
+ * received fallback (non-Claude) content. run-generation snapshots this
+ * before/after each generator. Module-level is safe because generation runs
+ * sequentially within a single Worker invocation.
+ */
+export const claudeTelemetry = { calls: 0, fallbacks: 0 };
+
+export function resetClaudeTelemetry(): void {
+  claudeTelemetry.calls = 0;
+  claudeTelemetry.fallbacks = 0;
+}
+
 export type ClaudeResult = {
   text: string;
   usedFallback: boolean;
@@ -58,11 +71,13 @@ export async function callClaudeText(
   options: CallClaudeOptions,
 ): Promise<ClaudeResult> {
   const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
+  claudeTelemetry.calls += 1;
 
   if (!apiKey) {
     console.warn(
       "[deliverables/claude-helper] ANTHROPIC_API_KEY missing — using fallback.",
     );
+    claudeTelemetry.fallbacks += 1;
     return { text: options.fallback, usedFallback: true };
   }
 
@@ -76,6 +91,7 @@ export async function callClaudeText(
     return { text, usedFallback: false };
   } catch (error) {
     console.error("[deliverables/claude-helper] Claude call failed:", error);
+    claudeTelemetry.fallbacks += 1;
     return { text: options.fallback, usedFallback: true };
   }
 }
@@ -113,6 +129,7 @@ export async function callClaudeJson<T>(options: {
     console.warn(
       "[deliverables/claude-helper] JSON parse/validation failed — using fallback.",
     );
+    claudeTelemetry.fallbacks += 1;
     return { data: options.fallback, usedFallback: true };
   }
 

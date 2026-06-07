@@ -15,6 +15,9 @@ const COLORS = {
   insight: { fgColor: { rgb: "FFF3E0" } },
 };
 
+const CURRENCY = '"$"#,##0';
+const PERCENT = "0.0%";
+
 function cellStyle(fill: { fgColor: { rgb: string }; font?: { bold: boolean } }, bold = false) {
   return {
     fill,
@@ -28,13 +31,32 @@ function cellStyle(fill: { fgColor: { rgb: string }; font?: { bold: boolean } },
   };
 }
 
-function styledCell(value: string | number, style: ReturnType<typeof cellStyle>) {
+type Cell = {
+  v?: string | number;
+  t?: string;
+  f?: string;
+  z?: string;
+  s?: ReturnType<typeof cellStyle>;
+};
+
+function styledCell(value: string | number, style: ReturnType<typeof cellStyle>): Cell {
   return { v: value, t: typeof value === "number" ? "n" : "s", s: style };
 }
 
-function buildSheetFromRows(
-  rows: Array<Array<{ v: string | number; t?: string; s?: ReturnType<typeof cellStyle> }>>,
-): XLSX.WorkSheet {
+function numCell(value: number, style: ReturnType<typeof cellStyle>, z?: string): Cell {
+  return { v: value, t: "n", z, s: style };
+}
+
+function fCell(
+  formula: string,
+  cached: number,
+  style: ReturnType<typeof cellStyle>,
+  z?: string,
+): Cell {
+  return { f: formula, v: cached, t: "n", z, s: style };
+}
+
+function buildSheetFromRows(rows: Cell[][]): XLSX.WorkSheet {
   const ws: XLSX.WorkSheet = {};
   rows.forEach((row, r) => {
     row.forEach((cell, c) => {
@@ -69,6 +91,15 @@ function defaultCloseRate(employees: string | undefined): number {
   return 0.05;
 }
 
+// Sheet "Team Metrics" input refs.
+const TM = "'Team Metrics'";
+const COMMISSION = `${TM}!B4`;
+const LEADS = `${TM}!B5`;
+const CLOSE = `${TM}!B6`;
+const PRICE = `${TM}!B7`;
+const LIFT = 1.35; // 1 + 0.35 conversion lift
+const GCI = `${PRICE}*${COMMISSION}`; // GCI per close
+
 export function buildRealEstateRoiWorkbook(
   company: Company,
   survey: Survey,
@@ -83,10 +114,10 @@ export function buildRealEstateRoiWorkbook(
   const gciPerClose = Math.round(medianSalePrice * avgCommissionPct);
   const avgResponseHours = 4;
   const targetResponseMinutes = 5;
-  const conversionLift = 0.35;
-  const improvedCloseRate = Math.round((closeRate * (1 + conversionLift)) * 1000) / 1000;
-  const additionalClosesPerMonth =
-    Math.round(leadsPerMonth * (improvedCloseRate - closeRate) * 10) / 10;
+  const improvedCloseRate = Math.round(closeRate * LIFT * 1000) / 1000;
+  const closesBefore = Math.round(leadsPerMonth * closeRate * 10) / 10;
+  const closesAfter = Math.round(leadsPerMonth * improvedCloseRate * 10) / 10;
+  const additionalClosesPerMonth = Math.round((closesAfter - closesBefore) * 10) / 10;
   const additionalGciMonth = Math.round(additionalClosesPerMonth * gciPerClose);
   const additionalGciYear = additionalGciMonth * 12;
   const aiInvestment = 12_000;
@@ -106,42 +137,43 @@ export function buildRealEstateRoiWorkbook(
     ],
     [
       styledCell("Number of agents", cellStyle(COLORS.input)),
-      styledCell(agents, cellStyle(COLORS.input)),
+      numCell(agents, cellStyle(COLORS.input)), // B3
       styledCell("Licensed agents producing GCI", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Average commission rate", cellStyle(COLORS.input)),
-      styledCell(avgCommissionPct, cellStyle(COLORS.input)),
+      numCell(avgCommissionPct, cellStyle(COLORS.input), PERCENT), // B4
       styledCell("Decimal: 0.025 = 2.5%", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Inbound leads per month (team)", cellStyle(COLORS.input)),
-      styledCell(leadsPerMonth, cellStyle(COLORS.input)),
+      numCell(leadsPerMonth, cellStyle(COLORS.input)), // B5
       styledCell("Zillow, Realtor.com, sphere, open house", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Current close rate (leads → closed)", cellStyle(COLORS.input)),
-      styledCell(closeRate, cellStyle(COLORS.input)),
+      numCell(closeRate, cellStyle(COLORS.input), PERCENT), // B6
       styledCell("e.g. 0.06 = 6%", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Median sale price ($)", cellStyle(COLORS.input)),
-      styledCell(medianSalePrice, cellStyle(COLORS.input)),
+      numCell(medianSalePrice, cellStyle(COLORS.input), CURRENCY), // B7
       styledCell("Placer County: $750K–$1.2M typical", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Avg lead response time (hours)", cellStyle(COLORS.input)),
-      styledCell(avgResponseHours, cellStyle(COLORS.input)),
+      numCell(avgResponseHours, cellStyle(COLORS.input)), // B8
       styledCell("Industry avg: 4+ hours", cellStyle(COLORS.input)),
     ],
     [
       styledCell("Target response time (minutes)", cellStyle(COLORS.input)),
-      styledCell(targetResponseMinutes, cellStyle(COLORS.input)),
+      numCell(targetResponseMinutes, cellStyle(COLORS.input)), // B9
       styledCell("AI auto-reply goal", cellStyle(COLORS.input)),
     ],
   ]);
   sheet1["!cols"] = [{ wch: 36 }, { wch: 18 }, { wch: 32 }];
 
+  // Sheet 2 — AI Impact. Col A metric, B before, C after.
   const sheet2 = buildSheetFromRows([
     [
       styledCell("AI Impact on Conversion", cellStyle(COLORS.header, true)),
@@ -160,40 +192,40 @@ export function buildRealEstateRoiWorkbook(
     ],
     [
       styledCell("Close rate", cellStyle(COLORS.calculated)),
-      styledCell(`${(closeRate * 100).toFixed(1)}%`, cellStyle(COLORS.calculated)),
-      styledCell(`${(improvedCloseRate * 100).toFixed(1)}%`, cellStyle(COLORS.calculated)),
+      fCell(CLOSE, closeRate, cellStyle(COLORS.calculated), PERCENT), // B4
+      fCell(`${CLOSE}*${LIFT}`, improvedCloseRate, cellStyle(COLORS.calculated), PERCENT), // C4
     ],
     [
       styledCell("Closes per month (team)", cellStyle(COLORS.calculated)),
-      styledCell(Math.round(leadsPerMonth * closeRate * 10) / 10, cellStyle(COLORS.calculated)),
-      styledCell(
-        Math.round(leadsPerMonth * improvedCloseRate * 10) / 10,
-        cellStyle(COLORS.calculated),
-      ),
+      fCell(`${LEADS}*${CLOSE}`, closesBefore, cellStyle(COLORS.calculated)), // B5
+      fCell(`${LEADS}*C4`, closesAfter, cellStyle(COLORS.calculated)), // C5
     ],
     [
       styledCell("Additional closes per month", cellStyle(COLORS.summary, true)),
       styledCell("—", cellStyle(COLORS.summary, true)),
-      styledCell(additionalClosesPerMonth, cellStyle(COLORS.summary, true)),
+      fCell("C5-B5", additionalClosesPerMonth, cellStyle(COLORS.summary, true)), // C6
     ],
     [
       styledCell("GCI per close (at median price)", cellStyle(COLORS.calculated)),
-      styledCell(`$${gciPerClose.toLocaleString()}`, cellStyle(COLORS.calculated)),
-      styledCell(`$${gciPerClose.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(GCI, gciPerClose, cellStyle(COLORS.calculated), CURRENCY), // B7
+      fCell(GCI, gciPerClose, cellStyle(COLORS.calculated), CURRENCY), // C7
     ],
     [
       styledCell("Additional GCI per month", cellStyle(COLORS.summary, true)),
       styledCell("—", cellStyle(COLORS.summary, true)),
-      styledCell(`$${additionalGciMonth.toLocaleString()}`, cellStyle(COLORS.summary, true)),
+      fCell("C6*C7", additionalGciMonth, cellStyle(COLORS.summary, true), CURRENCY), // C8
     ],
     [
       styledCell("Additional GCI per year", cellStyle(COLORS.summary, true)),
       styledCell("—", cellStyle(COLORS.summary, true)),
-      styledCell(`$${additionalGciYear.toLocaleString()}`, cellStyle(COLORS.summary, true)),
+      fCell("C8*12", additionalGciYear, cellStyle(COLORS.summary, true), CURRENCY), // C9
     ],
   ]);
   sheet2["!cols"] = [{ wch: 32 }, { wch: 18 }, { wch: 22 }];
 
+  // Sheet 3 — Investment Analysis. Value column = B.
+  const YEARLY = "'AI Impact'!C9";
+  const GCI_CLOSE = "'AI Impact'!C7";
   const sheet3 = buildSheetFromRows([
     [
       styledCell("Investment Analysis", cellStyle(COLORS.header, true)),
@@ -201,11 +233,11 @@ export function buildRealEstateRoiWorkbook(
     ],
     [
       styledCell("Clinovyr Workflow Automation Sprint", cellStyle(COLORS.input)),
-      styledCell(`$${aiInvestment.toLocaleString()}`, cellStyle(COLORS.input)),
+      numCell(aiInvestment, cellStyle(COLORS.input), CURRENCY), // B2 (input)
     ],
     [
       styledCell("Estimated annual GCI lift (Sheet 2)", cellStyle(COLORS.calculated)),
-      styledCell(`$${additionalGciYear.toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(YEARLY, additionalGciYear, cellStyle(COLORS.calculated), CURRENCY), // B3
     ],
     [
       styledCell("Clinovyr assessment ROI estimate", cellStyle(COLORS.summary)),
@@ -213,10 +245,7 @@ export function buildRealEstateRoiWorkbook(
     ],
     [
       styledCell("Break-even (additional closes needed)", cellStyle(COLORS.summary, true)),
-      styledCell(
-        gciPerClose > 0 ? `${(aiInvestment / gciPerClose).toFixed(1)} closes` : "N/A",
-        cellStyle(COLORS.summary, true),
-      ),
+      fCell(`IF(${GCI_CLOSE}>0,B2/${GCI_CLOSE},"N/A")`, gciPerClose > 0 ? Math.round((aiInvestment / gciPerClose) * 10) / 10 : 0, cellStyle(COLORS.summary, true)), // B5
     ],
     [
       styledCell("Placer County insight", cellStyle(COLORS.insight, true)),
@@ -235,7 +264,7 @@ export function buildRealEstateRoiWorkbook(
     ],
     [
       styledCell("3-year net GCI benefit (illustrative)", cellStyle(COLORS.calculated)),
-      styledCell(`$${(additionalGciYear * 3 - aiInvestment).toLocaleString()}`, cellStyle(COLORS.calculated)),
+      fCell(`${YEARLY}*3-B2`, additionalGciYear * 3 - aiInvestment, cellStyle(COLORS.calculated), CURRENCY), // B9
     ],
   ]);
   sheet3["!cols"] = [{ wch: 42 }, { wch: 48 }];

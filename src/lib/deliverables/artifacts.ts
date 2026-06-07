@@ -24,10 +24,10 @@ export const DELIVERABLE_KEY_META: Record<string, DeliverableKeyMeta> = {
     deliverableType: "pdf",
   },
   "tool-stack-guide": {
-    displayName: "Tool Stack Guide",
-    filename: "tool-stack-guide.json",
-    fileType: "json",
-    deliverableType: "json",
+    displayName: "AI Tool Stack Guide",
+    filename: "ai-tool-stack-guide.pdf",
+    fileType: "html",
+    deliverableType: "pdf",
   },
   "implementation-checklist": {
     displayName: "Implementation Checklist",
@@ -36,16 +36,16 @@ export const DELIVERABLE_KEY_META: Record<string, DeliverableKeyMeta> = {
     deliverableType: "pdf",
   },
   "executive-presentation": {
-    displayName: "Executive Presentation Outline",
-    filename: "executive-presentation.md",
-    fileType: "markdown",
-    deliverableType: "markdown",
+    displayName: "Executive Briefing",
+    filename: "executive-briefing.pdf",
+    fileType: "html",
+    deliverableType: "pdf",
   },
   "opportunity-brief": {
     displayName: "Opportunity Brief",
-    filename: "opportunity-brief.md",
-    fileType: "markdown",
-    deliverableType: "markdown",
+    filename: "opportunity-brief.pdf",
+    fileType: "html",
+    deliverableType: "pdf",
   },
   "tool-recommendations": {
     displayName: "Tool Recommendations",
@@ -67,9 +67,9 @@ export const DELIVERABLE_KEY_META: Record<string, DeliverableKeyMeta> = {
   },
   "crm-setup-guide": {
     displayName: "CRM Setup Guide",
-    filename: "crm-setup-guide.md",
-    fileType: "markdown",
-    deliverableType: "markdown",
+    filename: "crm-setup-guide.pdf",
+    fileType: "html",
+    deliverableType: "pdf",
   },
   "staff-training-guide": {
     displayName: "Staff Training Guide",
