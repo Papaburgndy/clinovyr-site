@@ -112,7 +112,7 @@ export function buildConstructionContextBlock(
     `Owner effective rate (est.): $${defaultOwnerHourlyRate(formData)}/hr`,
     `Owner admin hours/week (est.): ${estimateOwnerAdminHours(formData)}`,
     `Active jobs (est.): ${defaultActiveJobs(formData?.employees ?? company.size)}`,
-    `Readiness score: ${score?.overallScore ?? survey.score ?? "N/A"}/100 (${score?.tier ?? survey.tier ?? "N/A"})`,
+    `Readiness score: ${survey.score ?? score?.overallScore ?? "N/A"}/100 (${survey.tier ?? score?.tier ?? "N/A"})`,
     `Top time drains: ${topDrains}`,
     `Tech stack: ${stack || "Not fully documented"}`,
     `Recommended PM tool: ${recommendProjectManagementTool(company, formData)}`,

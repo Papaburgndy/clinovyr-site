@@ -38,15 +38,44 @@ function buildAnalysisFallback(
   formData: AssessmentFormData | null,
 ): AssessmentAnalysis {
   const topDrain = formData?.timeDrainsRanked?.[0] ?? "operational workflows";
+  const secondDrain = formData?.timeDrainsRanked?.[1] ?? "manual data entry";
   const tierDesc = TIER_INFO[score.tier]?.description ?? "";
   const sorted = Object.entries(score.categoryScores).sort((a, b) => b[1] - a[1]);
   const weakest = Object.entries(score.categoryScores).sort((a, b) => a[1] - b[1]);
+  const strongLabel = CATEGORY_LABELS[sorted[0]?.[0] as keyof typeof CATEGORY_LABELS] ?? "Process Maturity";
+  const weakLabel = CATEGORY_LABELS[weakest[0]?.[0] as keyof typeof CATEGORY_LABELS] ?? "Adoption Readiness";
+  const opps = score.topOpportunities ?? [];
+  const primaryOpp = opps[0] ?? "automating customer follow-up";
 
-  return {
-    categoryInsights: `Your strongest area is ${CATEGORY_LABELS[sorted[0]?.[0] as keyof typeof CATEGORY_LABELS] ?? "process maturity"}, while ${CATEGORY_LABELS[weakest[0]?.[0] as keyof typeof CATEGORY_LABELS] ?? "adoption readiness"} presents the greatest opportunity for improvement. For a ${company.industry} business of ${company.size}, closing these gaps will directly reduce time spent on ${topDrain.toLowerCase()}.`,
-    deeperAnalysis: `${company.name} is in the ${score.tier} tier with an overall score of ${score.overallScore}/100. ${tierDesc} Your tech stack and process documentation are the foundation — prioritize connecting existing tools before adding new platforms.`,
-    roadmap90Day: `Days 1–30: Document current ${topDrain.toLowerCase()} workflow and assign an internal AI champion.\nDays 31–60: Launch pilot automation on your highest-ROI opportunity with 2–3 team members.\nDays 61–90: Measure hours saved, refine SOPs, and plan full-team rollout with Clinovyr support.`,
+  const interpret = (key: keyof typeof CATEGORY_LABELS, v: number): string => {
+    const band = v >= 70 ? "strong" : v >= 45 ? "developing" : "an early-stage gap";
+    const actions: Record<string, string> = {
+      techStack: "connect your existing CRM, email, and scheduling tools with an automation layer (Make.com or Zapier) before buying anything new",
+      processMaturity: "document your top 3 repeatable workflows as written SOPs so they can be automated reliably",
+      dataReadiness: "clean and standardize your contact/customer records so AI has accurate context to work from",
+      adoptionReadiness: "run a short, hands-on staff training and name an internal AI champion to drive day-to-day use",
+      roi_potential: "start with the single highest-volume task to prove measurable hours saved within 30 days",
+    };
+    return `${CATEGORY_LABELS[key]} — ${v}/100 (${band}). To improve: ${actions[key] ?? "prioritize a focused pilot"}.`;
   };
+
+  const categoryInsights =
+    `Across five readiness dimensions, your strongest area is ${strongLabel} and your biggest opportunity is ${weakLabel}. Here is what each score means and the specific next move for a ${company.industry} business of ${company.size}:\n\n` +
+    (Object.entries(score.categoryScores) as Array<[keyof typeof CATEGORY_LABELS, number]>)
+      .map(([k, v]) => `• ${interpret(k, v)}`)
+      .join("\n");
+
+  const deeperAnalysis =
+    `${company.name} sits in the ${score.tier} tier at ${score.overallScore}/100. ${tierDesc} In practical terms, that means the fastest, lowest-risk wins come from automating high-volume, rules-based work — beginning with ${topDrain.toLowerCase()} and ${secondDrain.toLowerCase()} — rather than complex, judgment-heavy tasks.\n\n` +
+    `Where AI fits your operation: the goal is not to replace staff but to remove the repetitive load around ${topDrain.toLowerCase()}. A realistic first phase is an AI-assisted workflow that drafts, routes, and follows up automatically while a team member approves anything client-facing. Most ${company.industry.toLowerCase()} businesses your size recover several hours per week per person from this alone, which is the basis of the ROI estimate in your calculator.\n\n` +
+    `Sequencing and risk: prove value on one workflow before expanding. Keep a human-review gate on every client-facing output, use business-tier AI tools (never personal accounts for customer data), and track hours saved weekly so the investment is defensible. Once the first automation is stable and adopted, layer in the next opportunity — ${opps[1] ?? "the second-ranked opportunity from your assessment"}.`;
+
+  const roadmap90Day =
+    `Days 1–30 — Foundation: Document your current ${topDrain.toLowerCase()} process step by step. Assign an internal AI champion (1–2 hrs/week). Connect your existing tools with Make.com or Zapier. Clean your contact data so records are consistent.\n` +
+    `Days 31–60 — Pilot: Launch one automation targeting ${primaryOpp} with 2–3 team members. Add a human-approval step for anything client-facing. Track hours saved and reply rates weekly; tune the timing and copy from real results.\n` +
+    `Days 61–90 — Scale: Roll the proven automation out to the full team with role-based cheat sheets. Add the next opportunity (${opps[1] ?? "second-ranked workflow"}). Hold a monthly ROI review and decide on an ongoing optimization cadence.`;
+
+  return { categoryInsights, deeperAnalysis, roadmap90Day };
 }
 
 async function fetchAssessmentAnalysis(
@@ -60,7 +89,8 @@ async function fetchAssessmentAnalysis(
 
   const { text } = await callClaudeText({
     system:
-      "You are a Clinovyr AI consultant writing assessment report sections. Be specific to the client's industry and data. Output plain text with three sections separated by ---SECTION--- markers. No markdown headers.",
+      "You are a Clinovyr AI consultant writing the core sections of a paid AI Readiness Report. Be specific to the client's industry, data, and scores — cite their actual numbers and tools. Output plain text with three sections separated by ---SECTION--- markers. No markdown headers. " +
+      "Depth required: categoryInsights interprets each of their 5 category scores and what specifically to do about the weakest ones. deeperAnalysis (3 substantial paragraphs) covers where AI fits their operation, realistic ROI math, and risks/sequencing. roadmap90Day gives concrete named actions per phase (Days 1-30, 31-60, 61-90) with tools and owners. Write for a smart owner who wants specifics, not platitudes.",
     prompt: `Company: ${company.name} (${company.industry}, ${company.size})
 Score: ${score.overallScore}/100 (${score.tier})
 Category scores: tech ${score.categoryScores.techStack}, process ${score.categoryScores.processMaturity}, data ${score.categoryScores.dataReadiness}, adoption ${score.categoryScores.adoptionReadiness}, ROI ${score.categoryScores.roi_potential}
@@ -69,8 +99,8 @@ Opportunities: ${score.topOpportunities.join("; ")}
 Quick wins: ${score.quickWins.join("; ")}
 Executive summary: ${survey.executiveSummary ?? "N/A"}
 
-Write categoryInsights (1 paragraph), deeperAnalysis (2 paragraphs), roadmap90Day (Days 1-30, 31-60, 61-90). Separate with ---SECTION---`,
-    maxTokens: 1400,
+Write categoryInsights (1-2 paragraphs), deeperAnalysis (3 paragraphs), roadmap90Day (Days 1-30, 31-60, 61-90 with specific named actions). Separate with ---SECTION---`,
+    maxTokens: 4000,
     fallback: `${fallback.categoryInsights}\n---SECTION---\n${fallback.deeperAnalysis}\n---SECTION---\n${fallback.roadmap90Day}`,
   });
 
@@ -209,8 +239,24 @@ export const generateAssessmentReportPdf: DeliverableGenerator = async (ctx) => 
   const { company, survey, formData } = ctx;
   if (survey.status !== "complete") return null;
 
-  const score = resolveScore(formData, survey);
-  if (!score) return null;
+  const computed = resolveScore(formData, survey);
+  if (!computed) return null;
+
+  // Single source of truth: the values the customer already saw on their
+  // results page (persisted on the survey) win. We only keep the recomputed
+  // category breakdown + quick wins, which aren't stored on the survey. This
+  // guarantees the paid report's score, tier, ROI, and opportunities always
+  // match the rest of the customer experience.
+  const score: AIReadinessScore = {
+    ...computed,
+    overallScore: survey.score ?? computed.overallScore,
+    tier: (survey.tier as AIReadinessScore["tier"]) ?? computed.tier,
+    topOpportunities:
+      Array.isArray(survey.topOpportunities) && survey.topOpportunities.length > 0
+        ? (survey.topOpportunities as string[])
+        : computed.topOpportunities,
+    estimatedAnnualROI: survey.estimatedROI ?? computed.estimatedAnnualROI,
+  };
 
   const opportunities = enrichTopOpportunities(
     survey.topOpportunities,

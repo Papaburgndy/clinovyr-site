@@ -79,7 +79,7 @@ export function buildRealEstateContextBlock(
     `Type: ${getBrokerageTypeLabel(company, formData)}`,
     `Industry: ${company.industry} · Team size: ${company.size}`,
     `Revenue range: ${formData?.revenue ?? company.revenue ?? "N/A"}`,
-    `Readiness score: ${score?.overallScore ?? survey.score ?? "N/A"}/100 (${score?.tier ?? survey.tier ?? "N/A"})`,
+    `Readiness score: ${survey.score ?? score?.overallScore ?? "N/A"}/100 (${survey.tier ?? score?.tier ?? "N/A"})`,
     `Top time drains: ${topDrains}`,
     `Tech stack: ${stack || "Not fully documented"}`,
     `Recommended CRM: ${recommendCrmPlatform(company, formData)}`,

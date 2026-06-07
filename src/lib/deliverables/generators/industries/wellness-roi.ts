@@ -88,10 +88,12 @@ export function buildWellnessRoiWorkbook(
   formData: AssessmentFormData | null,
 ): Buffer {
   const employees = formData?.employees ?? company.size;
-  const activeClients = defaultActiveClients(employees);
-  const avgTreatment = defaultAvgTreatmentValue(employees);
-  const rebookingRate = defaultRebookingRate();
-  const visitsPerYear = defaultVisitsPerYear();
+  const m = formData?.industryMetrics ?? {};
+  const activeClients = m.well_activeClients ?? defaultActiveClients(employees);
+  const avgTreatment = m.well_avgTreatmentValue ?? defaultAvgTreatmentValue(employees);
+  const rebookingRate =
+    m.well_rebookingRatePct != null ? m.well_rebookingRatePct / 100 : defaultRebookingRate();
+  const visitsPerYear = m.well_visitsPerYear ?? defaultVisitsPerYear();
   const hourlyRate = 175;
   const socialHoursSaved = 8;
   const acquisitionCost = 275;

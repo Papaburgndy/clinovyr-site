@@ -56,9 +56,7 @@ function enrichStringOpportunity(
   roiRange: string,
 ): EnrichedOpportunity {
   const industryLabel = mapIndustryForScoring(industry) || industry;
-  const description = splitIntoSentences(
-    `${title} For ${industryLabel} businesses, this addresses a high-impact workflow with measurable time savings.`,
-  );
+  const description = `A high-impact automation for ${industryLabel} businesses that targets one of your top time drains — cutting manual effort with measurable hours saved and a quick payback.`;
 
   return {
     name: title,

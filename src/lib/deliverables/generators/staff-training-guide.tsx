@@ -37,17 +37,17 @@ function buildTrainingFallback(
   return {
     introduction: `${companyName} is adopting AI-assisted workflows to reduce time on ${formData?.timeDrainsRanked?.[0]?.toLowerCase() ?? "daily operations"} while maintaining quality and compliance standards expected in ${industry}.`,
     whyNow: `Your team has clear automation targets and leadership support. Starting with structured training ensures adoption sticks and ROI is measurable within 30 days.`,
-    toolsOverview: tools.slice(0, 3).map((name) => ({
+    toolsOverview: (tools.length ? tools : ["AI assistant (Claude/ChatGPT Team)", "Make.com automations", "Shared SOP library"]).slice(0, 3).map((name) => ({
       name,
-      purpose: `Supports ${industry} workflows with human-in-the-loop review`,
-      tips: "Use approved templates only. Escalate edge cases to your team lead.",
+      purpose: `Used in ${industry} workflows to draft and speed up repetitive work, always with a human approving anything client-facing.`,
+      tips: `Start from an approved template, then edit. Example prompt to practice: "Draft a friendly follow-up to a client who hasn't responded in 3 days about [topic]; keep it under 80 words and on-brand." Escalate anything unusual to your team lead.`,
     })),
     addressingConcerns: `We understand your concern about ${concern.toLowerCase()}. Every AI output goes through human review before client-facing use. We start with low-risk internal tasks and expand only after staff confidence is established.`,
     week1: {
       title: "Week 1 — Foundations",
       days: [
         { day: "Day 1–2", activities: ["Kickoff meeting and AI policy overview", "Access setup and password/security review"] },
-        { day: "Day 3–4", activities: ["Hands-on demo of primary automation", "Practice with sample scenarios (no live client data)"] },
+        { day: "Day 3–4", activities: ["Hands-on demo of the primary automation, start to finish", "Each person runs 3 practice scenarios with fake data — e.g. draft a reminder, summarize a call note, reply to a common question", "Save the best outputs as reusable team templates"] },
         { day: "Day 5", activities: ["Q&A session with Clinovyr", "Assign practice homework and feedback channel"] },
       ],
     },
@@ -211,14 +211,15 @@ export const generateStaffTrainingGuide: DeliverableGenerator = async ({
 
   const { data: content } = await callClaudeJson<TrainingGuideContent>({
     system:
-      "You are a Clinovyr change-management consultant. Output ONLY valid JSON matching TrainingGuideContent shape with introduction, whyNow, toolsOverview (3 items), addressingConcerns, week1/week2 with days and activities, roleGuides (3), faqs (4+), successMetrics (4). Be specific to industry.",
+      "You are a Clinovyr change-management consultant. Output ONLY valid JSON matching TrainingGuideContent shape with introduction, whyNow, toolsOverview (3 items), addressingConcerns, week1/week2 with days and activities, roleGuides (3), faqs (4+), successMetrics (4). " +
+      "Make it genuinely teachable: each day's activities must be concrete exercises (what to open, what to practice, an example prompt to try), not vague themes. roleGuides must give each role specific do's/don'ts. FAQs must answer real worries substantively. Tailor everything to the company's industry and named tools.",
     prompt: `Company: ${company.name}, Industry: ${company.industry}, Size: ${company.size}
 Top tools/automations: ${toolNames.join("; ") || "workflow automation"}
 Biggest concern: ${concern}
 Time drains: ${formData?.timeDrainsRanked?.slice(0, 3).join(", ") ?? "N/A"}
 AI experience: ${formData?.aiTools ?? "N/A"}, Comfort: ${formData?.comfortLevel ?? "N/A"}/5
 Tier: ${survey.tier ?? "TBD"}`,
-    maxTokens: 2000,
+    maxTokens: 3500,
     fallback,
     validate: (v) =>
       Boolean(v.introduction && v.week1?.days?.length && v.faqs?.length >= 3),

@@ -26,8 +26,10 @@ import {
   STEP_LABELS,
   STORAGE_KEY,
   TOTAL_STEPS,
+  getIndustryQuestions,
   type AssessmentFormData,
   type CompanyProfileForAssessment,
+  type IndustryMetrics,
 } from "@/types/assessment";
 
 type FormState = {
@@ -892,6 +894,64 @@ export function AssessmentForm({
         ) : null}
 
         {step === 6 ? (
+          <div className="space-y-5">
+            <p className="text-sm text-paper/55">
+              These numbers let us calculate accurate, personalized ROI for your
+              business. Every field is optional — leave any blank and we&apos;ll use
+              a benchmark estimate for your size and industry.
+            </p>
+            {(() => {
+              const questions = getIndustryQuestions(companyProfile.industry);
+              if (questions.length === 0) {
+                return (
+                  <p className="rounded-sm border border-rule/20 bg-ink/40 px-4 py-3 text-sm text-paper/60">
+                    No industry-specific numbers needed for your selection — your
+                    deliverables will use cross-industry benchmarks. Continue to
+                    the final step.
+                  </p>
+                );
+              }
+              const metrics: IndustryMetrics = formData.industryMetrics ?? {};
+              const setMetric = (key: keyof IndustryMetrics, raw: string) => {
+                const next: IndustryMetrics = { ...metrics };
+                if (raw.trim() === "") delete next[key];
+                else next[key] = Number(raw);
+                updateForm({ industryMetrics: next });
+              };
+              return (
+                <div className="grid gap-5 sm:grid-cols-2">
+                  {questions.map((q) => {
+                    const current = metrics[q.key];
+                    return (
+                      <div key={q.key}>
+                        <FieldLabel htmlFor={q.key}>
+                          {q.label}
+                          {q.unit !== "#" ? ` (${q.unit})` : ""}
+                        </FieldLabel>
+                        <input
+                          id={q.key}
+                          type="number"
+                          inputMode="decimal"
+                          min={0}
+                          step="any"
+                          value={current ?? ""}
+                          onChange={(e) => setMetric(q.key, e.target.value)}
+                          placeholder={q.placeholder}
+                          className="w-full rounded-sm border border-rule/25 bg-ink px-4 py-3 font-sans text-sm text-paper placeholder:text-paper/35 focus:border-accent-light/50 focus:outline-none focus:ring-2 focus:ring-accent-light/40"
+                        />
+                        {q.help ? (
+                          <p className="mt-1.5 text-xs text-paper/45">{q.help}</p>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+          </div>
+        ) : null}
+
+        {step === 7 ? (
           <div className="space-y-5">
             <div>
               <FieldLabel htmlFor="additionalNotes">

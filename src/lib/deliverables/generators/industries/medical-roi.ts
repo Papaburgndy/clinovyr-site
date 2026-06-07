@@ -124,14 +124,17 @@ export function buildMedicalRoiWorkbook(
   formData: AssessmentFormData | null,
 ): Buffer {
   const employees = formData?.employees ?? company.size;
-  const weeklyAppts = defaultAppointments(employees);
-  const noShowRate = defaultNoShowRate(employees);
-  const manualHours = defaultManualHours(employees);
-  const hourlyWage = 28;
+  const m = formData?.industryMetrics ?? {};
+  const weeklyAppts = m.med_weeklyAppointments ?? defaultAppointments(employees);
+  const noShowRate =
+    m.med_noShowRatePct != null ? m.med_noShowRatePct / 100 : defaultNoShowRate(employees);
+  const manualHours = m.med_adminHoursWeek ?? defaultManualHours(employees);
+  const hourlyWage = m.med_blendedWage ?? 28;
+  const apptValue = m.med_revenuePerVisit ?? APPT_VALUE;
 
   // Cached values (mirror the Excel formulas below so previews render).
   const recoveredApptsWeek = Math.round(weeklyAppts * noShowRate * NOSHOW_REDUCTION * 10) / 10;
-  const noShowSavingsWeek = Math.round(recoveredApptsWeek * APPT_VALUE);
+  const noShowSavingsWeek = Math.round(recoveredApptsWeek * apptValue);
   const hoursSavedWeek = Math.round(manualHours * HOURS_AUTOMATED * 10) / 10;
   const laborSavingsWeek = Math.round(hoursSavedWeek * hourlyWage);
   const totalWeeklySavings = noShowSavingsWeek + laborSavingsWeek;
@@ -204,7 +207,7 @@ export function buildMedicalRoiWorkbook(
     [
       styledCell("Appointment reminders (no-show reduction)", cellStyle(COLORS.calculated)),
       fCell(`${APPTS}*${NOSHOW}*${NOSHOW_REDUCTION}`, recoveredApptsWeek, cellStyle(COLORS.calculated)), // B3
-      fCell(`B3*${APPT_VALUE}*52`, noShowSavingsWeek * 52, cellStyle(COLORS.calculated), CURRENCY), // C3
+      fCell(`B3*${apptValue}*52`, noShowSavingsWeek * 52, cellStyle(COLORS.calculated), CURRENCY), // C3
     ],
     [
       styledCell("Intake & admin automation", cellStyle(COLORS.calculated)),

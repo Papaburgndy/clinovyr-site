@@ -25,32 +25,39 @@ function buildPhaseFallback(
   opportunities: ReturnType<typeof enrichTopOpportunities>,
 ): RoadmapPhases {
   const [first, second, third] = opportunities;
+  const f = first?.name ?? "your highest-ROI workflow";
+  const s = second?.name ?? "your second-ranked opportunity";
+  const t = third?.name ?? "your third opportunity";
   return {
     phase1: {
       title: "Phase 1 — Foundation (Days 1–30)",
       items: [
-        `Map ${first?.name ?? "priority workflow"} end-to-end`,
-        "Assign internal AI champion and document baseline hours",
-        "Configure sandbox environment for pilot testing",
-        `Staff kickoff communication for ${industry}`,
+        `Map "${f}" end-to-end (Owner: AI champion): write each step, who does it, and how long it takes today — this becomes your baseline.`,
+        `Name an internal AI champion (1–2 hrs/week) accountable for setup, training, and weekly tracking.`,
+        `Connect your existing tools with an automation layer (Make.com or Zapier) so data flows without manual copy-paste.`,
+        `Clean and standardize your contact/customer data so AI has accurate context to work from.`,
+        `Stand up a free AI workspace (Claude Team or ChatGPT Team) with a written "approved use" policy for ${industry}.`,
+        `Send a short staff kickoff: what's changing, why, and the human-review rule for anything client-facing.`,
       ],
     },
     phase2: {
       title: "Phase 2 — Pilot & Deploy (Days 31–60)",
       items: [
-        `Launch pilot: ${first?.name ?? "top automation"}`,
-        second ? `Begin design for ${second.name}` : "Expand automation rules from pilot feedback",
-        "Weekly ROI tracking and staff feedback sessions",
-        "Refine SOPs and escalation rules",
+        `Build and launch the "${f}" automation in Make.com with 2–3 team members (keep an approval step for client-facing output).`,
+        `Track results weekly: hours saved, reply/response rate, and error rate vs. your Day-1 baseline.`,
+        `Tune the timing, triggers, and message copy based on real responses — small changes compound.`,
+        `Document edge cases and escalation rules into a one-page SOP the whole team can follow.`,
+        `Begin design of "${s}" using what you learned from the first automation.`,
       ],
     },
     phase3: {
       title: "Phase 3 — Scale & Optimize (Days 61–90+)",
       items: [
-        third ? `Roll out ${third.name}` : "Full-team rollout of proven automations",
-        "Monthly ROI review with leadership",
-        "Knowledge base update and training refresh",
-        "Plan AI Operations Retainer for ongoing optimization",
+        `Roll "${f}" out to the entire team with role-based cheat sheets and a 30-minute live training.`,
+        `Launch "${s}", and scope "${t}" as the next build.`,
+        `Hold a monthly ROI review with leadership using your tracked numbers; decide what to automate next.`,
+        `Update your knowledge base/SOPs as workflows change so AI output stays accurate.`,
+        `Decide on an ongoing optimization cadence (in-house or a Clinovyr retainer) to keep compounding gains.`,
       ],
     },
   };
@@ -138,11 +145,15 @@ export const generateOpportunityRoadmap: DeliverableGenerator = async ({ company
 
   const { data: phases } = await callClaudeJson<RoadmapPhases>({
     system:
-      "You are a Clinovyr implementation strategist. Output ONLY valid JSON with phase1, phase2, phase3. Each has title and items (3-4 strings). Be industry-specific.",
-    prompt: `Company: ${company.name}, Industry: ${company.industry}, Size: ${company.size}
-Opportunities: ${opportunities.map((o) => o.name).join("; ") || "workflow automation"}
-JSON: { "phase1": { "title": "...", "items": [] }, "phase2": {...}, "phase3": {...} }`,
-    maxTokens: 900,
+      "You are a Clinovyr implementation strategist writing a concrete 90-day execution plan. Output ONLY valid JSON: { phase1: {title, items}, phase2: {title, items}, phase3: {title, items} }. " +
+      "Each phase has 5-6 items. Every item must be a SPECIFIC, actionable step — name the tool, the owner role, and the concrete output (e.g. 'Build the lead-response workflow in HubSpot (Ops owner): instant SMS + 1-hour call task'). Reference the company's actual opportunities and industry. No vague filler like 'assign a champion' without saying what they do. Keep each item one sentence.",
+    prompt: `Company: ${company.name}
+Industry: ${company.industry}
+Size: ${company.size}
+Top opportunities (in priority order): ${opportunities.map((o) => `${o.name} — ${o.description}`).join("; ") || "workflow automation"}
+
+Write a specific, industry-tailored 90-day roadmap (Phase 1 Days 1-30 foundation, Phase 2 Days 31-60 pilot & deploy, Phase 3 Days 61-90+ scale & optimize). Each item must be something the owner could hand to a team member and they'd know exactly what to do.`,
+    maxTokens: 3000,
     fallback,
     validate: (v) =>
       Boolean(v.phase1?.items?.length && v.phase2?.items?.length && v.phase3?.items?.length),

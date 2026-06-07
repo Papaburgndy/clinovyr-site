@@ -49,10 +49,23 @@ export function validateAssessmentStep(
       if (data.goals.length > 3) return "Select no more than three goals.";
       return null;
     case 6:
+      // Industry-specific numbers — all optional.
+      return null;
+    case 7:
       return null;
     default:
       return null;
   }
+}
+
+/** Keep only finite, non-negative numeric values from a raw industryMetrics object. */
+function sanitizeIndustryMetrics(value: unknown): AssessmentFormData["industryMetrics"] {
+  if (!value || typeof value !== "object") return {};
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+    if (typeof v === "number" && Number.isFinite(v) && v >= 0) out[k] = v;
+  }
+  return out as AssessmentFormData["industryMetrics"];
 }
 
 export function validateCompleteAssessment(
@@ -125,6 +138,7 @@ export function validateCompleteAssessment(
     valid: true,
     data: {
       ...data,
+      industryMetrics: sanitizeIndustryMetrics(data.industryMetrics),
       additionalNotes: data.additionalNotes ?? "",
     } as AssessmentFormData,
   };

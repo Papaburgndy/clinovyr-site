@@ -24,42 +24,55 @@ function buildChecklistFallback(
   topOpportunity: string,
   recommendedPkg: string | null,
 ): ChecklistContent {
+  const drain = formData?.timeDrainsRanked?.[0]?.toLowerCase() ?? "your priority workflow";
+  const crm = formData?.crm?.[0] ?? "your CRM";
   return {
-    intro: `Printable implementation checklist for ${company.name} (${company.industry}, ${company.size}). Focus: ${topOpportunity}.`,
+    intro: `Printable implementation checklist for ${company.name} (${company.industry}, ${company.size}). Primary focus: ${topOpportunity}. Work through it in order and check off each item — most teams complete the pilot in about six weeks.`,
     sections: [
       {
         title: "Week 1 — Discovery & Alignment",
         items: [
-          "Confirm top 3 time drains with department leads",
-          `Map current tools for ${company.industry} workflows`,
-          "Assign internal AI champion",
-          `Schedule Clinovyr kickoff for ${recommendedPkg ?? "your engagement"}`,
+          `Confirm your top 3 time drains with department leads and pick one to automate first (${drain}).`,
+          `Inventory your current tools (${crm}, email, scheduling) and note where data is re-typed by hand.`,
+          "Name an internal AI champion (1–2 hrs/week) accountable for setup and adoption.",
+          `Time the current ${drain} process for a few days to capture a baseline (minutes per task, tasks per week).`,
+          `Schedule the Clinovyr kickoff for ${recommendedPkg ?? "your engagement"}.`,
         ],
       },
       {
-        title: "Weeks 2–3 — Design & Pilot",
+        title: "Weeks 2–3 — Design & Build",
         items: [
-          `Document baseline hours on ${formData?.timeDrainsRanked?.[0] ?? "priority workflow"}`,
-          `Select pilot automation: ${topOpportunity}`,
-          "Draft staff communication and training outline",
-          "Configure test environment (sandbox CRM / email)",
+          `Write the target workflow as a step-by-step SOP, marking which steps AI will draft vs. a human will approve.`,
+          `Stand up a business-tier AI workspace (Claude Team or ChatGPT Team) — never personal accounts for customer data.`,
+          `Build the automation in a Make.com or Zapier test scenario connected to ${crm}.`,
+          "Create 2–3 approved prompt/message templates so output is consistent and on-brand.",
+          "Define escalation rules: what the AI must hand to a person, and how.",
         ],
       },
       {
-        title: "Weeks 4–6 — Deploy & Measure",
+        title: "Weeks 4–6 — Pilot & Measure",
         items: [
-          "Launch pilot with 2–3 users",
-          "Track hours saved and error rate weekly",
-          "Gather staff feedback; iterate prompts and rules",
-          "Plan rollout to full team",
+          "Turn the automation on for 2–3 users (or one location) with the human-approval step active.",
+          "Hold a 15-minute daily standup the first week to catch issues fast.",
+          "Track hours saved, response/reply rate, and error rate against your baseline.",
+          "Iterate prompts, timing, and rules from real results.",
+          "Decide go/no-go for full rollout based on the numbers.",
         ],
       },
       {
-        title: "Ongoing",
+        title: "Rollout",
         items: [
-          "Monthly ROI review with Clinovyr",
-          "Refresh playbooks as processes change",
-          "Document lessons learned for next automation",
+          "Enable for the whole team with role-based cheat sheets.",
+          "Run a 30-minute training: how to log activity, approve output, and escalate.",
+          "Set a standing weekly 15-minute review of the pipeline and metrics.",
+        ],
+      },
+      {
+        title: "Ongoing optimization",
+        items: [
+          "Monthly ROI review with leadership using tracked numbers.",
+          "Refresh SOPs and prompt templates as processes change.",
+          "Document lessons learned and scope the next automation.",
         ],
       },
     ],
@@ -127,7 +140,8 @@ export const generateImplementationChecklist: DeliverableGenerator = async ({
 
   const { data: content } = await callClaudeJson<ChecklistContent>({
     system:
-      "You are a Clinovyr implementation consultant. Output ONLY valid JSON: { intro: string, sections: [{ title, items: string[] }] }. Create 4 sections with 4-5 actionable checklist items each. Items should be printable task statements.",
+      "You are a Clinovyr implementation consultant. Output ONLY valid JSON: { intro: string, sections: [{ title, items: string[] }] }. Create 4-5 sections with 5 actionable checklist items each. " +
+      "Each item must be a concrete, checkable task naming the tool and the specific output (e.g. 'Build the appointment-reminder workflow in Make.com: 72h/24h/2h SMS via Twilio'), tailored to the company's industry and top opportunity. No vague items.",
     prompt: `Company: ${company.name}
 Industry: ${company.industry}
 Size: ${company.size} (${formData?.employees ?? "unknown"} employees)
@@ -137,7 +151,7 @@ Recommended package: ${survey.recommendedPkg ?? "AI Readiness Assessment"}
 Biggest concern: ${formData?.biggestConcern ?? "N/A"}
 
 Create a tailored printable implementation checklist.`,
-    maxTokens: 1000,
+    maxTokens: 2500,
     fallback,
     validate: (v) => Array.isArray(v.sections) && v.sections.length >= 3,
   });

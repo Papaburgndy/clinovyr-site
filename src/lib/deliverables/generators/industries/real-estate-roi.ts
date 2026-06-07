@@ -106,13 +106,15 @@ export function buildRealEstateRoiWorkbook(
   formData: AssessmentFormData | null,
 ): Buffer {
   const employees = formData?.employees ?? company.size;
-  const agents = defaultAgentCount(employees);
-  const leadsPerMonth = defaultLeadsPerMonth(employees);
-  const closeRate = defaultCloseRate(employees);
-  const avgCommissionPct = 0.025;
-  const medianSalePrice = 875_000;
+  const m = formData?.industryMetrics ?? {};
+  const agents = m.re_agents ?? defaultAgentCount(employees);
+  const leadsPerMonth = m.re_leadsPerMonth ?? defaultLeadsPerMonth(employees);
+  const closeRate =
+    m.re_closeRatePct != null ? m.re_closeRatePct / 100 : defaultCloseRate(employees);
+  const avgCommissionPct = m.re_commissionPct != null ? m.re_commissionPct / 100 : 0.025;
+  const medianSalePrice = m.re_medianSalePrice ?? 875_000;
   const gciPerClose = Math.round(medianSalePrice * avgCommissionPct);
-  const avgResponseHours = 4;
+  const avgResponseHours = m.re_responseHours ?? 4;
   const targetResponseMinutes = 5;
   const improvedCloseRate = Math.round(closeRate * LIFT * 1000) / 1000;
   const closesBefore = Math.round(leadsPerMonth * closeRate * 10) / 10;

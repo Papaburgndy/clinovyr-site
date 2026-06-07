@@ -37,21 +37,25 @@ function buildFallback(
   );
   const primary = opportunities[0];
   const topDrain = formData?.timeDrainsRanked?.[0] ?? "daily operations";
+  const readiness = (
+    survey.readinessStatement ??
+    "strong potential to capture quick wins without disrupting core operations"
+  )
+    .trim()
+    .replace(/[.\s]+$/, "");
   return {
     headline: primary?.name ?? survey.biggestOpportunity ?? "Workflow automation",
     summary:
       primary?.description ??
       survey.executiveSummary ??
       `A high-impact automation aligned to ${company.name}'s assessment, targeting ${topDrain.toLowerCase()}.`,
-    whyFirst: `Your assessment indicates ${
-      survey.readinessStatement ??
-      "strong potential to capture quick wins without disrupting core operations"
-    }. Starting here minimizes risk while proving ROI for a broader rollout.`,
+    whyFirst: `Your assessment indicates ${readiness}. Starting here minimizes risk while proving ROI for a broader rollout.`,
     howItWorks: [
-      `Map the current ${topDrain.toLowerCase()} process and baseline the hours it consumes`,
-      "Configure the automation in a sandbox using tools you already own",
-      "Pilot with 2–3 team members and measure hours saved",
-      "Document the SOP and roll out to the full team",
+      `Map the current ${topDrain.toLowerCase()} process step by step and time it for a week to set a baseline (minutes per task, tasks per week).`,
+      `Connect your existing tools with Make.com or Zapier so the trigger (a new lead, booking, or task) kicks off automatically.`,
+      `Add an AI assistant (Claude/ChatGPT Team) to draft the response or summary, with a required human-approval step before anything reaches a customer.`,
+      `Pilot with 2–3 team members for 1–2 weeks; track hours saved and reply rate against the baseline and tune the copy/timing.`,
+      `Document the workflow as a one-page SOP and roll it out to the full team with a short training.`,
     ],
     successCriteria: [
       `Measurable hours saved on ${topDrain.toLowerCase()} within 30 days`,
@@ -150,7 +154,7 @@ Biggest concern: ${formData?.biggestConcern ?? "N/A"}
 Recommended package: ${survey.recommendedPkg ?? "AI Opportunity Audit"}
 
 Write the single highest-ROI opportunity brief for this business.`,
-    maxTokens: 1100,
+    maxTokens: 2500,
     fallback,
     validate: (v) =>
       typeof v.headline === "string" &&

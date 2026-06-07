@@ -87,11 +87,13 @@ export function buildConstructionRoiWorkbook(
   formData: AssessmentFormData | null,
 ): Buffer {
   const employees = formData?.employees ?? company.size;
-  const ownerRate = defaultOwnerHourlyRate(formData);
-  const adminHrsWeek = estimateOwnerAdminHours(formData);
-  const activeJobs = defaultActiveJobs(employees);
-  const avgProjectValue = defaultAvgProjectValue(employees);
-  const bidsPerMonth = employees === "1–5" ? 6 : employees === "6–20" ? 12 : 20;
+  const m = formData?.industryMetrics ?? {};
+  const ownerRate = m.con_ownerHourlyRate ?? defaultOwnerHourlyRate(formData);
+  const adminHrsWeek = m.con_ownerAdminHoursWeek ?? estimateOwnerAdminHours(formData);
+  const activeJobs = m.con_activeJobs ?? defaultActiveJobs(employees);
+  const avgProjectValue = m.con_avgProjectValue ?? defaultAvgProjectValue(employees);
+  const bidsPerMonth =
+    m.con_bidsPerMonth ?? (employees === "1–5" ? 6 : employees === "6–20" ? 12 : 20);
 
   const commAutomationHrsSaved = Math.round(adminHrsWeek * 0.35 * 10) / 10;
   const bidTimeReductionHrs = Math.round(adminHrsWeek * 0.25 * 10) / 10;

@@ -104,9 +104,10 @@ export function buildLegalRoiWorkbook(
   formData: AssessmentFormData | null,
 ): Buffer {
   const employees = formData?.employees ?? company.size;
-  const attorneys = defaultAttorneyCount(employees);
-  const billableRate = defaultBillableRate(formData);
-  const totalNonBillableHrs = estimateNonBillableHours(formData);
+  const m = formData?.industryMetrics ?? {};
+  const attorneys = m.legal_attorneys ?? defaultAttorneyCount(employees);
+  const billableRate = m.legal_billableRate ?? defaultBillableRate(formData);
+  const totalNonBillableHrs = m.legal_nonBillableHoursWeek ?? estimateNonBillableHours(formData);
 
   const intakeHrs = hoursFromDrain(formData, /intake|onboard|new client/i, 2.5);
   const statusHrs = hoursFromDrain(formData, /status|update|follow.?up|client comm/i, 2);

@@ -89,13 +89,14 @@ export function buildRetailRoiWorkbook(
   formData: AssessmentFormData | null,
 ): Buffer {
   const employees = formData?.employees ?? company.size;
+  const m = formData?.industryMetrics ?? {};
   const subType = getRetailSubType(company, formData);
-  const monthlyRevenue = defaultMonthlyRevenue(employees);
-  const customerCount = defaultCustomerCount(employees);
-  const avgTransaction = defaultAvgTransaction(subType);
-  const emailList = defaultEmailListSize(employees);
-  const openRate = defaultEmailOpenRate();
-  const currentRating = defaultGoogleRating();
+  const monthlyRevenue = m.ret_monthlyRevenue ?? defaultMonthlyRevenue(employees);
+  const customerCount = m.ret_customerCount ?? defaultCustomerCount(employees);
+  const avgTransaction = m.ret_avgTransaction ?? defaultAvgTransaction(subType);
+  const emailList = m.ret_emailListSize ?? defaultEmailListSize(employees);
+  const openRate = m.ret_emailOpenRatePct != null ? m.ret_emailOpenRatePct / 100 : defaultEmailOpenRate();
+  const currentRating = m.ret_googleRating ?? defaultGoogleRating();
   const targetRating = 4.4;
   const lapsedPct = 0.35;
   const winBackRate = 0.05;

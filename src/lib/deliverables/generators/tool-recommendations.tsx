@@ -33,41 +33,52 @@ function buildToolFallback(
   formData: AssessmentFormData | null,
 ): ToolGuideContent {
   const crm = formData?.crm?.join(", ") || "your CRM";
+  const drain = formData?.timeDrainsRanked?.[0]?.toLowerCase() ?? "customer follow-up";
   return {
-    intro: `Prioritized tool recommendations for ${industry} businesses. Connect existing systems before adding new platforms.`,
+    intro: `Prioritized, vendor-neutral tool recommendations for ${industry} businesses. The sequence matters: connect what you already own, add an AI assistant layer, then a knowledge base — buy nothing that duplicates existing features. Pricing is current-market and approximate.`,
     tools: [
       {
-        name: "Zapier or Make",
-        cost: "$20–50/mo starter",
-        learningCurve: "Low — visual builder",
-        integration: `Works with ${crm}, email, scheduling`,
-        bestFor: "Quick automations without developer time",
+        name: "Make.com (or Zapier)",
+        cost: "$0–29/mo to start",
+        learningCurve: "Low — visual, no code",
+        integration: `Connects ${crm}, email, scheduling, forms`,
+        bestFor: "Routing leads and automating follow-up",
         narrative:
-          "Start here to bridge your current stack. Most clients see ROI within 2 weeks on intake routing and follow-up sequences.",
+          `Your automation backbone. Build the "${drain}" flow first: when a new lead or task is created, it sends an instant text/email, creates a call task, and logs the activity in ${crm}. Make.com is usually cheaper at volume; Zapier has more pre-built apps. Most owners see time saved within the first two weeks.`,
       },
       {
-        name: "Claude or ChatGPT (Team)",
+        name: "Claude Team (or ChatGPT Team)",
         cost: "$25–30/user/mo",
         learningCurve: "Medium — prompt design",
-        integration: "Browser, API, CRM plugins",
-        bestFor: `Drafting, summarization, ${industry} SOP assistance`,
+        integration: "Browser, mobile, API, automation steps",
+        bestFor: `Drafting, summarizing, and ${industry.toLowerCase()} Q&A`,
         narrative:
-          "Ground AI in your FAQs and intake forms. Use approved templates for client-facing content with human review gates.",
+          `Your AI assistant layer for drafting replies, summarizing calls/records, and answering staff questions from your SOPs. Use the Team tier (not personal accounts) so customer data stays in a business workspace, and keep a human-approval step on anything client-facing. Load it with your FAQs and templates for accurate, on-brand output.`,
       },
       {
-        name: "Notion or structured Drive",
+        name: "Notion (or structured Google Drive)",
         cost: "Free–$10/user/mo",
         learningCurve: "Low",
-        integration: "Export to AI tools, team wiki",
-        bestFor: "Knowledge base and SOP documentation",
+        integration: "Feeds context to AI tools; team wiki",
+        bestFor: "SOPs and a single source of truth",
         narrative:
-          "Single source of truth improves AI accuracy and staff onboarding. Document workflows before automating them.",
+          "Document your workflows before you automate them — AI is only as accurate as the context you give it. A simple, well-organized SOP library also speeds onboarding and makes every other tool on this list work better.",
+      },
+      {
+        name: `An SMS/review tool (Twilio or a ${industry.toLowerCase()}-specific platform)`,
+        cost: "$15–75/mo (usage-based)",
+        learningCurve: "Low–Medium",
+        integration: `Triggered by Make.com + ${crm}`,
+        bestFor: "Reminders, follow-up, and review requests",
+        narrative:
+          "Text gets read far faster than email. Wire automated reminders and a post-service review request through this so it fires from your automations — this is often the single highest-ROI add for local businesses.",
       },
     ],
     deferList: [
-      "Full CRM replacement until pilot ROI is proven",
-      "Custom AI model training before SOP documentation exists",
-      `Tools that duplicate features in ${crm}`,
+      `A full ${crm} replacement — fix workflow and data first; switching CRMs rarely solves a process problem.`,
+      "Custom/fine-tuned AI models — unnecessary until your SOPs and prompts are proven.",
+      "Standalone point tools that duplicate features you already pay for.",
+      "Enterprise 'AI platforms' with annual contracts before a pilot has shown ROI.",
     ],
   };
 }
@@ -101,7 +112,7 @@ function ToolRecommendationsDocument({
           <Text style={pdfStyles.tableCellHeader}>Integration</Text>
           <Text style={[pdfStyles.tableCellHeader, { flex: 1.2 }]}>Best For</Text>
         </View>
-        {content.tools.slice(0, 3).map((tool) => (
+        {content.tools.map((tool) => (
           <View key={tool.name}>
             <View style={pdfStyles.tableRow}>
               <Text style={[pdfStyles.tableCell, { flex: 1.2, fontFamily: "Helvetica-Bold" }]}>
@@ -147,14 +158,15 @@ export const generateToolRecommendations: DeliverableGenerator = async ({
 
   const { data: content } = await callClaudeJson<ToolGuideContent>({
     system:
-      "You are a Clinovyr tech stack advisor. Output ONLY valid JSON: { intro, tools: [{ name, cost, learningCurve, integration, bestFor, narrative }], deferList: string[] }. Exactly 3 tools with realistic pricing.",
+      "You are a Clinovyr tech stack advisor. Output ONLY valid JSON: { intro, tools: [{ name, cost, learningCurve, integration, bestFor, narrative }], deferList: string[] }. " +
+      "Recommend exactly 4 REAL named products suited to this business's industry and existing stack. For each: realistic current monthly pricing, honest learning curve, how it integrates with their named tools, who/what it's best for, and a 2-3 sentence narrative describing the SPECIFIC workflow it automates for them and the outcome. The deferList (3-4 items) should name things NOT to buy yet and why. No vague filler.",
     prompt: `Company: ${company.name}, Industry: ${company.industry}, Size: ${company.size}
 Tier: ${survey.tier ?? "TBD"}
 Stack: CRM ${formData?.crm?.join(", ") ?? "N/A"}, Email ${formData?.emailTools?.join(", ") ?? "N/A"}, Scheduling ${formData?.scheduling?.join(", ") ?? "N/A"}, PM ${formData?.pm?.join(", ") ?? "N/A"}, Accounting ${formData?.accounting?.join(", ") ?? "N/A"}
 AI experience: ${formData?.aiTools ?? "N/A"}, Comfort: ${formData?.comfortLevel ?? "N/A"}/5
 Time drains: ${formData?.timeDrainsRanked?.slice(0, 3).join(", ") ?? "N/A"}
 Goals: ${formData?.goals?.join(", ") ?? "N/A"}`,
-    maxTokens: 1200,
+    maxTokens: 3000,
     fallback,
     validate: (v) => Array.isArray(v.tools) && v.tools.length >= 3,
   });
