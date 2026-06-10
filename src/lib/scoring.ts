@@ -415,7 +415,11 @@ function scoreTechStack(formData: AssessmentFormData): number {
     (item) => item !== "None" && item !== "Spreadsheets",
   );
   const hasDedicatedAccounting = formData.accounting.some(
-    (item) => item === "QuickBooks" || item === "Xero" || item === "FreshBooks",
+    (item) =>
+      item === "QuickBooks" ||
+      item === "Xero" ||
+      item === "FreshBooks" ||
+      item === "Wave",
   );
   const usesSpreadsheetsOnly =
     formData.pm.includes("Spreadsheets") && !hasDedicatedPm;
@@ -466,7 +470,9 @@ function scoreProcessMaturity(formData: AssessmentFormData): number {
 function scoreDataReadiness(formData: AssessmentFormData): number {
   let score = 40;
 
-  if (formData.accounting.some((item) => item !== "Other")) {
+  if (
+    formData.accounting.some((item) => item !== "Other" && item !== "None")
+  ) {
     score += 15;
   }
 

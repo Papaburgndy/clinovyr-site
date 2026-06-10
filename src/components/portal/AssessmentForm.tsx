@@ -14,17 +14,20 @@ import { validateAssessmentStep } from "@/lib/validate-assessment";
 import { cn } from "@/lib/utils";
 import {
   ACCOUNTING_OPTIONS,
+  AI_OWNER_OPTIONS,
   AI_TOOLS_OPTIONS,
   CONCERN_OPTIONS,
   CRM_OPTIONS,
   EMAIL_OPTIONS,
   EMPLOYEE_RANGES,
   GOAL_OPTIONS,
+  MARKETING_CHANNEL_OPTIONS,
   PM_OPTIONS,
   REVENUE_RANGES,
   SCHEDULING_OPTIONS,
   STEP_LABELS,
   STORAGE_KEY,
+  TIME_DRAINS,
   TOTAL_STEPS,
   getIndustryQuestions,
   type AssessmentFormData,
@@ -391,7 +394,18 @@ export function AssessmentForm({
   const router = useRouter();
   const [state, dispatch] = useReducer(formReducer, {
     step: initialStep,
-    formData: initialData,
+    formData: {
+      ...initialData,
+      // Future-proof saved drafts: if the master TIME_DRAINS list gains items
+      // after a draft was saved, append the missing ones so ranking validation
+      // still passes.
+      timeDrainsRanked: [
+        ...initialData.timeDrainsRanked,
+        ...TIME_DRAINS.filter(
+          (d) => !initialData.timeDrainsRanked.includes(d),
+        ),
+      ],
+    },
     completedSteps: initialCompletedSteps,
   });
   const [error, setError] = useState<string | null>(null);
@@ -851,10 +865,23 @@ export function AssessmentForm({
               value={formData.biggestConcern}
               onChange={(biggestConcern) => updateForm({ biggestConcern })}
             />
+            <div>
+              <RadioGroup
+                label="Who would own AI tools day-to-day? (optional)"
+                name="aiOwner"
+                options={AI_OWNER_OPTIONS}
+                value={formData.aiOwner ?? ""}
+                onChange={(aiOwner) => updateForm({ aiOwner })}
+              />
+              <p className="mt-1.5 text-xs text-paper/45">
+                Helps us tailor your setup sessions and training materials.
+              </p>
+            </div>
           </div>
         ) : null}
 
         {step === 5 ? (
+          <div className="space-y-8">
           <fieldset className="space-y-3">
             <legend className="text-sm font-medium text-paper/90">
               What are your top goals? (Select up to 3)
@@ -891,6 +918,19 @@ export function AssessmentForm({
               })}
             </div>
           </fieldset>
+          <div>
+            <RadioGroup
+              label="How do most new customers find you today? (optional)"
+              name="marketingChannel"
+              options={MARKETING_CHANNEL_OPTIONS}
+              value={formData.marketingChannel ?? ""}
+              onChange={(marketingChannel) => updateForm({ marketingChannel })}
+            />
+            <p className="mt-1.5 text-xs text-paper/45">
+              Helps us prioritize automations that grow your strongest channel.
+            </p>
+          </div>
+          </div>
         ) : null}
 
         {step === 6 ? (

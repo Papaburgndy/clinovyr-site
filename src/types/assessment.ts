@@ -21,6 +21,11 @@ export const CRM_OPTIONS = [
   "HubSpot",
   "Salesforce",
   "GoHighLevel",
+  "Follow Up Boss",
+  "Clio",
+  "Mindbody/Jane",
+  "Buildertrend",
+  "Square",
   "None",
   "Other",
 ] as const;
@@ -28,6 +33,8 @@ export const CRM_OPTIONS = [
 export const EMAIL_OPTIONS = [
   "Mailchimp",
   "Constant Contact",
+  "Klaviyo",
+  "ActiveCampaign",
   "Gmail/Outlook only",
   "Other",
 ] as const;
@@ -35,6 +42,7 @@ export const EMAIL_OPTIONS = [
 export const SCHEDULING_OPTIONS = [
   "Calendly",
   "Acuity",
+  "Square Appointments",
   "Practice software",
   "None",
 ] as const;
@@ -43,6 +51,8 @@ export const PM_OPTIONS = [
   "Asana",
   "Monday",
   "Notion",
+  "Trello",
+  "ClickUp",
   "Spreadsheets",
   "None",
 ] as const;
@@ -51,6 +61,8 @@ export const ACCOUNTING_OPTIONS = [
   "QuickBooks",
   "Xero",
   "FreshBooks",
+  "Wave",
+  "None",
   "Other",
 ] as const;
 
@@ -77,6 +89,24 @@ export const CONCERN_OPTIONS = [
   "Team adoption",
   "Don't know where to start",
   "Don't trust it yet",
+] as const;
+
+/** Optional — who would own AI tools day-to-day (adoption signal + setup-session planning). */
+export const AI_OWNER_OPTIONS = [
+  "Me (the owner)",
+  "Office manager / ops lead",
+  "A tech-savvy team member",
+  "No one yet",
+] as const;
+
+/** Optional — primary new-customer channel (personalization + internal marketing data). */
+export const MARKETING_CHANNEL_OPTIONS = [
+  "Referrals / word of mouth",
+  "Google search",
+  "Social media",
+  "Paid ads",
+  "Repeat customers",
+  "Other",
 ] as const;
 
 export const GOAL_OPTIONS = [
@@ -216,7 +246,11 @@ export type AssessmentFormData = {
   aiTools: string;
   comfortLevel: number | null;
   biggestConcern: string;
+  /** Optional — who would own AI day-to-day. */
+  aiOwner?: string;
   goals: string[];
+  /** Optional — how most new customers find the business. */
+  marketingChannel?: string;
   industryMetrics: IndustryMetrics;
   additionalNotes: string;
 };
@@ -236,7 +270,9 @@ export const INITIAL_FORM_DATA: AssessmentFormData = {
   aiTools: "",
   comfortLevel: null,
   biggestConcern: "",
+  aiOwner: "",
   goals: [],
+  marketingChannel: "",
   industryMetrics: {},
   additionalNotes: "",
 };
