@@ -10,7 +10,7 @@ export const CLINOVYR_PRODUCTS = {
     amount: 150_000,
     name: "AI Opportunity Audit",
     description:
-      "Focused 2-session audit identifying your #1 highest-ROI AI automation opportunity",
+      "Your top AI automation opportunities ranked by ROI, with implementation checklist and tool recommendations — delivered in minutes, setup call included",
     deliverables: [
       "opportunity-brief",
       "implementation-checklist",
@@ -22,7 +22,7 @@ export const CLINOVYR_PRODUCTS = {
     amount: 500_000,
     name: "AI Readiness Assessment",
     description:
-      "Full 3-week operational audit with prioritized AI roadmap, ROI estimates, and executive report",
+      "Complete AI readiness package: full report, prioritized roadmap, tool stack guide, and executive briefing — delivered in minutes, setup sessions included",
     deliverables: [
       "assessment-report-pdf",
       "opportunity-roadmap",
@@ -36,7 +36,7 @@ export const CLINOVYR_PRODUCTS = {
     amount: 1_200_000,
     name: "Workflow Automation Sprint",
     description:
-      "4-6 week hands-on implementation of 2-3 AI automations with full training and 30-day support",
+      "Build-ready automation package: importable blueprints, CRM setup guide, training guide, and live ROI calculator — with hands-on setup sessions included",
     deliverables: [
       "assessment-report-pdf",
       "opportunity-roadmap",

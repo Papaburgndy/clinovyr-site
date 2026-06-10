@@ -34,21 +34,21 @@ const itemVariants = {
 const STEPS = [
   {
     number: "01",
-    title: "We audit your business.",
+    title: "Take the free survey.",
     description:
-      "A focused 2–3 week assessment of your operations, tools, data, and biggest time drains. You'll know exactly where AI can help and what it's worth.",
+      "Ten minutes about your operations, tools, and biggest time drains. You get an instant AI readiness score, your top automation opportunities, and an ROI estimate.",
   },
   {
     number: "02",
-    title: "We build your automations.",
+    title: "Get your deliverables in minutes.",
     description:
-      "Hands-on implementation of your highest-ROI workflows — customer follow-up, scheduling, reporting, lead intake. You're running real AI in 30 days.",
+      "Choose a package and your industry-specific reports, blueprints, calculators, and guides are generated for your business and waiting in your portal minutes after checkout.",
   },
   {
     number: "03",
-    title: "We run and improve it.",
+    title: "We help you set it up.",
     description:
-      "Monthly retainer keeps everything optimized, adds new automations, trains your team, and ensures AI grows with your business.",
+      "Every package includes setup sessions with a real person plus email support — so the automations and tools in your deliverables actually get up and running.",
   },
 ] as const;
 
@@ -79,7 +79,7 @@ export function Process() {
             variants={itemVariants}
             className="mt-6 font-display text-4xl font-light leading-[1.15] tracking-tight text-paper md:text-5xl"
           >
-            From conversation to results in 60 days
+            From a 10-minute survey to working automations
           </motion.h2>
         </motion.div>
 

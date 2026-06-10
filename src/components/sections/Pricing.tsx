@@ -32,42 +32,42 @@ const itemVariants = {
 
 const TIERS = [
   {
-    name: "Clarity",
-    price: "$5,000",
-    priceNote: "one-time",
+    name: "AI Opportunity Audit",
+    price: "$1,500",
+    priceNote: "one-time · delivered in minutes",
     featured: false,
     features: [
-      "AI Readiness Assessment (3 weeks)",
-      "Prioritized use case roadmap",
-      "Tool & vendor recommendations",
-      "Executive readout presentation",
-      "30-day email support",
+      "Opportunity Brief — your top automations ranked by ROI",
+      "30-day Implementation Checklist",
+      "Tool Recommendations guide for your stack",
+      "Setup call to walk through your results",
+      "Email support while you implement",
     ],
   },
   {
-    name: "Build + Run",
-    price: "from $12,000",
-    priceNote: "Sprint · retainer optional",
+    name: "AI Readiness Assessment",
+    price: "$5,000",
+    priceNote: "one-time · delivered in minutes",
     featured: true,
     features: [
-      "Workflow Automation Sprint (4–6 weeks)",
-      "2–3 production automations built & deployed",
-      "Staff training & adoption support",
-      "30-day post-launch support included",
-      "Optional monthly retainer from $2,500/mo",
+      "Full AI Readiness Report scored across 5 categories",
+      "Prioritized Opportunity Roadmap with phased timeline",
+      "Tool Stack Guide & Implementation Checklist",
+      "Executive Briefing deck for your leadership team",
+      "Setup sessions + 30-day email support",
     ],
   },
   {
-    name: "Fractional CAIO",
-    price: "from $4,000",
-    priceNote: "/month",
+    name: "Workflow Automation Sprint",
+    price: "$12,000",
+    priceNote: "one-time · delivered in minutes",
     featured: false,
     features: [
-      "Dedicated AI leadership for your business",
-      "Monthly new automation or optimization",
-      "Vendor & tool management",
-      "Team AI coaching & training",
-      "Priority response & availability",
+      "Everything in the Assessment report suite",
+      "Importable automation blueprints for your industry",
+      "CRM Setup Guide & Staff Training Guide",
+      "ROI Calculator with live, editable formulas",
+      "Hands-on setup sessions to get automations running",
     ],
   },
 ] as const;
@@ -106,7 +106,9 @@ export function Pricing() {
             variants={itemVariants}
             className="mt-4 font-sans text-base leading-relaxed text-muted md:text-lg"
           >
-            Start where it makes sense. Scale as you grow.
+            Industry-specific reports, blueprints, and calculators — generated
+            for your business and delivered to your portal within minutes of
+            purchase, with real humans to help you set everything up.
           </motion.p>
         </motion.div>
 
@@ -180,12 +182,9 @@ export function Pricing() {
           whileInView="visible"
           viewport={VIEWPORT}
         >
-          Need a lighter start?{" "}
-          <span className="text-ink/85">
-            AI Opportunity Audit — $1,500
-          </span>
-          . Start with our free AI discovery survey, then book a call if you
-          prefer.
+          Not sure which fits? Take the free discovery survey — your results
+          include a recommendation, and you can book a call before buying
+          anything.
         </motion.p>
       </div>
     </section>

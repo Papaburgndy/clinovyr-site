@@ -34,9 +34,9 @@ const STAT_CARDS = [
       "of organizations are now using AI in at least one function (McKinsey 2026)",
   },
   {
-    value: "$2K–$5K/mo",
+    value: "Minutes",
     description:
-      "typical retainer that pays for itself within 60 days of implementation",
+      "from checkout to industry-specific reports, blueprints, and calculators in your portal",
   },
   {
     value: "Placer County",

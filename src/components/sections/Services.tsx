@@ -29,39 +29,39 @@ const itemVariants = {
 
 const SERVICES = [
   {
+    tag: "Start Here",
+    name: "Free AI Discovery Survey",
+    description:
+      "A 10-minute survey that scores your AI readiness, ranks your automation opportunities, and estimates your ROI — instantly, no sales call required.",
+    price: "Free",
+  },
+  {
     tag: "Entry Point",
     name: "AI Opportunity Audit",
     description:
-      "Focused 2-session audit identifying your highest-ROI AI automation opportunity, with tool recommendations and a 30-day action plan.",
+      "Your highest-ROI automation opportunities ranked and explained, with a 30-day implementation checklist and tool recommendations for your stack — plus a setup call.",
     price: "$1,500",
   },
   {
-    tag: "Foundation",
+    tag: "Most Popular",
     name: "AI Readiness Assessment",
     description:
-      "Full 3-week operational audit with prioritized AI roadmap, ROI estimates, and executive report — delivered through your Clinovyr client portal.",
+      "The complete picture: full readiness report, prioritized roadmap, tool stack guide, and an executive briefing for your leadership — delivered to your portal in minutes.",
     price: "$5,000",
   },
   {
-    tag: "Core Service",
+    tag: "Build-Ready",
     name: "Workflow Automation Sprint",
     description:
-      "4–6 week hands-on build of 2–3 production automations with training and 30-day post-launch support. Lead intake, follow-up, scheduling, and reporting.",
+      "Everything you need to deploy: importable automation blueprints, CRM setup guide, staff training guide, and a live ROI calculator — with hands-on setup sessions included.",
     price: "$12,000",
   },
   {
-    tag: "Recurring",
-    name: "AI Operations Retainer",
+    tag: "Included",
+    name: "Setup & Implementation Help",
     description:
-      "Fractional AI leadership: monthly optimization, new automations, staff training, and strategic guidance (separate from sprint packages).",
-    price: "$2,000–$5,000/mo",
-  },
-  {
-    tag: "Visibility",
-    name: "Lunch & Learn Workshops",
-    description:
-      "Custom team workshops with branded decks and facilitator guides — in person or Zoom. Scoped to your industry and workflows.",
-    price: "Custom quote",
+      "Every package includes time with a real person — walkthrough calls, setup sessions, and email support to get your tools and automations actually running.",
+    price: "Included",
   },
   {
     tag: "Scalable",
@@ -99,7 +99,7 @@ export function Services() {
             variants={itemVariants}
             className="mt-6 font-display text-4xl font-light leading-[1.15] tracking-tight text-paper md:text-5xl"
           >
-            Six ways Clinovyr drives results
+            AI deliverables, built for your business
           </motion.h2>
         </motion.div>
 

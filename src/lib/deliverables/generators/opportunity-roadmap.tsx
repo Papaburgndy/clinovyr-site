@@ -57,7 +57,7 @@ function buildPhaseFallback(
         `Launch "${s}", and scope "${t}" as the next build.`,
         `Hold a monthly ROI review with leadership using your tracked numbers; decide what to automate next.`,
         `Update your knowledge base/SOPs as workflows change so AI output stays accurate.`,
-        `Decide on an ongoing optimization cadence (in-house or a Clinovyr retainer) to keep compounding gains.`,
+        `Decide on an ongoing optimization cadence (in-house, with Clinovyr setup support as needed) to keep compounding gains.`,
       ],
     },
   };

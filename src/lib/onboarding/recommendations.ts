@@ -16,22 +16,22 @@ const GOAL_PRIORITY: OnboardingGoalId[] = [
 
 const BY_GOAL: Record<OnboardingGoalId, ProductRecommendation> = {
   "run-ai-ongoing": {
-    product: "Managed AI Services",
-    tagline: "Ongoing AI operations for your team",
+    product: "Workflow Automation Sprint",
+    tagline: "Everything you need to run AI, with setup help",
     reason:
-      "You want a partner to run AI day-to-day — our retainer keeps automations live and improving.",
+      "You want AI working day-to-day — the Sprint delivers build-ready blueprints, training guides, and hands-on setup sessions to get it running.",
   },
   "automate-workflows": {
     product: "Workflow Automation Sprint",
-    tagline: "Ship high-impact automations quickly",
+    tagline: "Build-ready automations for your workflows",
     reason:
-      "You're ready to automate specific workflows — a focused sprint delivers working automations fast.",
+      "You're ready to automate specific workflows — the Sprint delivers importable blueprints and setup sessions to get them live fast.",
   },
   "strategy-roadmap": {
-    product: "AI Strategy Workshop",
+    product: "AI Readiness Assessment",
     tagline: "A clear roadmap aligned to your business",
     reason:
-      "You need strategy and a roadmap — the workshop turns goals into a prioritized AI plan.",
+      "You need strategy and a roadmap — the Assessment turns your survey into a prioritized, phased AI plan with an executive briefing.",
   },
   "understand-ai": {
     product: "AI Readiness Assessment",
@@ -80,7 +80,7 @@ export function recommendProduct(
     recommendation = {
       ...BY_GOAL["run-ai-ongoing"],
       reason:
-        "Strategy plus ongoing execution points to Managed AI Services after an initial roadmap.",
+        "Strategy plus day-to-day execution points to the Sprint — roadmap, blueprints, and setup sessions in one package.",
     };
   }
 
