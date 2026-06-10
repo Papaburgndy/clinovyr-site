@@ -51,9 +51,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
     // Static asset — dynamic `opengraph-image.tsx` pulled ~2 MiB of @vercel/og WASM into the Worker.
+    // PNG, not SVG: Facebook/LinkedIn/X don't render SVG og:images.
     images: [
       {
-        url: "/og.svg",
+        url: "/og.png",
         width: 1200,
         height: 630,
         alt: "Clinovyr — Intelligence, Applied.",
@@ -64,6 +65,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Clinovyr — AI Consulting for Placer County Businesses",
     description,
+    images: ["/og.png"],
   },
   robots: { index: true, follow: true },
   alternates: {

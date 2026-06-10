@@ -34,47 +34,60 @@ function buildTrainingFallback(
   tools: string[],
   concern: string,
 ): TrainingGuideContent {
+  const topDrain =
+    formData?.timeDrainsRanked?.[0]?.toLowerCase() ?? "daily operations";
+  const secondDrain = formData?.timeDrainsRanked?.[1]?.toLowerCase() ?? null;
+
   return {
-    introduction: `${companyName} is adopting AI-assisted workflows to reduce time on ${formData?.timeDrainsRanked?.[0]?.toLowerCase() ?? "daily operations"} while maintaining quality and compliance standards expected in ${industry}.`,
-    whyNow: `Your team has clear automation targets and leadership support. Starting with structured training ensures adoption sticks and ROI is measurable within 30 days.`,
-    toolsOverview: (tools.length ? tools : ["AI assistant (Claude/ChatGPT Team)", "Make.com automations", "Shared SOP library"]).slice(0, 3).map((name) => ({
+    introduction: `${companyName} is adopting AI-assisted workflows to reduce time spent on ${topDrain}${secondDrain ? ` and ${secondDrain}` : ""} while maintaining the quality and compliance standards expected in ${industry}. This guide is the playbook for the first two weeks: what each person practices, in what order, and how you'll know it's working. The goal is not "everyone uses AI for everything" — it's that three or four high-frequency tasks get measurably faster, with a clear human checkpoint on anything a client could see.`,
+    whyNow: `Your team has clear automation targets, leadership support, and named tools — the three ingredients that separate AI rollouts that stick from ones that fizzle. Teams that train in a structured two-week window typically see their first measurable time savings inside 30 days; teams that "let people explore on their own" usually stall, because nobody knows what good looks like. Training now also means your team shapes the guardrails, rather than having rules imposed later after a near-miss.`,
+    toolsOverview: (tools.length ? tools : ["AI assistant (Claude/ChatGPT Team)", "Make.com automations", "Shared SOP library"]).slice(0, 3).map((name, index) => ({
       name,
-      purpose: `Used in ${industry} workflows to draft and speed up repetitive work, always with a human approving anything client-facing.`,
-      tips: `Start from an approved template, then edit. Example prompt to practice: "Draft a friendly follow-up to a client who hasn't responded in 3 days about [topic]; keep it under 80 words and on-brand." Escalate anything unusual to your team lead.`,
+      purpose:
+        index === 0
+          ? `Your primary workhorse for ${industry.toLowerCase()} workflows — drafting client-facing messages, summarizing notes, and turning rough bullet points into polished text. A human reviews and approves anything that leaves the building.`
+          : `Used in ${industry} workflows to draft and speed up repetitive work, always with a human approving anything client-facing. Treat its output as a strong first draft from a capable new hire — fast, useful, and in need of a quick check.`,
+      tips: `Start from an approved template, then edit. Example prompt to practice: "Draft a friendly follow-up to a client who hasn't responded in 3 days about [topic]; keep it under 80 words and on-brand." Two more to try: "Summarize these notes into 5 bullet points for a handoff" and "Rewrite this paragraph at an 8th-grade reading level, same facts." Escalate anything unusual to your team lead rather than improvising.`,
     })),
-    addressingConcerns: `We understand your concern about ${concern.toLowerCase()}. Every AI output goes through human review before client-facing use. We start with low-risk internal tasks and expand only after staff confidence is established.`,
+    addressingConcerns: `We understand your concern about ${concern.toLowerCase()} — it's the most common worry teams raise, and it's legitimate. Here is how the rollout addresses it directly: every AI output goes through human review before client-facing use, we start with low-risk internal tasks (summaries, drafts, data prep) and expand only after staff confidence is established, and there is a written escalation rule for anything ambiguous. Nobody is graded on "using AI more"; people are recognized for catching bad outputs just as much as for producing fast ones. If a tool makes the work worse, say so in the daily standup — that feedback shapes week 2.`,
     week1: {
       title: "Week 1 — Foundations",
       days: [
-        { day: "Day 1–2", activities: ["Kickoff meeting and AI policy overview", "Access setup and password/security review"] },
-        { day: "Day 3–4", activities: ["Hands-on demo of the primary automation, start to finish", "Each person runs 3 practice scenarios with fake data — e.g. draft a reminder, summarize a call note, reply to a common question", "Save the best outputs as reusable team templates"] },
-        { day: "Day 5", activities: ["Q&A session with Clinovyr", "Assign practice homework and feedback channel"] },
+        { day: "Day 1–2", activities: ["Kickoff meeting (45 min): walk the AI policy one page at a time — what's approved, what's banned, who to ask", "Access setup: business accounts only, password manager entries created, personal AI accounts explicitly off-limits for work data", "Each person writes down the one task they most want off their plate — these become week 2 candidates"] },
+        { day: "Day 3–4", activities: ["Hands-on demo of the primary automation, start to finish, with a real (anonymized) example", "Each person runs 3 practice scenarios with fake data — e.g. draft a reminder, summarize a call note, reply to a common question", "Save the best outputs as reusable team templates in the shared SOP library", "Practice the failure case too: feed the tool a vague request, watch it guess, and practice spotting what's wrong"] },
+        { day: "Day 5", activities: ["Q&A session with Clinovyr — bring the awkward questions", "Assign practice homework: 2 drafts per person before Day 6, posted to the feedback channel", "Set the week 2 pilot group and confirm who the AI champion is"] },
       ],
     },
     week2: {
       title: "Week 2 — Live Practice",
       days: [
-        { day: "Day 6–7", activities: ["Supervised live use with 2–3 team members", "Daily 15-min standup on what worked / what didn't"] },
-        { day: "Day 8–9", activities: ["Expand to full pilot group", "Document edge cases and escalation rules"] },
-        { day: "Day 10", activities: ["Week 2 retrospective and ROI baseline", "Plan full rollout timeline"] },
+        { day: "Day 6–7", activities: ["Supervised live use with 2–3 team members on real work, reviewer named in advance", "Daily 15-min standup: one thing that worked, one that didn't, one question", "Start the time log: minutes saved per task, however rough"] },
+        { day: "Day 8–9", activities: ["Expand to the full pilot group", "Document edge cases and escalation rules as they actually occur — this becomes your living SOP", "Promote the 3 best prompts/templates of the week into the official library"] },
+        { day: "Day 10", activities: ["Week 2 retrospective and ROI baseline: hours saved, error catches, team confidence pulse", "Decide what graduates to unsupervised use vs. what stays reviewed", "Plan the full rollout timeline and the 30-day check-in"] },
       ],
     },
     roleGuides: [
-      { role: "Front desk / intake", guidance: "Use AI for draft responses and scheduling prep. Always verify before sending." },
-      { role: "Operations / back office", guidance: "Focus on data entry reduction and report drafting. Log time saved daily." },
-      { role: "Leadership", guidance: "Review weekly ROI dashboard. Approve scope expansions based on pilot data." },
+      { role: "Front desk / intake", guidance: "Use AI for draft responses, scheduling prep, and turning voicemail/call notes into clean summaries. Do: start every client-facing draft from an approved template. Don't: send anything unreviewed, or paste client identifiers into unapproved tools." },
+      { role: "Operations / back office", guidance: "Focus on data entry reduction, report drafting, and first-pass document prep. Do: log time saved daily, even roughly — it's the rollout's scoreboard. Don't: let the tool invent numbers; every figure in a report gets traced to its source." },
+      { role: "Senior staff / practitioners", guidance: "Use AI to prep — summarizing case/client history before a meeting, drafting routine correspondence — not to make judgment calls. Do: flag tasks that feel risky to automate; that judgment is exactly what the pilot needs. Don't: delegate professional decisions or anything regulated to a draft you didn't read." },
+      { role: "AI champion", guidance: "You're the first stop for questions and the keeper of the template library. Do: collect every confusing output in a running doc for the retrospective. Don't: fix things silently — broadcast the lesson so the whole team levels up." },
+      { role: "Leadership", guidance: "Review the weekly time-saved log and approve scope expansions based on pilot data, not enthusiasm. Do: publicly credit good catches of bad AI output. Don't: measure people on AI usage volume — measure outcomes." },
     ],
     faqs: [
-      { question: "Will AI replace my job?", answer: "No. AI handles repetitive tasks so you can focus on client relationships and judgment calls." },
-      { question: "What if the AI makes a mistake?", answer: "All outputs require human review. Escalation rules are documented in your SOP." },
-      { question: "How do I get help?", answer: "Contact your AI champion or Clinovyr during office hours in weeks 2–4." },
-      { question: "Is client data safe?", answer: "Use only approved tools with business accounts. Never paste sensitive data into personal AI accounts." },
+      { question: "Will AI replace my job?", answer: "No. AI handles the repetitive drafting and data-shuffling so you can focus on client relationships and judgment calls. The plan explicitly keeps a human in charge of every decision and every client-facing message." },
+      { question: "What if the AI makes a mistake?", answer: "Expect it to — that's why every output gets human review before it counts. Catching a bad output is a win, not a failure; escalation rules are documented in your SOP and refined during week 2." },
+      { question: "How do I get help?", answer: "First stop is your AI champion; second is the team feedback channel; third is Clinovyr office hours in weeks 2–4. No question is too basic — the fastest adopters ask the most questions in week 1." },
+      { question: "Is client data safe?", answer: "Use only the approved tools under business accounts, which don't train on your data. Never paste sensitive client data into personal AI accounts, and when in doubt, anonymize before you paste." },
+      { question: "Do I have to use it?", answer: "During the pilot, everyone tries the core workflows so the team's feedback is complete. After that, the tools that survive the retrospective become the standard way of working — like email did — because they'll have proven they save real time." },
+      { question: "What if it's slower than doing it myself?", answer: "Sometimes it will be at first — say so in the standup. Some tasks aren't worth automating, and finding those is a goal of the pilot, not a problem with you." },
     ],
     successMetrics: [
-      "Hours saved per week on priority workflows",
-      "Staff confidence score (1–5 survey at day 30)",
-      "Error rate vs. manual baseline",
+      "Hours saved per week on priority workflows (from the daily time log)",
+      "Staff confidence score (1–5 survey at day 30, compared to the day 1 baseline)",
+      "Error rate vs. manual baseline — including AI mistakes caught in review",
       "Response time to new inquiries",
+      "Template library growth: approved prompts/templates in active use",
+      "Share of pilot tasks graduated to unsupervised use by day 30",
     ],
   };
 }

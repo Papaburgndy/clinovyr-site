@@ -7,13 +7,24 @@ const GENERATE_PATH = "/generate";
 /**
  * Fire-and-forget from the Stripe webhook — do not await in the request handler.
  * Dispatches PDF/ZIP generation to the clinovyr-deliverables Worker via HTTP.
+ *
+ * On Cloudflare the invocation can be terminated as soon as the webhook
+ * response is sent, which would cancel an un-awaited fetch. Register the
+ * dispatch with ctx.waitUntil so the runtime keeps it alive.
  */
 export function triggerDeliverableGeneration(
   params: TriggerDeliverableGenerationParams,
 ): void {
-  void dispatchToDeliverablesWorker(params).catch((error) => {
+  const dispatch = dispatchToDeliverablesWorker(params).catch((error) => {
     console.error("[deliverables/trigger] unhandled error:", error);
   });
+
+  try {
+    getCloudflareContext().ctx.waitUntil(dispatch);
+  } catch {
+    // Outside the Workers runtime (e.g. `next dev`) there is no ctx;
+    // the un-awaited promise is fine there.
+  }
 }
 
 function resolveDeliverablesWorkerUrl(): string | null {

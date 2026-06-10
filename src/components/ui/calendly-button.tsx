@@ -7,7 +7,12 @@ const CALENDLY_SCRIPT_SRC =
   "https://assets.calendly.com/assets/external/widget.js";
 const CALENDLY_CSS_HREF =
   "https://assets.calendly.com/assets/external/widget.css";
-const CALENDLY_DISCOVERY_URL = "https://calendly.com/clinovyr/discovery";
+// Build-time override (NEXT_PUBLIC_ vars are inlined); falls back to the
+// discovery event type. Keep in sync with the runtime CALENDLY_URL used in
+// the portal and emails.
+const CALENDLY_DISCOVERY_URL =
+  process.env.NEXT_PUBLIC_CALENDLY_URL ??
+  "https://calendly.com/clinovyr/discovery";
 
 let calendlyAssetRefCount = 0;
 let calendlyLinkEl: HTMLLinkElement | null = null;
@@ -52,11 +57,14 @@ function releaseCalendlyAssets() {
 type CalendlyButtonProps = {
   className?: string;
   label?: string;
+  /** Override the Calendly event URL (defaults to the discovery call). */
+  url?: string;
 };
 
 export function CalendlyButton({
   className,
   label = "Book a Free Call",
+  url = CALENDLY_DISCOVERY_URL,
 }: CalendlyButtonProps) {
   useEffect(() => {
     acquireCalendlyAssets();
@@ -64,8 +72,8 @@ export function CalendlyButton({
   }, []);
 
   const handleClick = useCallback(() => {
-    window.Calendly?.initPopupWidget({ url: CALENDLY_DISCOVERY_URL });
-  }, []);
+    window.Calendly?.initPopupWidget({ url });
+  }, [url]);
 
   return (
     <button

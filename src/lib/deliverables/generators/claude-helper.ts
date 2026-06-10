@@ -26,7 +26,25 @@ type CallClaudeOptions = {
   fallback: string;
 };
 
-async function requestClaude(
+/** Statuses worth retrying: rate limits, overloaded, transient server errors. */
+const RETRYABLE_STATUSES = new Set([408, 429, 500, 502, 503, 504, 529]);
+const MAX_ATTEMPTS = 3;
+const BASE_RETRY_DELAY_MS = 1500;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+class AnthropicHttpError extends Error {
+  constructor(
+    public readonly status: number,
+    body: string,
+  ) {
+    super(`Anthropic API error (${status}): ${body}`);
+  }
+}
+
+async function requestClaudeOnce(
   system: string,
   prompt: string,
   maxTokens: number,
@@ -49,7 +67,7 @@ async function requestClaude(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Anthropic API error (${response.status}): ${errorText}`);
+    throw new AnthropicHttpError(response.status, errorText);
   }
 
   const data = (await response.json()) as {
@@ -62,6 +80,49 @@ async function requestClaude(
   }
 
   return textBlock.text.trim();
+}
+
+/**
+ * Calls the Anthropic API with up to MAX_ATTEMPTS tries. Retries transient
+ * failures (rate limits, overloaded, 5xx, network errors) with exponential
+ * backoff so a single hiccup doesn't downgrade a paid deliverable to
+ * fallback content. Non-retryable errors (e.g. 401 bad key) throw at once.
+ */
+async function requestClaude(
+  system: string,
+  prompt: string,
+  maxTokens: number,
+  apiKey: string,
+): Promise<string> {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    try {
+      return await requestClaudeOnce(system, prompt, maxTokens, apiKey);
+    } catch (error) {
+      lastError = error;
+
+      const retryable =
+        error instanceof AnthropicHttpError
+          ? RETRYABLE_STATUSES.has(error.status)
+          : // Network/fetch failures (TypeError) and empty responses are
+            // transient; anything else HTTP-shaped already threw above.
+            true;
+
+      if (!retryable || attempt === MAX_ATTEMPTS) {
+        throw error;
+      }
+
+      const delay = BASE_RETRY_DELAY_MS * 2 ** (attempt - 1);
+      console.warn(
+        `[deliverables/claude-helper] attempt ${attempt}/${MAX_ATTEMPTS} failed, retrying in ${delay}ms:`,
+        error instanceof Error ? error.message : error,
+      );
+      await sleep(delay);
+    }
+  }
+
+  throw lastError;
 }
 
 /**
