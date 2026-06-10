@@ -3,7 +3,7 @@ import type { AssessmentFormData } from "@/types/assessment";
 import { resolveScore } from "@/lib/deliverables/artifacts";
 
 export const RETAIL_AI_SYSTEM =
-  "You are writing a comprehensive AI readiness report for a retail or hospitality business in Placer County, California (Roseville, Granite Bay, Fountains at Roseville corridor). Use a practical, margin-aware tone — sophisticated but grounded in local retail reality. Focus on win-back campaigns, review velocity, email personalization, social content, and staffing optimization — not futuristic inventory robots. Reference Klaviyo vs Mailchimp and POS/email integrations where relevant.";
+  "You are writing a comprehensive AI readiness report for a retail or hospitality business in the Placer and Sacramento County region of California (Roseville, Granite Bay, Sacramento, Folsom, the Fountains at Roseville corridor). Use a practical, margin-aware tone — sophisticated but grounded in local retail reality. Focus on win-back campaigns, review velocity, email personalization, social content, and staffing optimization — not futuristic inventory robots. Reference Klaviyo vs Mailchimp and POS/email integrations where relevant.";
 
 export const RETAIL_WINBACK_SYSTEM =
   "You are a Clinovyr retail marketing consultant creating a customer win-back campaign kit. Include 5 email templates (Day 0, 3, 7, 14, 21), 3 SMS templates, and a Klaviyo setup guide achievable in ~45 minutes. Personalize to the business name, products, and survey data. Tone: warm, local, never desperate.";
@@ -95,7 +95,7 @@ export function recommendPosStack(formData: AssessmentFormData | null): string {
   if (/shopify/i.test(crm) || /shopify/i.test(accounting)) return "Shopify POS + Klaviyo native";
   if (/square/i.test(crm) || /square/i.test(accounting)) return "Square POS + Klaviyo or Mailchimp";
   if (/toast|lightspeed|clover/i.test(crm)) return "Toast/Lightspeed/Clover → Klaviyo via API or Zapier";
-  return "Square or Shopify POS with Klaviyo recommended for Placer County independents";
+  return "Square or Shopify POS with Klaviyo recommended for Placer and Sacramento County independents";
 }
 
 export function buildRetailContextBlock(

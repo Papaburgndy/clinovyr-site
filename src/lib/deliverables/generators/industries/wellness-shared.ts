@@ -3,7 +3,7 @@ import type { AssessmentFormData } from "@/types/assessment";
 import { resolveScore } from "@/lib/deliverables/artifacts";
 
 export const WELLNESS_AI_SYSTEM =
-  "You are writing a comprehensive AI readiness report for a wellness, med spa, or aesthetic business in Placer County, California (Roseville, Granite Bay, Rocklin). Use an aspirational wellness brand tone — sophisticated, warm, and results-focused. Be specific about client retention economics, rebooking automation, and booking platform integrations. Always include FTC compliance guidance on health and beauty claims.";
+  "You are writing a comprehensive AI readiness report for a wellness, med spa, or aesthetic business in the Placer and Sacramento County region of California (Roseville, Granite Bay, Rocklin, Sacramento, Folsom). Use an aspirational wellness brand tone — sophisticated, warm, and results-focused. Be specific about client retention economics, rebooking automation, and booking platform integrations. Always include FTC compliance guidance on health and beauty claims.";
 
 export const WELLNESS_SOCIAL_SYSTEM =
   "You are a Clinovyr wellness marketing consultant creating a 30-day social content calendar for a med spa or wellness studio. Personalize posts to the business's services from survey data. Each post needs: caption under 125 words, exactly 15 hashtags, and a clear image concept for a VA or owner to execute. Mix educational, promotional, staff/brand, and engagement content.";

@@ -46,7 +46,7 @@ function buildSocialPackFallback(
   return {
     intro: `This 30-day Social Content Pack gives ${company.name} (${label}) 28 ready-to-post captions with hashtags, posting times, and image concepts — tailored for ${contentFocus}. Includes 5 Instagram story templates. Schedule via Later or Buffer; add your photos from the image concepts.`,
     postingSchedule:
-      "Post 6–7 days per week. Best times for Placer County retail: 10am (product/special), 1pm (engagement), 7pm (restaurant/dining). Batch photography Sunday; schedule Monday AM.",
+      "Post 6–7 days per week. Best times for Placer and Sacramento County retail: 10am (product/special), 1pm (engagement), 7pm (restaurant/dining). Batch photography Sunday; schedule Monday AM.",
     subType: sub,
     posts: buildDefaultSocialPosts(company, formData),
     storyTemplates: DEFAULT_STORY_TEMPLATES,

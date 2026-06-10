@@ -69,7 +69,7 @@ export function Hero() {
             aria-hidden="true"
           />
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-paper/70">
-            AI Consulting — Granite Bay, CA
+            AI Consulting — Placer & Sacramento Counties, CA
           </p>
         </motion.div>
 
@@ -89,7 +89,7 @@ export function Hero() {
           variants={itemVariants}
           className="mt-8 max-w-prose font-sans text-base leading-relaxed text-paper/75 md:text-lg"
         >
-          Clinovyr helps Roseville and Granite Bay businesses implement AI —
+          Clinovyr helps businesses across Placer and Sacramento Counties implement AI —
           cutting busywork, accelerating growth, and building a measurable edge
           over competitors who are still doing things the old way.
         </motion.p>
@@ -129,7 +129,7 @@ export function Hero() {
           className="mt-8 font-mono text-xs leading-relaxed text-paper/70"
         >
           Serving medical practices, law firms, real estate, construction & more
-          across Placer County
+          across Placer & Sacramento Counties
         </motion.p>
       </motion.div>
 

@@ -288,7 +288,7 @@ function MedicalAIReportDocument({
         ))}
         <View style={pdfStyles.ctaBox}>
           <Text style={pdfStyles.ctaText}>
-            Clinovyr implements HIPAA-aware automations for Placer County medical and dental
+            Clinovyr implements HIPAA-aware automations for Placer and Sacramento County medical and dental
             practices. Email clinovyr@gmail.com · clinovyr.com
           </Text>
         </View>

@@ -57,7 +57,7 @@ function buildCrmGuideFallback(
     "Follow Up Boss":
       "Follow Up Boss is the industry standard for lead aggregation from Zillow, Realtor.com, and Ylopo with agent accountability dashboards — best for established teams with 6–50 agents.",
     GoHighLevel:
-      "GoHighLevel combines CRM, SMS, funnels, and automations in one platform — recommended for large Placer County teams needing white-label client portals and advanced nurture.",
+      "GoHighLevel combines CRM, SMS, funnels, and automations in one platform — recommended for large Placer and Sacramento County teams needing white-label client portals and advanced nurture.",
   };
 
   return {

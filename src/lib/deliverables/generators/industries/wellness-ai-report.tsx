@@ -318,7 +318,7 @@ function WellnessAIReportDocument({
         ))}
         <View style={pdfStyles.ctaBox}>
           <Text style={pdfStyles.ctaText}>
-            Clinovyr implements retention-first AI for Placer County wellness businesses. A 10%
+            Clinovyr implements retention-first AI for Placer and Sacramento County wellness businesses. A 10%
             rebooking lift funds the investment — we help you get there. clinovyr@gmail.com ·
             clinovyr.com
           </Text>

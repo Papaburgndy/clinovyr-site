@@ -61,7 +61,7 @@ function buildReportFallback(
   const crm = formData?.crm?.join(", ") ?? "your CRM";
 
   return {
-    executiveSummary: `${company.name} is a ${brokerage.toLowerCase()} serving Placer County buyers and sellers with ${crm}. With ${company.size} team members, your assessment highlights ${topDrain.toLowerCase()} as the primary operational drain — especially the gap between inbound lead volume and consistent, fast follow-up. Agents in Roseville and Granite Bay markets compete on response time as much as on pricing expertise; AI-assisted qualification, listing copy, and nurture sequences can recover 8–15 hours per agent per week while improving conversion on $750K+ transactions.`,
+    executiveSummary: `${company.name} is a ${brokerage.toLowerCase()} serving Placer and Sacramento County buyers and sellers with ${crm}. With ${company.size} team members, your assessment highlights ${topDrain.toLowerCase()} as the primary operational drain — especially the gap between inbound lead volume and consistent, fast follow-up. Agents in Roseville and Granite Bay markets compete on response time as much as on pricing expertise; AI-assisted qualification, listing copy, and nurture sequences can recover 8–15 hours per agent per week while improving conversion on $750K+ transactions.`,
     leadResponseProblem:
       "Industry data shows that responding to a Zillow or Realtor.com lead within 5 minutes increases contact rates by up to 400% compared to a 30-minute delay. Yet most brokerages still rely on manual inbox checks, shared team inboxes, and ad-hoc texting — meaning hot buyers and sellers in Rocklin, Lincoln, and Granite Bay often hear from a competitor first. Every hour of delay on a qualified Placer County lead represents thousands in potential GCI walking out the door.",
     leadResponseStats: [
@@ -249,7 +249,7 @@ function RealEstateAIReportDocument({
         </Text>
         <Text style={pdfStyles.coverMeta}>Prepared {dateStr}</Text>
         <Text style={[pdfStyles.coverMeta, { marginTop: 32, color: BRAND.cream }]}>
-          Real estate AI strategy for Placer County teams
+          Real estate AI strategy for Placer and Sacramento County teams
         </Text>
       </BrandedPage>
 
@@ -352,7 +352,7 @@ function RealEstateAIReportDocument({
         ))}
         <View style={pdfStyles.ctaBox}>
           <Text style={pdfStyles.ctaText}>
-            Clinovyr implements AI automations for Placer County real estate teams. One additional
+            Clinovyr implements AI automations for Placer and Sacramento County real estate teams. One additional
             close funds the investment — we help you get there faster. clinovyr@gmail.com ·
             clinovyr.com
           </Text>

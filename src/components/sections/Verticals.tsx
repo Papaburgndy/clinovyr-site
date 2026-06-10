@@ -51,7 +51,7 @@ const VERTICALS: {
   {
     name: "Real Estate & Property",
     description:
-      "Lead qualification, listing content, CRM automation, and nurture sequences for Placer County agents and brokers.",
+      "Lead qualification, listing content, CRM automation, and nurture sequences for Placer and Sacramento County agents and brokers.",
     icon: Home,
   },
   {
@@ -107,7 +107,7 @@ export function Verticals() {
             variants={itemVariants}
             className="mt-6 font-display text-4xl font-light leading-[1.15] tracking-tight text-ink md:text-5xl"
           >
-            Built for Placer County&apos;s leading industries
+            Built for the region&apos;s leading industries
           </motion.h2>
 
           <motion.p
@@ -176,8 +176,8 @@ export function Verticals() {
             variants={itemVariants}
             className="font-sans text-base leading-relaxed text-ink/85 md:text-lg"
           >
-            Don&apos;t see your industry? We work across all Placer County business
-            sectors.{" "}
+            Don&apos;t see your industry? We work across all Placer and
+            Sacramento County business sectors.{" "}
             <a
               href={SURVEY_INTAKE_URL}
               className={cn(

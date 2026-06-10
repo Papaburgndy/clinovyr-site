@@ -39,8 +39,8 @@ const STAT_CARDS = [
       "from checkout to industry-specific reports, blueprints, and calculators in your portal",
   },
   {
-    value: "Placer County",
-    description: "our market, our neighbors, our focus",
+    value: "Placer + Sac",
+    description: "Placer and Sacramento Counties — our market, our neighbors, our focus",
   },
 ] as const;
 

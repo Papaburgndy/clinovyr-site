@@ -3,7 +3,7 @@ import type { AssessmentFormData } from "@/types/assessment";
 import { resolveScore } from "@/lib/deliverables/artifacts";
 
 export const REAL_ESTATE_AI_SYSTEM =
-  "You are writing a comprehensive AI readiness report for a real estate brokerage or team in Placer County, California (Roseville, Granite Bay, Rocklin). Be specific, practical, and ROI-focused. Reference lead response time, conversion rates, MLS workflows, and CRM automation. Use local market context where natural (median home prices $750K–$1.2M in premium Placer County neighborhoods).";
+  "You are writing a comprehensive AI readiness report for a real estate brokerage or team in the Placer and Sacramento County region of California (Roseville, Granite Bay, Rocklin, Sacramento, Folsom, Elk Grove). Be specific, practical, and ROI-focused. Reference lead response time, conversion rates, MLS workflows, and CRM automation. Use local market context where natural (median home prices $750K–$1.2M in premium Placer County neighborhoods).";
 
 export const REAL_ESTATE_PROMPT_SYSTEM =
   "You are a Clinovyr real estate AI consultant creating a copy-paste prompt library for agents. Each prompt must use [bracket] placeholders, include usage notes, and estimate time saved. Focus on lead response, listings, CMAs, nurture, and transaction coordination.";

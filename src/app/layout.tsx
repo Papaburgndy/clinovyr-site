@@ -26,25 +26,27 @@ const fontMono = DM_Mono({
 });
 
 const description =
-  "Clinovyr helps Roseville and Granite Bay businesses implement AI automation to save time, reduce costs, and outgrow competitors. AI consulting, workflow automation, and AI strategy for local SMBs.";
+  "Clinovyr helps businesses across Placer and Sacramento Counties implement AI automation to save time, reduce costs, and outgrow competitors. AI consulting, workflow automation, and AI strategy for local SMBs.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://clinovyr.com"),
   title: {
-    default: "Clinovyr — AI Consulting for Placer County Businesses",
+    default: "Clinovyr — AI Consulting for Placer & Sacramento County Businesses",
     template: "%s | Clinovyr",
   },
   description,
   keywords: [
     "AI consulting Roseville CA",
     "AI consulting Granite Bay",
+    "AI consulting Sacramento",
     "business automation Placer County",
+    "business automation Sacramento County",
     "AI strategy Sacramento",
     "workflow automation small business",
   ],
   authors: [{ name: "Clinovyr" }],
   openGraph: {
-    title: "Clinovyr — AI Consulting for Placer County Businesses",
+    title: "Clinovyr — AI Consulting for Placer & Sacramento County Businesses",
     description,
     url: "https://clinovyr.com",
     siteName: "Clinovyr",
@@ -63,7 +65,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Clinovyr — AI Consulting for Placer County Businesses",
+    title: "Clinovyr — AI Consulting for Placer & Sacramento County Businesses",
     description,
     images: ["/og.png"],
   },

@@ -78,7 +78,7 @@ function buildReportFallback(
   const pmTool = recommendProjectManagementTool(company, formData);
 
   return {
-    executiveSummary: `${company.name} is a ${contractorType.toLowerCase()} with ${company.size} team members serving Placer County homeowners and commercial clients. Your assessment highlights ${topDrain.toLowerCase()} as the primary drain on owner time — hours spent on bids, scheduling subs, and writing client updates instead of running jobs and closing new work. This report maps five practical AI use cases in plain language, local market context for Roseville and Granite Bay, and a clear starting point: fix client communication first, then automate bids and sub coordination.`,
+    executiveSummary: `${company.name} is a ${contractorType.toLowerCase()} with ${company.size} team members serving Placer and Sacramento County homeowners and commercial clients. Your assessment highlights ${topDrain.toLowerCase()} as the primary drain on owner time — hours spent on bids, scheduling subs, and writing client updates instead of running jobs and closing new work. This report maps five practical AI use cases in plain language, local market context for Roseville and Granite Bay, and a clear starting point: fix client communication first, then automate bids and sub coordination.`,
     contractorProblem:
       "Most small and mid-size contractors don't lose money on the job site — they lose it in the office. Owners spend evenings writing bid proposals, chasing subs for quotes, and drafting progress emails while active jobs wait for decisions. When three jobs run simultaneously, communication breaks down: clients feel ignored, subs show up on the wrong day, and change orders get verbal approval instead of written sign-off. Every hour on admin is an hour not spent estimating the next $100K remodel or walking a Bosch corridor commercial bid.",
     problemStats: [
@@ -264,7 +264,7 @@ function ConstructionAIReportDocument({
         </Text>
         <Text style={pdfStyles.coverMeta}>Prepared {dateStr}</Text>
         <Text style={[pdfStyles.coverMeta, { marginTop: 32, color: BRAND.cream }]}>
-          Plain-language AI strategy for Placer County contractors
+          Plain-language AI strategy for Placer and Sacramento County contractors
         </Text>
       </BrandedPage>
 
@@ -371,7 +371,7 @@ function ConstructionAIReportDocument({
         ))}
         <View style={pdfStyles.ctaBox}>
           <Text style={pdfStyles.ctaText}>
-            Clinovyr implements AI for Placer County contractors — starting with the communication
+            Clinovyr implements AI for Placer and Sacramento County contractors — starting with the communication
             workflows that protect your reputation. clinovyr@gmail.com · clinovyr.com
           </Text>
         </View>

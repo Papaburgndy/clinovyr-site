@@ -3,7 +3,7 @@ import type { AssessmentFormData } from "@/types/assessment";
 import { resolveScore } from "@/lib/deliverables/artifacts";
 
 export const CONSTRUCTION_AI_SYSTEM =
-  "You are writing a comprehensive AI readiness report for a general contractor or specialty trade firm in Placer County, California (Roseville, Granite Bay, Rocklin, Lincoln). Use plain language — no jargon. Be specific, practical, and ROI-focused. Reference bid estimation, subcontractor coordination, client progress updates, lead qualification, and materials tracking. Include local context: ADU boom, Bosch facility expansion, Placer County permit timelines.";
+  "You are writing a comprehensive AI readiness report for a general contractor or specialty trade firm in the Placer and Sacramento County region of California (Roseville, Granite Bay, Rocklin, Lincoln, Sacramento, Folsom, Elk Grove). Use plain language — no jargon. Be specific, practical, and ROI-focused. Reference bid estimation, subcontractor coordination, client progress updates, lead qualification, and materials tracking. Include local context: ADU boom, Bosch facility expansion, Placer County permit timelines.";
 
 export const CONSTRUCTION_BID_SYSTEM =
   "You are a Clinovyr construction operations consultant creating a practical guide for contractors to use AI when drafting bids. Provide exact copy-paste prompts, step-by-step workflow, and a realistic sample bid scope input with AI output example. Focus on saving owner time without replacing field judgment.";

@@ -283,7 +283,7 @@ function RetailAIReportDocument({
         ))}
         <View style={pdfStyles.ctaBox}>
           <Text style={pdfStyles.ctaText}>
-            Clinovyr implements practical retail AI for Placer County businesses — win-back,
+            Clinovyr implements practical retail AI for Placer and Sacramento County businesses — win-back,
             reviews, and email first. clinovyr@gmail.com · clinovyr.com
           </Text>
         </View>

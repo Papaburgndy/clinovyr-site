@@ -83,7 +83,7 @@ export function Contact() {
                 <span className="mx-3 text-paper/30" aria-hidden="true">
                   |
                 </span>
-                <span>Granite Bay, CA</span>
+                <span>Granite Bay, CA — serving Placer &amp; Sacramento Counties</span>
               </p>
             </div>
 

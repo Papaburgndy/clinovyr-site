@@ -52,11 +52,11 @@ export function Footer() {
               Intelligence, Applied.
             </p>
             <p className="mt-4 max-w-sm font-sans text-sm leading-relaxed text-paper/70">
-              AI consulting for Placer County businesses — practical guidance
-              to save time, reduce costs, and grow.
+              AI consulting for Placer and Sacramento County businesses —
+              practical guidance to save time, reduce costs, and grow.
             </p>
             <p className="mt-6 font-mono text-xs uppercase tracking-widest text-paper/70">
-              Granite Bay / Roseville, California
+              Serving Placer &amp; Sacramento Counties, California
             </p>
           </div>
 
