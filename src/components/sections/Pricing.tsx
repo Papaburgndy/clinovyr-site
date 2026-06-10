@@ -67,7 +67,7 @@ const TIERS = [
       "Importable automation blueprints for your industry",
       "CRM Setup Guide & Staff Training Guide",
       "ROI Calculator with live, editable formulas",
-      "Hands-on setup sessions to get automations running",
+      "Working sessions where we implement your first automations with you",
     ],
   },
 ] as const;
@@ -182,9 +182,10 @@ export function Pricing() {
           whileInView="visible"
           viewport={VIEWPORT}
         >
-          Not sure which fits? Take the free discovery survey — your results
-          include a recommendation, and you can book a call before buying
-          anything.
+          Comparable consultant-delivered assessments run $5,000–$15,000 and
+          take weeks. Not sure which fits? Take the free discovery survey —
+          your results include a recommendation, and you can book a call
+          before buying anything.
         </motion.p>
       </div>
     </section>

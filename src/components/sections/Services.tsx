@@ -53,7 +53,7 @@ const SERVICES = [
     tag: "Build-Ready",
     name: "Workflow Automation Sprint",
     description:
-      "Everything you need to deploy: importable automation blueprints, CRM setup guide, staff training guide, and a live ROI calculator — with hands-on setup sessions included.",
+      "Everything you need to deploy: importable automation blueprints, CRM setup guide, staff training guide, and a live ROI calculator — plus working sessions where we implement your first automations with you.",
     price: "$12,000",
   },
   {

@@ -36,7 +36,7 @@ export const CLINOVYR_PRODUCTS = {
     amount: 1_200_000,
     name: "Workflow Automation Sprint",
     description:
-      "Build-ready automation package: importable blueprints, CRM setup guide, training guide, and live ROI calculator — with hands-on setup sessions included",
+      "Build-ready automation package: importable blueprints, CRM setup guide, training guide, and live ROI calculator — with working sessions where we implement your first automations with you",
     deliverables: [
       "assessment-report-pdf",
       "opportunity-roadmap",

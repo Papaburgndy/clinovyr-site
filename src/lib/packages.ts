@@ -56,7 +56,7 @@ export const PACKAGES: Record<RecommendedPackage, PackageDetails> = {
       "Importable automation blueprints built for your industry's workflows",
       "CRM setup guide and staff training guide for smooth adoption",
       "ROI calculator with live, editable formulas to track your numbers",
-      "Hands-on setup sessions to get automations running, plus 30-day support",
+      "Working sessions where we implement your first automations with you, plus 30-day support",
     ],
     deliverables: [
       "AI Readiness Report + Opportunity Roadmap (PDF)",
