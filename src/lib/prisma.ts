@@ -1,3 +1,5 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { PrismaPg } from "@prisma/adapter-pg";
 // Edge entry avoids bundling query_compiler_fast_bg.wasm-base64.js (~4.7 MiB) into the Worker.
 import { PrismaClient } from "@prisma/client/edge";
@@ -10,6 +12,38 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
   pgPool: Pool | undefined;
 };
+
+/**
+ * Per-request scope for Prisma on Cloudflare Workers.
+ *
+ * A PrismaClient holds a pg socket, and workerd forbids using I/O objects
+ * created during one request from a different request — a cached global
+ * client makes every isolate serve exactly one successful request and then
+ * hang ("Worker's code had hung" / error 1101). So in production each
+ * request gets its own client, memoized for the duration of that request.
+ *
+ * - In the Next.js site worker, OpenNext's getCloudflareContext().ctx is a
+ *   unique per-request object we can key on.
+ * - In the standalone deliverables worker, the fetch handler wraps its work
+ *   in prismaRequestScope.run({}, ...) to provide the per-request key.
+ * - Outside any request (build, scripts, dev server) we fall back to the
+ *   traditional global singleton, which is correct there.
+ */
+export const prismaRequestScope = new AsyncLocalStorage<object>();
+
+const prismaByRequest = new WeakMap<object, PrismaClient>();
+
+function getRequestScopeKey(): object | null {
+  const manual = prismaRequestScope.getStore();
+  if (manual) return manual;
+
+  try {
+    // Throws outside an OpenNext request (deliverables worker, build, scripts).
+    return getCloudflareContext().ctx ?? null;
+  } catch {
+    return null;
+  }
+}
 
 function isNextProductionBuild(): boolean {
   return (
@@ -50,10 +84,31 @@ function createPrismaClient(): PrismaClient {
 }
 
 function getPrismaClient(): PrismaClient {
-  if (!globalForPrisma.prisma) {
-    globalForPrisma.prisma = createPrismaClient();
+  // Dev / build / scripts: classic global singleton (Node keeps sockets fine).
+  if (process.env.NODE_ENV !== "production") {
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = createPrismaClient();
+    }
+    return globalForPrisma.prisma;
   }
-  return globalForPrisma.prisma;
+
+  const key = getRequestScopeKey();
+
+  if (!key) {
+    // No request context available (e.g. build-time prerender) — fall back
+    // to the global singleton; there is no cross-request reuse risk there.
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = createPrismaClient();
+    }
+    return globalForPrisma.prisma;
+  }
+
+  let client = prismaByRequest.get(key);
+  if (!client) {
+    client = createPrismaClient();
+    prismaByRequest.set(key, client);
+  }
+  return client;
 }
 
 export const prisma: PrismaClient = new Proxy({} as PrismaClient, {

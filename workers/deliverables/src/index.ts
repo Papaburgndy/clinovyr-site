@@ -1,4 +1,5 @@
 import { runDeliverableGeneration } from "../../../src/lib/deliverables/run-generation";
+import { prismaRequestScope } from "../../../src/lib/prisma";
 import type { TriggerDeliverableGenerationParams } from "../../../src/lib/deliverables/types";
 
 export interface Env {
@@ -53,10 +54,14 @@ export default {
       return new Response("Missing required fields", { status: 400 });
     }
 
+    // prismaRequestScope gives this invocation its own Prisma client; reusing
+    // a client (and its socket) across Worker requests hangs the isolate.
     ctx.waitUntil(
-      runDeliverableGeneration(params).catch((error) => {
-        console.error("[clinovyr-deliverables] generation failed:", error);
-      }),
+      prismaRequestScope.run({}, () =>
+        runDeliverableGeneration(params).catch((error) => {
+          console.error("[clinovyr-deliverables] generation failed:", error);
+        }),
+      ),
     );
 
     return Response.json({ ok: true, queued: true });
