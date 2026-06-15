@@ -80,7 +80,10 @@ export async function POST(request: Request) {
   await prisma.$transaction([
     prisma.user.update({
       where: { email },
-      data: { password: hashedPassword },
+      // Completing a reset proves the user controls this inbox, so also mark
+      // the email verified — otherwise login (which requires a verified email)
+      // would keep rejecting them with a generic "invalid" message.
+      data: { password: hashedPassword, emailVerified: new Date() },
     }),
     prisma.verificationToken.delete({
       where: {
